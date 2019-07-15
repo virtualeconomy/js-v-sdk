@@ -1,0 +1,29 @@
+{
+  "private": true,
+  "name": "@virtualeconomy/js-v-sdk",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "bignumber.js": "^7.2.1",
+    "crypto-js": "^3.1.9-1",
+    "identicon.js": "^2.3.2",
+    "node-fetch": "^2.6.0",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/node": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-flow": "^6.23.0",
+    "babel-preset-stage-0": "^6.24.1",
+    "flow-bin": "^0.92.1"
+  },
+  "scripts": {
+    "test_blockchain": "npm run build && node libs/test_blockchain.js",
+    "clean": "rm -rf libs",
+    "build": "babel --source-maps -d libs src test"
+  }
+}

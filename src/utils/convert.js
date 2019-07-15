@@ -2,8 +2,8 @@
 // Derived from waves-api
 //
 Object.defineProperty(exports, "__esModule", { value: true });
-var bignumber_1 = require("../libs/bignumber");
-var converters_1 = require("../libs/converters");
+var bignumber_1 = require("bignumber.js");
+var converters_1 = require("./converters");
 function performBitwiseAnd(a, b) {
     var sa = a.toString(2).split('.')[0];
     var sb = b.toString(2).split('.')[0];

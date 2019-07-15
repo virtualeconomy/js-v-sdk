@@ -10,10 +10,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 //Object.defineProperty(exports, "__esModule", { value: true });
-var bignumber_1 = require("../libs/bignumber");
-var base58_1 = require("../libs/base58");
-var convert_1 = require("../utils/convert");
-var concat_1 = require("../utils/concat");
+var bignumber_1 = require("bignumber.js");
+var base58_1 = require("./base58");
+var convert_1 = require("./convert");
+var concat_1 = require("./concat");
 // var constants = require("../constants");
 // ABSTRACT PARENT
 export var ByteProcessor = /** @class */ (function () {

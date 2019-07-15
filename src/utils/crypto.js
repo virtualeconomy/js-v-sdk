@@ -3,15 +3,14 @@
 //
 Object.defineProperty(exports, "__esModule", { value: true });
 var CryptoJS = require("crypto-js");
-var axlsign_1 = require("../libs/axlsign");
-var base58_1 = require("../libs/base58");
-var blake = require("../libs/blake2b");
-var converters_1 = require("../libs/converters");
-var secure_random_1 = require("../libs/secure-random");
-var sha3_1 = require("../libs/sha3");
+var axlsign_1 = require("./axlsign");
+var base58_1 = require("./base58");
+var blake = require("./blake2b");
+var converters_1 = require("./converters");
+var secure_random_1 = require("./secure-random");
+var sha3_1 = require("./sha3");
 var concat_1 = require("./concat");
 var constants = require("../constants");
-var NETWORK_BYTE = constants.NETWORK_BYTE
 
 function sha256(input) {
     var bytes;
@@ -96,16 +95,16 @@ exports.default = {
         var seedHash = buildSeedHash(seed, nonce);
         var keys = axlsign_1.default.generateKeyPair(seedHash);
         return {
-            privateKey: keys.private,
-            publicKey: keys.public
+            private_key: keys.private,
+            public_key: keys.public
         };
     },
-    isValidAddress: function (address) {
+    isValidAddress: function (address, networkByte) {
         if (!address || typeof address !== 'string') {
             throw new Error('Missing or invalid address');
         }
         var addressBytes = base58_1.default.decode(address);
-        if (addressBytes[0] !== constants.ADDRESS_VERSION || addressBytes[1] !== NETWORK_BYTE) {
+        if (addressBytes[0] !== constants.ADDRESS_VERSION || addressBytes[1] !== networkByte) {
             return false;
         }
         var key = addressBytes.slice(0, 22);
@@ -118,11 +117,11 @@ exports.default = {
         }
         return true;
     },
-    buildRawAddress: function (publicKeyBytes) {
+    buildRawAddress: function (publicKeyBytes, networkByte) {
         if (!publicKeyBytes || publicKeyBytes.length !== constants.PUBLIC_KEY_BYTE_LENGTH || !(publicKeyBytes instanceof Uint8Array)) {
             throw new Error('Missing or invalid public key');
         }
-        var prefix = Uint8Array.from([constants.ADDRESS_VERSION, NETWORK_BYTE]);
+        var prefix = Uint8Array.from([constants.ADDRESS_VERSION, networkByte]);
         var publicKeyHashPart = Uint8Array.from(hashChain(publicKeyBytes).slice(0, 20));
         var rawAddress = concat_1.concatUint8Arrays(prefix, publicKeyHashPart);
         var addressHash = Uint8Array.from(hashChain(rawAddress).slice(0, 4));

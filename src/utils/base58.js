@@ -1,16 +1,17 @@
 "use strict";
-// Derived from waves-api
-//
 // Object.defineProperty(exports, "__esModule", { value: true });
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 var ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 var ALPHABET_MAP = ALPHABET.split('').reduce(function (map, c, i) {
     map[c] = i;
     return map;
 }, {});
-export default {
+exports.default = {
     encode: function (buffer) {
-        if (!buffer.length)
-            return '';
+        if (!buffer.length) return '';
         var digits = [0];
         for (var i = 0; i < buffer.length; i++) {
             for (var j = 0; j < digits.length; j++) {
@@ -20,12 +21,12 @@ export default {
             var carry = 0;
             for (var k = 0; k < digits.length; k++) {
                 digits[k] += carry;
-                carry = (digits[k] / 58) | 0;
+                carry = digits[k] / 58 | 0;
                 digits[k] %= 58;
             }
             while (carry) {
                 digits.push(carry % 58);
-                carry = (carry / 58) | 0;
+                carry = carry / 58 | 0;
             }
         }
         for (var i = 0; buffer[i] === 0 && i < buffer.length - 1; i++) {
@@ -36,8 +37,7 @@ export default {
         }).join('');
     },
     decode: function (string) {
-        if (!string.length)
-            return new Uint8Array(0);
+        if (!string.length) return new Uint8Array(0);
         var bytes = [0];
         for (var i = 0; i < string.length; i++) {
             var c = string[i];
@@ -65,4 +65,5 @@ export default {
         return new Uint8Array(bytes.reverse());
     }
 };
+//# sourceMappingURL=base58.js.map
 //# sourceMappingURL=base58.js.map

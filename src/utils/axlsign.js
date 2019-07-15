@@ -1373,5 +1373,19 @@ axlsign.generateKeyPair = function (seed) {
         private: sk
     };
 };
-export default axlsign
+
+axlsign.generateFromPrivateKey = function (pk,sk) {
+    crypto_scalarmult_base(pk, sk);
+    // Turn secret key into the correct format.
+    sk[0] &= 248;
+    sk[31] &= 127;
+    sk[31] |= 64;
+    // Remove sign bit from public key.
+    pk[31] &= 127;
+    return {
+        public: pk,
+        private: sk
+    };
+};
+exports.default=axlsign;
 //# sourceMappingURL=axlsign.js.map

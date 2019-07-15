@@ -53,7 +53,7 @@ function secureRandom(count, options) {
         throw new Error('Your environment is not defined');
     }
 }
-export default {
+exports.default = {
     secureRandom: secureRandom,
     randomArray: function (byteCount) {
         return secureRandom(byteCount, { type: 'Array' });
