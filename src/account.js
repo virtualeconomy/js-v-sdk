@@ -8,9 +8,9 @@ var base58_1 = require("../libs/utils/base58");
 var axlsign_1 = require("../libs/utils/axlsign")
 var secure_random_1 = require("../libs/utils/secure-random");
 const { PRIVATE_KEY_BYTE_LENGTH } = require("../libs/constants");
-async function postRequest (host, path, data) {
-    const url = host + path;
-    const jsonData = JSON.stringify(data).replace(/"amount":"(\d+)"/g, '"amount":$1')
+async function postRequest (node, tx) {
+    const url = node;
+    const jsonData = JSON.stringify(tx).replace(/"amount":"(\d+)"/g, '"amount":$1')
     const config = {
         method: 'POST',
         headers: {

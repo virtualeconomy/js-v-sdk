@@ -86,6 +86,18 @@ export var Attachment = /** @class */ (function (_super) {
     };
     return Attachment;
 }(ByteProcessor));
+export var Data = /** @class */ (function (_super) {
+    __extends(Data, _super);
+    function Data() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Data.prototype.process = function (value) {
+        var dataBytes = base58_1.default.decode(value);
+        dataBytes = convert_1.default.bytesToByteArrayWithSize(dataBytes)
+        return Uint8Array.from(dataBytes);
+    };
+    return Data;
+}(ByteProcessor));
 export var Recipient = /** @class */ (function (_super) {
     __extends(Recipient, _super);
     function Recipient() {

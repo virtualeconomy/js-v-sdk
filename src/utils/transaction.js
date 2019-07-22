@@ -42,6 +42,23 @@ var cancelLeasingField = {
     timestamp: new ByteProcessor_1.Long('timestamp'),
     txId: new ByteProcessor_1.Base58('transactionId')
 }
+var executeContractField = {
+    contractId: new ByteProcessor_1.Base58('contractId'),
+    functionIndex: new ByteProcessor_1.Short('functionIndex'),
+    functionData: new ByteProcessor_1.Data('functionData'),
+    attachment: new ByteProcessor_1.Attachment('attachment'),
+    fee: new ByteProcessor_1.Long('fee'),
+    feeScale: new ByteProcessor_1.Short('feeScale'),
+    timestamp: new ByteProcessor_1.Long('timestamp'),
+}
+var registerContractField = {
+    contract: new ByteProcessor_1.Data('contract'),
+    initData: new ByteProcessor_1.Data('initData'),
+    description: new ByteProcessor_1.Attachment('description'),
+    fee: new ByteProcessor_1.Long('fee'),
+    feeScale: new ByteProcessor_1.Short('feeScale'),
+    timestamp: new ByteProcessor_1.Long('timestamp'),
+}
 var storedFields = {};
 
 
@@ -56,6 +73,12 @@ function getFields(type) {
             break;
         case constants.CANCEL_LEASE_TX:
             storedFields = cancelLeasingField;
+            break;
+        case constants.EXECUTE_CONTRACT_TX:
+            storedFields = executeContractField;
+            break;
+        case constants.REGISTER_CONTRACT_TX:
+            storedFields = registerContractField;
             break;
     }
 }
