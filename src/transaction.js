@@ -28,6 +28,15 @@ function getTxType() {
     }
 
 }
+function getApi() {
+    if (!cold_tx.hasOwnProperty('amount')) {
+        return 1
+    }
+    let amount = cold_tx['amount'];
+    if ((BigNumber(amount).isLessThan(BigNumber(Number.MAX_SAFE_INTEGER).dividedBy(1e8)) || BigNumber(amount).multipliedBy(1e8).mod(100).isEqualTo(0))) {
+        return 1;
+    } else return constants.API_VERSION;
+}
 
 function checkStoredTx() {
     for ( let key in stored_tx) {
@@ -346,17 +355,19 @@ module.exports = class Transaction {
         cold_tx = JSON.parse(JSON.stringify(stored_tx));// deep copy
         switch (tx_type) {
             case constants.OPC_TRANSACTION:
+                cold_tx['api'] = getApi();
                 break;
             case constants.OPC_CONTRACT:
+                cold_tx['api'] = constants.API_VERSION;
                 getContractColdFields(this.network_byte);
                 break;
             case constants.OPC_FUNCTION:
+                cold_tx['api'] = constants.API_VERSION;
                 getFunctionColdFields(stored_tx['functionIndex'], this.network_byte);
                 break;
         }
         cold_tx['opc'] = tx_type;
         cold_tx['protocol'] = constants.PROTOCOL;
-        cold_tx['api'] = constants.API_VERSION;
         return cold_tx;
     }
 
@@ -395,9 +406,9 @@ module.exports = class Transaction {
             case constants.OPC_FUNCTION:
                 function_type = stored_tx['functionIndex'];
                 if ((function_type === constants.SEND_FUNCIDX && sending_tx['attachment'] !== undefined) || function_type === constants.SEND_FUNCIDX_SPLIT  ) {
-                cold_tx['functionData'] = processFunctionData(cold_tx['functionData'], 'SEND')
+                cold_tx['functionData'] = processFunctionData(cold_tx['functionData'], 'SEND');
                 } else {
-                cold_tx['functionData'] = processFunctionData(cold_tx['functionData'], function_string_type[function_type])
+                cold_tx['functionData'] = processFunctionData(cold_tx['functionData'], function_string_type[function_type]);
                 }
                 field_type = 9 & (255);
                 return tx_1.default.toBytes((cold_tx),field_type);
