@@ -1,7 +1,7 @@
-import "babel-polyfill";
+// import "babel-polyfill";
 const Account = require('../libs/account');
 var constants = require("../libs/constants");
-
+var expect = require("chai").expect;
 const network_byte = constants.TESTNET_BYTE;
 
 /*======= Change the below before run ==========*/
@@ -12,125 +12,74 @@ const test_address = "AUAztxsft2v6rmjRRb72nLea6BNyRHHWpUR";
 const nonce = 0;
 /*================ Change end ==================*/
 
-
-
-function testAccountBuildWithSeed(seed, nonce) {
+// Test Account
+//test account build with seed
+describe('test account built with seed', function () {
     let account =  new Account(network_byte);
     account.buildFromSeed(seed, nonce);
-    console.log("test account built with seed:");
-    testGetPublicKeyAndAddress(account);
-    testGetPrivateKey(account);
-    console.log('')
-}
+    it('get publicKey', function () {
+        let public_key = account.getPublicKey();
+        expect(public_key).to.be.equal(test_public_key);
+    });
+    it('get address', function () {
+        let address = account.getAddress();
+        expect(address).to.be.equal(test_address);
+    });
+    it('get privateKey', function () {
+        let private_key = account.getPrivateKey();
+        expect(private_key).to.be.equal(test_private_key);
+    })
+});
 
-function testAccountBuildWithPrivateKey(private_key) {
+//test account build with privateKey
+describe('test account built with seed', function () {
     let account =  new Account(network_byte);
-    account.buildFromPrivateKey(private_key);
-    console.log("test account built with private key");
-    testGetPublicKeyAndAddress(account);
-    testGetPrivateKey(account);
-    console.log('')
-}
+    account.buildFromPrivateKey(test_private_key);
+    it('get publicKey', function () {
+        let public_key = account.getPublicKey();
+        expect(public_key).to.be.equal(test_public_key);
+    });
+    it('get address', function () {
+        let address = account.getAddress();
+        expect(address).to.be.equal(test_address);
+    });
+    it('get privateKey', function () {
+        let private_key = account.getPrivateKey();
+        expect(private_key).to.be.equal(test_private_key);
+    })
+});
 
-function testAccountBuildWithColdWallet(public_key, input_address) {
-
-    // Test Build Account with public_key
+//test account build with cold wallet
+describe('test account built with coldWallet', function () {
     let account_with_publicKey =  new Account(network_byte);
-    account_with_publicKey.buildColdWallet(public_key, '');
-    console.log("test account built with cold wallet and public_key")
-    let address = account_with_publicKey.getAddress();
-    console.log("get address:");
-    console.log(address);
-    if(address == test_address) {
-        console.log("Get address succeeded!");
-    }
-    else {
-        console.log("Get address failed!");
-    }
-    console.log('')
+    account_with_publicKey.buildColdWallet(test_public_key, '');
+    it('get address with publicKey', function () {
+        let address = account_with_publicKey.getAddress();
+        expect(address).to.be.equal(test_address);
+    });
 
-
-    //Test Build Account with input_address
     let account_with_address =  new Account(network_byte);
-    account_with_address.buildColdWallet('', input_address);
-    console.log("test account built with cold wallet and address")
-    address = account_with_address.getAddress();
-    console.log("get address:");
-    console.log(address);
-    if(address == test_address) {
-        console.log("Get address succeeded!");
-    }
-    else {
-        console.log("Get address failed!");
-    }
-    console.log('')
+    account_with_address.buildColdWallet('', test_address);
+    it('get address from address', function () {
+        let address = account_with_address.getAddress();
+        expect(address).to.be.equal(test_address);
+    });
+});
 
-}
-
-function testGetPrivateKey(account) {
-    let private_key = account.getPrivateKey();
-    console.log("get private_key:");
-    console.log(private_key);
-    if(private_key == test_private_key) {
-        console.log("Get private_key succeeded!");
-    }
-    else {
-        console.log("Get private_key failed!");
-    }
-}
-function testGetPublicKeyAndAddress(account) {
-    let public_key = account.getPublicKey();
-    console.log("get public_key:");
-    console.log(public_key);
-    if(public_key == test_public_key) {
-        console.log("Get public_key succeeded!");
-    }
-    else {
-        console.log("Get public_key failed!")
-    }
-
-    let address = account.getAddress();
-    console.log("get address:");
-    console.log(address);
-    if(address == test_address) {
-        console.log("Get address succeeded!");
-    }
-    else {
-        console.log("Get address failed!");
-    }
-}
-
-function testCheckAddress(address) {
+//test CheckAddress
+describe('test check address', function () {
     let account =  new Account(network_byte);
-    let is_valid_address = account.checkAddress(address);
-    console.log("test check address:");
-    if(is_valid_address) {
-        console.log("check address succeeded!");
-    }
-    else {
-        console.log("check address failed!");
-    }
-    console.log('')
-}
+    it('right address', function () {
+        let is_valid_address = account.checkAddress(test_address);
+        expect(is_valid_address).to.be.ok;
+    });
+});
 
-function testConvertPublicKeyToAddress(public_key, network_byte) {
+//test ConvertPublicKeyToAddres
+describe('test convert publicKey to address', function () {
     let account =  new Account(network_byte);
-    let convert_address = account.convertPublicKeyToAddress(public_key, network_byte);
-    console.log("test convert public key to address:")
-    if(convert_address == test_address) {
-        console.log("Succeeded!")
-    }
-    else {
-        console.log("failed!")
-    }
-    console.log('')
-}
-
-// Test Account
-testAccountBuildWithSeed(seed, nonce)
-testAccountBuildWithPrivateKey(test_private_key);
-testAccountBuildWithColdWallet(test_public_key, test_address);
-testCheckAddress(test_address);
-testConvertPublicKeyToAddress(test_public_key, network_byte);
-
-
+    it('right address', function () {
+        let convert_address = account.convertPublicKeyToAddress(test_public_key, network_byte);
+        expect(convert_address).to.be.equal(test_address);
+    });
+});

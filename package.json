@@ -22,7 +22,8 @@
     "flow-bin": "^0.92.1"
   },
   "scripts": {
-    "test_blockchain": "npm run build && node libs/test_blockchain.js",
+    "test": "mocha ./test/test_account.js ./test/test_blockchain.js",
+    "test_tx": "npm run build && node libs/test_tx.js",
     "clean": "rm -rf libs",
     "build": "babel --source-maps -d libs src test"
   }
