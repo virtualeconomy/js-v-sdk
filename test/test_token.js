@@ -111,39 +111,39 @@ describe('test issue and destroy token', function () {
     // Result of issue token
     // Only sendToken function needs attachment
     let function_index = constants.ISSUE_FUNCIDX;
-    let contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
+    let issue_contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
 
     it('get issue token Tx', function () {
-        expect(contract_tx).to.not.be.empty;
-        expect(contract_tx['contractId']).to.be.a('string');
-        // expect(contract_tx['functionIndex']).to.be.equal(constants.ISSUE_FUNCIDX);
-        expect(contract_tx['senderPublicKey']).to.be.equal(public_key);
-        expect(contract_tx['attachment']).to.be.equal(undefined);
+        expect(issue_contract_tx).to.not.be.empty;
+        expect(issue_contract_tx['contractId']).to.be.a('string');
+        expect(issue_contract_tx['functionIndex']).to.be.equal(constants.ISSUE_FUNCIDX);
+        expect(issue_contract_tx['senderPublicKey']).to.be.equal(public_key);
+        expect(issue_contract_tx['attachment']).to.be.equal(undefined);
     });
 
-    let bytes = tra.toBytes();
-    let signature = acc.getSignature(bytes);
-    let send_tx = tra.toJsonForSendingTx(signature);
-    it('get json for sending tx(issue token)', function () {
-        expect(send_tx).to.not.be.empty;
-        expect(send_tx['functionData']).to.not.be.empty;
-        expect(send_tx['contractId']).to.be.equal(test_contract_id);
-        expect(send_tx['senderPublicKey']).to.be.equal(public_key);
-        // expect(send_tx['signature']).to.be.equal(signature);
-        expect(contract_tx['timestamp']).to.be.equal(timestamp);
+    let issue_bytes = tra.toBytes();
+    let issue_signature = acc.getSignature(issue_bytes);
+    let issue_send_tx = tra.toJsonForSendingTx(issue_signature);
+    it('get json for sending tx (issue token)', function () {
+        expect(issue_send_tx).to.not.be.empty;
+        expect(issue_send_tx['functionData']).to.not.be.empty;
+        expect(issue_send_tx['contractId']).to.be.equal(test_contract_id);
+        expect(issue_send_tx['senderPublicKey']).to.be.equal(public_key);
+        expect(issue_send_tx['signature']).to.be.equal(issue_signature);
+        expect(issue_send_tx['timestamp']).to.be.equal(timestamp);
     });
 
-    it('get send execute contractTx result(issue token)', async() =>{
-        let result = await sendExecuteContractTx(acc, send_tx);
+    it('get send execute contractTx result (issue token)', async() =>{
+        let result = await sendExecuteContractTx(acc, issue_send_tx);
         expect(result).to.not.be.empty;
         expect(result['contractId']).to.be.equal(test_contract_id);
         expect(result['functionIndex']).to.be.equal(constants.ISSUE_FUNCIDX);
-        expect(result['functionData']).to.be.equal(send_tx['functionData']);
+        expect(result['functionData']).to.be.equal(issue_send_tx['functionData']);
         expect(result['attachment']).to.be.equal('');
     });
 
     let cold_tx = tra.toJsonForColdSignature();
-    it('get json for cold signature(issue token)', function () {
+    it('get json for cold signature (issue token)', function () {
         expect(cold_tx).to.not.be.empty;
         expect(cold_tx['contractId']).to.be.equal(test_contract_id);
         expect(cold_tx['address']).to.be.equal(address);
@@ -161,37 +161,45 @@ describe('test issue and destroy token', function () {
     // Only sendToken function needs attachment
     function_index = constants.DESTROY_FUNCIDX;
     function_data = {amount, unity};
-    contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
+    let destroy_contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
     it('get destroy token Tx', function () {
-        expect(contract_tx).to.not.be.empty;
-        expect(contract_tx['contractId']).to.be.a('string');
-        expect(contract_tx['senderPublicKey']).to.be.equal(public_key);
-        expect(contract_tx['timestamp']).to.be.equal(timestamp);
+        expect(destroy_contract_tx).to.not.be.empty;
+        expect(destroy_contract_tx['contractId']).to.be.a('string');
+        expect(destroy_contract_tx['functionIndex']).to.be.equal(constants.DESTROY_FUNCIDX);
+        expect(destroy_contract_tx['senderPublicKey']).to.be.equal(public_key);
+        expect(destroy_contract_tx['attachment']).to.be.equal(undefined);
     });
 
-    bytes = tra.toBytes();
-    signature = acc.getSignature(bytes);
-    sendTx = tra.toJsonForSendingTx(signature);
+    let bytes = tra.toBytes();
+    let destroy_signature = acc.getSignature(bytes);
+    let destroy_send_tx = tra.toJsonForSendingTx(destroy_signature);
     it('get json for sending tx (destroy token)', function () {
-        expect(sendTx).to.not.be.empty;
-        expect(sendTx['contractId']).to.be.a('string');
-        expect(sendTx['senderPublicKey']).to.be.equal(public_key);
-        expect(sendTx['signature']).to.be.equal(signature);
-        expect(sendTx['timestamp']).to.be.equal(timestamp);
+        expect(destroy_send_tx).to.not.be.empty;
+        expect(destroy_send_tx['contractId']).to.be.a('string');
+        expect(destroy_send_tx['senderPublicKey']).to.be.equal(public_key);
+        expect(destroy_send_tx['signature']).to.be.equal(destroy_signature);
+        expect(destroy_send_tx['timestamp']).to.be.equal(timestamp);
     });
 
     it('get send execute contractTx result (destroy token)', async() =>{
-        let result = await sendExecuteContractTx(acc, sendTx);
+        let result = await sendExecuteContractTx(acc, destroy_send_tx);
         expect(result).to.not.be.empty;
-        expect(result['id']).to.be.a('string');
         expect(result['contractId']).to.be.equal(test_contract_id);
+        expect(result['functionIndex']).to.be.equal(constants.DESTROY_FUNCIDX);
+        expect(result['functionData']).to.be.equal(destroy_send_tx['functionData']);
+        expect(result['attachment']).to.be.equal('');
     });
 
-    coldSig = tra.toJsonForColdSignature();
+    let destroy_cold_tx = tra.toJsonForColdSignature();
     it('get json for cold signature (destroy token)', function () {
-        expect(coldSig).to.not.be.empty;
-        expect(coldSig['contractId']).to.be.equal(test_contract_id);
-        expect(coldSig['address']).to.be.equal(address);
+        expect(destroy_cold_tx).to.not.be.empty;
+        expect(destroy_cold_tx['contractId']).to.be.equal(test_contract_id);
+        expect(destroy_cold_tx['address']).to.be.equal(address);
+        expect(destroy_cold_tx['opc']).to.be.equal(constants.OPC_FUNCTION);
+        expect(destroy_cold_tx['functionId']).to.be.equal(constants.DESTROY_FUNCIDX);
+        expect(destroy_cold_tx['function']).to.not.be.empty;
+        expect(destroy_cold_tx['api']).to.be.equal(constants.API_VERSION);
+        expect(destroy_cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
     });
 });
 
@@ -218,33 +226,42 @@ describe('test split token', function () {
     it('get split token Tx', function () {
         expect(contract_tx).to.not.be.empty;
         expect(contract_tx['contractId']).to.be.a('string');
+        expect(contract_tx['functionIndex']).to.be.equal(constants.SPLIT_FUNCIDX);
         expect(contract_tx['senderPublicKey']).to.be.equal(public_key);
-        expect(contract_tx['timestamp']).to.be.equal(timestamp);
+        expect(contract_tx['attachment']).to.be.equal(undefined);
     });
 
     let bytes = tra.toBytes();
     let signature = acc.getSignature(bytes);
-    let sendTx = tra.toJsonForSendingTx(signature);
+    let send_tx = tra.toJsonForSendingTx(signature);
     it('get json for sending tx (split token)', function () {
-        expect(sendTx).to.not.be.empty;
-        expect(sendTx['contractId']).to.be.a('string');
-        expect(sendTx['senderPublicKey']).to.be.equal(public_key);
-        expect(sendTx['signature']).to.be.equal(signature);
-        expect(sendTx['timestamp']).to.be.equal(timestamp);
+        expect(send_tx).to.not.be.empty;
+        expect(send_tx['functionData']).to.not.be.empty;
+        expect(send_tx['contractId']).to.be.equal(test_contract_id);
+        expect(send_tx['senderPublicKey']).to.be.equal(public_key);
+        expect(send_tx['signature']).to.be.equal(signature);
+        expect(send_tx['timestamp']).to.be.equal(timestamp);
     });
 
     it('get send execute contractTx result (split token)', async() =>{
-        let result = await sendExecuteContractTx(acc, sendTx);
+        let result = await sendExecuteContractTx(acc, send_tx);
         expect(result).to.not.be.empty;
-        expect(result['id']).to.be.a('string');
         expect(result['contractId']).to.be.equal(test_contract_id);
+        expect(result['functionIndex']).to.be.equal(constants.SPLIT_FUNCIDX);
+        expect(result['functionData']).to.be.equal(send_tx['functionData']);
+        expect(result['attachment']).to.be.equal('');
     });
 
-    coldSig = tra.toJsonForColdSignature();
+    let cold_tx = tra.toJsonForColdSignature();
     it('get json for cold signature (split token)', function () {
-        expect(coldSig).to.not.be.empty;
-        expect(coldSig['contractId']).to.be.equal(test_contract_id);
-        expect(coldSig['address']).to.be.equal(address);
+        expect(cold_tx).to.not.be.empty;
+        expect(cold_tx['contractId']).to.be.equal(test_contract_id);
+        expect(cold_tx['address']).to.be.equal(address);
+        expect(cold_tx['opc']).to.be.equal(constants.OPC_FUNCTION);
+        expect(cold_tx['functionId']).to.be.equal(constants.SPLIT_FUNCIDX);
+        expect(cold_tx['function']).to.not.be.empty;
+        expect(cold_tx['api']).to.be.equal(constants.API_VERSION);
+        expect(cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
     });
 });
 
@@ -271,33 +288,42 @@ describe('test supersede token', function () {
     it('get supersede token Tx', function () {
         expect(contract_tx).to.not.be.empty;
         expect(contract_tx['contractId']).to.be.a('string');
+        expect(contract_tx['functionIndex']).to.be.equal(constants.SUPERSEDE_FUNCIDX);
         expect(contract_tx['senderPublicKey']).to.be.equal(public_key);
-        expect(contract_tx['timestamp']).to.be.equal(timestamp);
+        expect(contract_tx['attachment']).to.be.equal(undefined);
     });
 
     let bytes = tra.toBytes();
     let signature = acc.getSignature(bytes);
-    let sendTx = tra.toJsonForSendingTx(signature);
+    let send_tx = tra.toJsonForSendingTx(signature);
     it('get json for sending tx (supersede token)', function () {
-        expect(sendTx).to.not.be.empty;
-        expect(sendTx['contractId']).to.be.a('string');
-        expect(sendTx['senderPublicKey']).to.be.equal(public_key);
-        expect(sendTx['signature']).to.be.equal(signature);
-        expect(sendTx['timestamp']).to.be.equal(timestamp);
+        expect(send_tx).to.not.be.empty;
+        expect(send_tx['functionData']).to.not.be.empty;
+        expect(send_tx['contractId']).to.be.equal(test_contract_id);
+        expect(send_tx['senderPublicKey']).to.be.equal(public_key);
+        expect(send_tx['signature']).to.be.equal(signature);
+        expect(send_tx['timestamp']).to.be.equal(timestamp);
     });
 
     it('get send execute contractTx result (supersede token)', async() =>{
-        let result = await sendExecuteContractTx(acc, sendTx);
+        let result = await sendExecuteContractTx(acc, send_tx);
         expect(result).to.not.be.empty;
-        expect(result['id']).to.be.a('string');
         expect(result['contractId']).to.be.equal(test_contract_id);
+        expect(result['functionIndex']).to.be.equal(constants.SUPERSEDE_FUNCIDX);
+        expect(result['functionData']).to.be.equal(send_tx['functionData']);
+        expect(result['attachment']).to.be.equal('');
     });
 
-    coldSig = tra.toJsonForColdSignature();
-    it('get token json for cold signature (supersede token)', function () {
-        expect(coldSig).to.not.be.empty;
-        expect(coldSig['contractId']).to.be.equal(test_contract_id);
-        expect(coldSig['address']).to.be.equal(address);
+    let cold_tx = tra.toJsonForColdSignature();
+    it('get json for cold signature (supersede token)', function () {
+        expect(cold_tx).to.not.be.empty;
+        expect(cold_tx['contractId']).to.be.equal(test_contract_id);
+        expect(cold_tx['address']).to.be.equal(address);
+        expect(cold_tx['opc']).to.be.equal(constants.OPC_FUNCTION);
+        expect(cold_tx['functionId']).to.be.equal(constants.SUPERSEDE_FUNCIDX);
+        expect(cold_tx['function']).to.not.be.empty;
+        expect(cold_tx['api']).to.be.equal(constants.API_VERSION);
+        expect(cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
     });
 });
 
@@ -326,32 +352,41 @@ describe('test send token', function () {
     it('get send token Tx', function () {
         expect(contract_tx).to.not.be.empty;
         expect(contract_tx['contractId']).to.be.a('string');
+        expect(contract_tx['functionIndex']).to.be.equal(constants.SEND_FUNCIDX_SPLIT);
         expect(contract_tx['senderPublicKey']).to.be.equal(public_key);
-        expect(contract_tx['timestamp']).to.be.equal(timestamp);
+        expect(contract_tx['attachment']).to.be.equal(attachment);
     });
 
     let bytes = tra.toBytes();
     let signature = acc.getSignature(bytes);
-    let sendTx = tra.toJsonForSendingTx(signature);
+    let send_tx = tra.toJsonForSendingTx(signature);
     it('get json for sending tx (send token)', function () {
-        expect(sendTx).to.not.be.empty;
-        expect(sendTx['contractId']).to.be.a('string');
-        expect(sendTx['senderPublicKey']).to.be.equal(public_key);
-        expect(sendTx['signature']).to.be.equal(signature);
-        expect(sendTx['timestamp']).to.be.equal(timestamp);
+        expect(send_tx).to.not.be.empty;
+        expect(send_tx['functionData']).to.not.be.empty;
+        expect(send_tx['contractId']).to.be.equal(test_contract_id);
+        expect(send_tx['senderPublicKey']).to.be.equal(public_key);
+        expect(send_tx['signature']).to.be.equal(signature);
+        expect(send_tx['timestamp']).to.be.equal(timestamp);
     });
 
     it('get send execute contractTx result (send token)', async() =>{
-        let result = await sendExecuteContractTx(acc, sendTx);
+        let result = await sendExecuteContractTx(acc, send_tx);
         expect(result).to.not.be.empty;
-        expect(result['id']).to.be.a('string');
         expect(result['contractId']).to.be.equal(test_contract_id);
+        expect(result['functionIndex']).to.be.equal(constants.SEND_FUNCIDX_SPLIT);
+        expect(result['functionData']).to.be.equal(send_tx['functionData']);
+        expect(result['attachment']).to.not.be.empty;
     });
 
-    coldSig = tra.toJsonForColdSignature();
+    let cold_tx = tra.toJsonForColdSignature();
     it('get json for cold signature (send token)', function () {
-        expect(coldSig).to.not.be.empty;
-        expect(coldSig['contractId']).to.be.equal(test_contract_id);
-        expect(coldSig['address']).to.be.equal(address);
+        expect(cold_tx).to.not.be.empty;
+        expect(cold_tx['contractId']).to.be.equal(test_contract_id);
+        expect(cold_tx['address']).to.be.equal(address);
+        expect(cold_tx['opc']).to.be.equal(constants.OPC_FUNCTION);
+        expect(cold_tx['functionId']).to.be.equal(constants.SEND_FUNCIDX_SPLIT);
+        expect(cold_tx['function']).to.not.be.empty;
+        expect(cold_tx['api']).to.be.equal(constants.API_VERSION);
+        expect(cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
     });
 });
