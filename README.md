@@ -8,7 +8,7 @@ JavaScript library for V Systems
   2. clone this project
 
 ``` bash
-$ git clone https://github.com/virtualeconomy/js-v-min-sdk.git
+$ git clone https://github.com/virtualeconomy/js-v-sdk.git
 ```
 
   3. install packages
@@ -362,6 +362,263 @@ $ git clone https://github.com/virtualeconomy/js-v-min-sdk.git
     console.log(cold_tx);
     ```
 
+### contract related
+
+1. Register contract (Create token)
+
+    ```javascript
+    // tra: your transaction object, acc: your account object, build them first!
+    var contract_1 = require("../libs/contract");
+    const node_address = "http://test.v.systems:9922"; // change to your node address
+
+    async function sendRegisterContractTx(acc, tx) {
+        var node = node_address + '/contract/broadcast/register';
+        const result = await acc.sendTransactionTx(node, tx);
+        console.log(result);
+    }
+
+    // Necessary data for creating token, init_data should contain 'amount', 'unity', 'token_description' three keys.
+    let contract = contract_1.CONTRACT; // contract_1.CONTRACT_WITH_SPLIT
+    let public_key = acc.getPublicKey();
+    let amount = "<amount>";
+    let unity = "<unity>";
+    let token_description = "<description for token>";
+    let contract_description = "<description for contract>";
+    let timestamp = Date.now() * 1e6;
+    let init_data = {amount, unity, token_description};
+
+    // Build contract tx
+    tra.buildRegisterContractTx(public_key, contract, init_data, contract_description, timestamp);
+
+    // Get bytes
+    let bytes = tra.toBytes();
+
+    // Get signature
+    let signature = acc.getSignature(bytes);
+
+    // Get json for sending tx
+    let send_tx = tra.toJsonForSendingTx(signature);
+
+    // Send transaction
+    sendRegisterContractTx(acc, send_tx);
+
+    // You can also get json for cold signature
+    let cold_tx = tra.toJsonForColdSignature();
+    console.log('Json for cold signature:');
+    console.log(cold_tx);
+    ```
+
+2. Execute contract
+
+    Issue token
+    ```javascript
+    // tra: your transaction object, acc: your account object, build them first!
+    var contract_1 = require("../libs/contract");
+    var constants = require("../libs/constants");
+    const node_address = "http://test.v.systems:9922"; // change to your node address
+
+    async function sendExecuteContractTx(acc, tx) {
+        var node = node_address + '/contract/broadcast/execute';
+        const result = await acc.sendTransactionTx(node, tx);
+        console.log(result);
+    }
+
+    // Necessary data for issue token, function_data should contain 'amount', 'unity' two keys, and attachment should be undefined
+    let public_key = acc.getPublicKey();
+    let amount = "<amount>";
+    let unity = "<unity of this token>";
+    let timestamp = Date.now() * 1e6;
+    let function_data = {amount, unity};
+    let attachment = undefined;
+    let function_index = constants.ISSUE_FUNCIDX;
+
+    // Build contract tx
+    tra.buildExecuteContractTx(public_key, "<contract_id>", function_index, function_data, timestamp, attachment);
+
+    // Get bytes
+    let bytes = tra.toBytes();
+
+    // Get signature
+    let signature = acc.getSignature(bytes);
+
+    // Get json for sending tx
+    let send_tx = tra.toJsonForSendingTx(signature);
+
+    // Send transaction
+    sendExecuteContractTx(acc, send_tx);
+
+    // You can also get json for cold signature
+    let cold_tx = tra.toJsonForColdSignature();
+    console.log('Json for cold signature:');
+    console.log(cold_tx);
+    ```
+    Destroy token
+    ```javascript
+    // tra: your transaction object, acc: your account object, build them first!
+    var contract_1 = require("../libs/contract");
+    var constants = require("../libs/constants");
+    const node_address = "http://test.v.systems:9922"; // change to your node address
+
+    async function sendExecuteContractTx(acc, tx) {
+        var node = node_address + '/contract/broadcast/execute';
+        const result = await acc.sendTransactionTx(node, tx);
+        console.log(result);
+    }
+
+    // Necessary data for destroy token, function_data should contain 'amount', 'unity' two keys, and attachment should be undefined
+    let public_key = acc.getPublicKey();
+    let amount = "<amount>";
+    let unity = "<unity of this token>"; // 1e8
+    let timestamp = Date.now() * 1e6;
+    let function_data = {amount, unity};
+    let attachment = undefined;
+    let function_index = constants.DESTROY_FUNCIDX;
+
+    // Build contract tx
+    tra.buildExecuteContractTx(public_key, "<contract_id>", function_index, function_data, timestamp, attachment);
+
+    // Get bytes
+    let bytes = tra.toBytes();
+
+    // Get signature
+    let signature = acc.getSignature(bytes);
+
+    // Get json for sending tx
+    let send_tx = tra.toJsonForSendingTx(signature);
+
+    // Send transaction
+    sendExecuteContractTx(acc, send_tx);
+
+    // You can also get json for cold signature
+    let cold_tx = tra.toJsonForColdSignature();
+    console.log('Json for cold signature:');
+    console.log(cold_tx);
+    ```
+    Split token
+    ```javascript
+    // tra: your transaction object, acc: your account object, build them first!
+    var contract_1 = require("../libs/contract");
+    var constants = require("../libs/constants");
+    const node_address = "http://test.v.systems:9922"; // change to your node address
+
+    async function sendExecuteContractTx(acc, tx) {
+        var node = node_address + '/contract/broadcast/execute';
+        const result = await acc.sendTransactionTx(node, tx);
+        console.log(result);
+    }
+
+    // Necessary data for split token, function_data should contain 'new_unity' key, and attachment should be undefined
+    let public_key = acc.getPublicKey();
+    let new_unity = "<new unity>";
+    let timestamp = Date.now() * 1e6;
+    let function_data = { new_unity };
+    let attachment = undefined;
+    let function_index = constants.SPLIT_FUNCIDX;
+
+    // Build contract tx
+    tra.buildExecuteContractTx(public_key, "<contract_id>", function_index, function_data, timestamp, attachment);
+
+    // Get bytes
+    let bytes = tra.toBytes();
+
+    // Get signature
+    let signature = acc.getSignature(bytes);
+
+    // Get json for sending tx
+    let send_tx = tra.toJsonForSendingTx(signature);
+
+    // Send transaction
+    sendExecuteContractTx(acc, send_tx);
+
+    // You can also get json for cold signature
+    let cold_tx = tra.toJsonForColdSignature();
+    console.log('Json for cold signature:');
+    console.log(cold_tx);
+    ```
+    Supersede token
+    ```javascript
+    // tra: your transaction object, acc: your account object, build them first!
+    var contract_1 = require("../libs/contract");
+    var constants = require("../libs/constants");
+    const node_address = "http://test.v.systems:9922"; // change to your node address
+
+    async function sendExecuteContractTx(acc, tx) {
+        var node = node_address + '/contract/broadcast/execute';
+        const result = await acc.sendTransactionTx(node, tx);
+        console.log(result);
+    }
+
+    // Necessary data for supersede token, function_data should contain 'new_issuer' key, and attachment should be undefined
+    let public_key = acc.getPublicKey();
+    let new_issuer = "<new issuer>";
+    let timestamp = Date.now() * 1e6;
+    let function_data = { new_issuer };
+    let attachment = undefined;
+    let function_index = constants.SUPERSEDE_FUNCIDX;
+
+    // Build contract tx
+    tra.buildExecuteContractTx(public_key, "<contract_id>", function_index, function_data, timestamp, attachment);
+
+    // Get bytes
+    let bytes = tra.toBytes();
+
+    // Get signature
+    let signature = acc.getSignature(bytes);
+
+    // Get json for sending tx
+    let send_tx = tra.toJsonForSendingTx(signature);
+
+    // Send transaction
+    sendExecuteContractTx(acc, send_tx);
+
+    // You can also get json for cold signature
+    let cold_tx = tra.toJsonForColdSignature();
+    console.log('Json for cold signature:');
+    console.log(cold_tx);
+    ```
+    Send token
+    ```javascript
+    // tra: your transaction object, acc: your account object, build them first!
+    var contract_1 = require("../libs/contract");
+    var constants = require("../libs/constants");
+    const node_address = "http://test.v.systems:9922"; // change to your node address
+
+    async function sendExecuteContractTx(acc, tx) {
+        var node = node_address + '/contract/broadcast/execute';
+        const result = await acc.sendTransactionTx(node, tx);
+        console.log(result);
+    }
+
+    // Necessary data for send token, function_data should contain 'recipient', 'amount', 'unity' three keys, and attachment should not be undefined
+    let public_key = acc.getPublicKey();
+    let recipient = "<recipient address>";
+    let timestamp = Date.now() * 1e6;
+    let amount = "<amount>";
+    let unity = "<unity of this token>"; //1e8
+    let function_data = {recipient, amount, unity}
+    let attachment = "<attachment>";
+    let function_index = constants.SEND_FUNCIDX_SPLIT; // constants.SEND_FUNCIDX
+
+    // Build contract tx
+    tra.buildExecuteContractTx(public_key, "<contract_id>", function_index, function_data, timestamp, attachment);
+
+    // Get bytes
+    let bytes = tra.toBytes();
+
+    // Get signature
+    let signature = acc.getSignature(bytes);
+
+    // Get json for sending tx
+    let send_tx = tra.toJsonForSendingTx(signature);
+
+    // Send transaction
+    sendExecuteContractTx(acc, send_tx);
+
+    // You can also get json for cold signature
+    let cold_tx = tra.toJsonForColdSignature();
+    console.log('Json for cold signature:');
+    console.log(cold_tx);
+    ```
 ## Sample Code and Testing
 
 
