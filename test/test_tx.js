@@ -50,7 +50,7 @@ describe('test payment tx', function () {
     let signature = acc.getSignature(bytes);
     let send_tx = tra.toJsonForSendingTx(signature);
 
-    let cold_tx = tra.toJsonForColdSignature()
+    let cold_tx = tra.toJsonForColdSignature();
     it('get send tx', function () {
         expect(send_tx).to.not.be.empty;
     });
@@ -175,7 +175,5 @@ describe('test cancel leasing tx', function () {
     it('get cancel leasing tx result', async ()=>{
         await sendCancelLeasingTx(acc, send_tx);
         expect(cancel_lease_result).to.not.be.empty;
-        // expect(cancel_lease_result['id']).to.be.a('string');
-        // expect(cancel_lease_result['type']).to.be.equal(constants.CANCEL_LEASE_TX);
     });
 });

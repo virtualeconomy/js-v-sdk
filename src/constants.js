@@ -33,7 +33,7 @@ export const ACCOUNT_ADDR_TYPE = 2;
 // function index
 export const SUPERSEDE_FUNCIDX = 0
 export const ISSUE_FUNCIDX = 1
-export const BURN_FUNCIDX = 2
+export const DESTROY_FUNCIDX = 2
 export const SPLIT_FUNCIDX = 3
 export const SEND_FUNCIDX = 3
 export const SEND_FUNCIDX_SPLIT = 4

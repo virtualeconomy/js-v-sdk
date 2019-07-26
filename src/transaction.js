@@ -6,16 +6,16 @@ import "babel-polyfill";
 import BigNumber from 'bignumber.js'
 var crypto_1 = require("../libs/utils/crypto");
 var convert_1 = require("../libs/utils/convert")
-var base58_1 = require("../libs/utils/base58");
+var base58_1 = require("base-58");
+var blake2b_1 = require("blake2b");
 var tx_1 = require("../libs/utils/transaction");
 var constants = require("../libs/constants");
-var contract = require("../libs/contract")
-
+var contract = require("../libs/contract");
 
 var stored_tx = {}; // Fields for original data
 var cold_tx = {}; // Fields for ColdSignature
 var sending_tx = {}; //Fields for sending to API
-const function_string_type = ['SUPERSEDE', 'ISSUE', 'BURN', 'SPLIT', 'SEND']
+const function_string_type = ['SUPERSEDE', 'ISSUE', 'DESTROY', 'SPLIT', 'SEND'];
 function getTxType() {
     if (stored_tx.hasOwnProperty('transactionType')) {
         return constants.OPC_TRANSACTION;
@@ -30,7 +30,7 @@ function getTxType() {
 }
 function getApi() {
     if (!cold_tx.hasOwnProperty('amount')) {
-        return 1
+        return 1;
     }
     let amount = cold_tx['amount'];
     if ((BigNumber(amount).isLessThan(BigNumber(Number.MAX_SAFE_INTEGER).dividedBy(1e8)) || BigNumber(amount).multipliedBy(1e8).mod(100).isEqualTo(0))) {
@@ -41,48 +41,46 @@ function getApi() {
 function checkStoredTx() {
     for ( let key in stored_tx) {
         if (stored_tx[key] === undefined && key !== 'attachment') {
-            throw new Error('Missing ' + key + ' value,' +"build valid tx!" )
+            throw new Error('Missing ' + key + ' value,' +"build valid tx!" );
         }
     }
 }
 
-function convertAmountToMinimumUnit(amountStr) {
-    var amount = Number(amountStr) * constants.VSYS_PRECISION;
+function convertAmountToMinimumUnit(amount_str) {
+    let amount = Number(amount_str) * constants.VSYS_PRECISION;
     if (amount > Number.MAX_SAFE_INTEGER) {
-        amount = BigNumber(amountStr).multipliedBy(constants.VSYS_PRECISION).toFixed(0)
+        amount = BigNumber(amount_str).multipliedBy(constants.VSYS_PRECISION).toFixed(0);
     }
     return amount;
 }
 
-function transferAmount(amountData) {
-    var byteArr = convert_1.default.bigNumberToByteArray(amountData)
-    var typeArr = new Array(1);
-    typeArr[0] = constants.AMOUNT_TYPE;
-    var dataArr = typeArr.concat(byteArr);
-    return dataArr
+function transferAmount(amount_data) {
+    let byte_arr = convert_1.default.bigNumberToByteArray(amount_data);
+    let type_arr = new Array(1);
+    type_arr[0] = constants.AMOUNT_TYPE;
+    let data_arr = type_arr.concat(byte_arr);
+    return data_arr;
 }
 
 function transferShortTxt(description) {
-    var byteArr = convert_1.default.stringToByteArray(description)
+    let byte_arr = convert_1.default.stringToByteArray(description);
 
-    var typeArr = new Array(1);
-    typeArr[0] = constants.SHORTTEXT_TYPE ;
-
-    var length = byteArr.length
-    var lengthArr = convert_1.default.shortToByteArray(length)
-
-    return typeArr.concat(lengthArr.concat(byteArr))
+    let type_arr = new Array(1);
+    type_arr[0] = constants.SHORTTEXT_TYPE ;
+    let length = byte_arr.length;
+    let length_arr = convert_1.default.shortToByteArray(length);
+    return type_arr.concat(length_arr.concat(byte_arr));
 }
 
 function processAttachment(description) {
-    return base58_1.default.encode(convert_1.default.stringToByteArray(description))
+    return base58_1.encode(convert_1.default.stringToByteArray(description));
 }
 
 function transferAccount(account) {
-    var accountArr = base58_1.default.decode(account)
-    var typeArr = [constants.ACCOUNT_ADDR_TYPE]
-    typeArr = typeArr.concat(Array.from(accountArr))
-    return typeArr
+    let account_arr = base58_1.decode(account);
+    let type_arr = [constants.ACCOUNT_ADDR_TYPE];
+    type_arr = type_arr.concat(Array.from(account_arr));
+    return type_arr;
 }
 
 
@@ -97,15 +95,15 @@ function processContractData(init_data) {
     if(!init_data.hasOwnProperty('token_description')) {
         throw new Error("There is no field 'token_description' in initData");
     }
-    let max = BigNumber(init_data['amount']).multipliedBy(BigNumber(init_data['unity']))
-    let unity = BigNumber(init_data['unity'])
-    let token_description = init_data['token_description']
-    let max_arr = transferAmount(max)
-    let unity_arr = transferAmount(unity)
-    let des_arr = transferShortTxt(token_description)
-    let parameters_num = convert_1.default.shortToByteArray(3)
-    let encode_arr = parameters_num.concat(max_arr.concat(unity_arr.concat(des_arr)))
-    return base58_1.default.encode(encode_arr)
+    let max = BigNumber(init_data['amount']).multipliedBy(BigNumber(init_data['unity']));
+    let unity = BigNumber(init_data['unity']);
+    let token_description = init_data['token_description'];
+    let max_arr = transferAmount(max);
+    let unity_arr = transferAmount(unity);
+    let des_arr = transferShortTxt(token_description);
+    let parameters_num = convert_1.default.shortToByteArray(3);
+    let encode_arr = parameters_num.concat(max_arr.concat(unity_arr.concat(des_arr)));
+    return base58_1.encode(encode_arr);
 }
 function processFunctionData(init_data, type) {
     let parameters_num,encode_arr,amount,account_arr,amount_arr;
@@ -116,11 +114,11 @@ function processFunctionData(init_data, type) {
                 account_arr = transferAccount(new_issuer);
                 parameters_num = convert_1.default.shortToByteArray(1);
                 encode_arr = parameters_num.concat(account_arr);
-                return base58_1.default.encode(Uint8Array.from(encode_arr));
+                return base58_1.encode(Uint8Array.from(encode_arr));
             } else {
                 throw new Error("There is no field 'new_issuer' in functionData");
             }
-        case 'ISSUE' || 'BURN':
+        case 'ISSUE' : case 'DESTROY':
             if(!init_data.hasOwnProperty('amount')) {
                 throw new Error("There is no field 'amount' in functionData");
             }
@@ -131,8 +129,8 @@ function processFunctionData(init_data, type) {
             let unity = init_data['unity'];
             amount_arr = transferAmount(BigNumber(amount).multipliedBy(unity));
             parameters_num = convert_1.default.shortToByteArray(1);
-            encode_arr = parameters_num.concat(amount_arr)
-            return base58_1.default.encode(Uint8Array.from(encode_arr));
+            encode_arr = parameters_num.concat(amount_arr);
+            return base58_1.encode(Uint8Array.from(encode_arr));
         case 'SPLIT' :
             if(!init_data.hasOwnProperty('new_unity')) {
                 throw new Error("There is no field 'new_unity' in functionData");
@@ -141,7 +139,7 @@ function processFunctionData(init_data, type) {
             let unity_arr = transferAmount(new_unity);
             parameters_num = convert_1.default.shortToByteArray(1);
             encode_arr = parameters_num.concat(unity_arr);
-            return base58_1.default.encode(Uint8Array.from(encode_arr));
+            return base58_1.encode(Uint8Array.from(encode_arr));
         case 'SEND' :
             if(!init_data.hasOwnProperty('recipient')) {
                 throw new Error("There is no field 'recipient' in functionData");
@@ -152,21 +150,22 @@ function processFunctionData(init_data, type) {
             if(!init_data.hasOwnProperty('unity')) {
                 throw new Error("There is no field 'unity' in functionData");
             }
-            let recipient = init_data['recipient']
-            amount = BigNumber(init_data['amount']).multipliedBy(init_data['unity'])
-            account_arr = transferAccount(recipient)
-            amount_arr = transferAmount(amount)
-            parameters_num = convert_1.default.shortToByteArray(2)
-            encode_arr = parameters_num.concat(account_arr.concat(amount_arr))
-            return base58_1.default.encode(Uint8Array.from(encode_arr))
+            let recipient = init_data['recipient'];
+            amount = BigNumber(init_data['amount']).multipliedBy(init_data['unity']);
+            account_arr = transferAccount(recipient);
+            amount_arr = transferAmount(amount);
+            parameters_num = convert_1.default.shortToByteArray(2);
+            encode_arr = parameters_num.concat(account_arr.concat(amount_arr));
+            return base58_1.encode(Uint8Array.from(encode_arr));
+        default :
+            throw new Error('Wrong function index!');
     }
 }
 
 
-
-
+// Fields-process functions for cold signature
 function getContractColdFields(network_byte) {
-    let init_data = cold_tx['initData']
+    let init_data = cold_tx['initData'];
     if(!init_data.hasOwnProperty('amount')) {
         throw new Error("There is no field 'amount' in initData");
     }
@@ -176,78 +175,76 @@ function getContractColdFields(network_byte) {
     if(!init_data.hasOwnProperty('token_description')) {
         throw new Error("There is no field 'token_description' in initData");
     }
-    let amount = init_data['amount']
-    let unity = init_data['unity']
-    let token_description = init_data['token_description']
-    let public_key_bytes = base58_1.default.decode(cold_tx['senderPublicKey']);
-    cold_tx['address'] = crypto_1.default.buildRawAddress(public_key_bytes, network_byte)
-    cold_tx['contractInitExplain'] = 'Create token ' + (cold_tx['contract'] === contract.CONTRACT ? ' ' : '(support split) ') + 'with max supply ' + BigNumber(amount)
-    cold_tx['contractInitTextual'] = "init(max=" + BigNumber(amount) + ",unity= "+ BigNumber(unity) + ",tokenDescription='" + token_description + "')"
-    cold_tx['contractInit'] = processContractData(cold_tx['initData'])
-    delete cold_tx['senderPublicKey']
-    delete cold_tx['initData']
+    let amount = init_data['amount'];
+    let unity = init_data['unity'];
+    let token_description = init_data['token_description'];
+    let public_key_bytes = base58_1.decode(cold_tx['senderPublicKey']);
+    cold_tx['address'] = crypto_1.default.buildRawAddress(public_key_bytes, network_byte);
+    cold_tx['contractInitExplain'] = 'Create token' + (cold_tx['contract'] === contract.CONTRACT ? ' ' : ' (support split) ') + 'with max supply ' + BigNumber(amount);
+    cold_tx['contractInitTextual'] = "init(max=" + BigNumber(amount) + ",unity= "+ BigNumber(unity) + ",tokenDescription='" + token_description + "')";
+    cold_tx['contractInit'] = processContractData(cold_tx['initData']);
+    delete cold_tx['senderPublicKey'];
+    delete cold_tx['initData'];
 }
 
 function getFunctionColdFields(function_type, network_byte) {
     let init_data = cold_tx['functionData'];
     switch (function_type) {
         case constants.SUPERSEDE_FUNCIDX:
-            cold_tx['functionExplain'] = 'Set issuer to ' + init_data['new_issuer']
+            cold_tx['functionExplain'] = 'Set issuer to ' + init_data['new_issuer'];
             break;
         case constants.ISSUE_FUNCIDX:
-            cold_tx['functionExplain'] = 'Issue ' + init_data['amount'] + ' Token'
+            cold_tx['functionExplain'] = 'Issue ' + init_data['amount'] + ' Token';
             break;
-        case constants.BURN_FUNCIDX:
-            cold_tx['functionExplain'] = 'Destroy ' + init_data['amount'] + ' Token'
+        case constants.DESTROY_FUNCIDX:
+            cold_tx['functionExplain'] = 'Destroy ' + init_data['amount'] + ' Token';
             break;
-        case constants.SPLIT_FUNCIDX && cold_tx['attachment'] !== undefined:
-            cold_tx['functionExplain'] = 'Set token unity to ' + init_data['new_unity']
-            break;
-        default :
-            throw new Error('Invalid or missing functionIndex!')
     }
-    if ((function_type === constants.SEND_FUNCIDX && cold_tx['attachment'] !== undefined) || function_type === constants.SEND_FUNCIDX_SPLIT  ) {
+    if ((function_type === constants.SEND_FUNCIDX && stored_tx['attachment'] !== undefined) || function_type === constants.SEND_FUNCIDX_SPLIT  ) {
         cold_tx['attachment'] = processAttachment(cold_tx['attachment']);
-        cold_tx['functionData'] = processFunctionData(init_data, 'SEND');
-        cold_tx['functionExplain'] = 'send ' + init_data['amount'] + ' token to ' + init_data['recipient']
+        cold_tx['function'] = processFunctionData(init_data, 'SEND');
+        cold_tx['functionExplain'] = 'send ' + init_data['amount'] + ' token to ' + init_data['recipient'];
     } else {
+        if (function_type === constants.SPLIT_FUNCIDX && stored_tx['attachment'] === undefined) {
+            cold_tx['functionExplain'] = 'Set token unity to ' + init_data['new_unity'];
+        }
         cold_tx['attachment'] = '';
-        cold_tx['functionData'] = processFunctionData(init_data, function_string_type[function_type])
+        cold_tx['function'] = processFunctionData(init_data, function_string_type[function_type]);
     }
-    let public_key_bytes = base58_1.default.decode(cold_tx['senderPublicKey']);
-    cold_tx['address'] = crypto_1.default.buildRawAddress(public_key_bytes, network_byte)
-    cold_tx['functionId'] = cold_tx['functionIndex']
+    let public_key_bytes = base58_1.decode(cold_tx['senderPublicKey']);
+    cold_tx['address'] = crypto_1.default.buildRawAddress(public_key_bytes, network_byte);
+    cold_tx['functionId'] = cold_tx['functionIndex'];
     delete cold_tx['functionIndex'];
     delete cold_tx['senderPublicKey'];
     delete cold_tx['functionData'];
 }
 
-// Fields process functions for sending TX
+// Fields-process functions for sending TX
 function getTransactionFields(type) {
     switch (type) {
         case constants.PAYMENT_TX:
-            sending_tx['recipient'] = "address:" + sending_tx['recipient']
-            sending_tx['attachment'] = processAttachment(sending_tx['attachment'])
+            sending_tx['recipient'] = "address:" + sending_tx['recipient'];
+            sending_tx['attachment'] = processAttachment(sending_tx['attachment']);
             break;
         case constants.LEASE_TX:
-            sending_tx['recipient'] = "address:" + sending_tx['recipient']
+            sending_tx['recipient'] = "address:" + sending_tx['recipient'];
             break;
         case constants.CANCEL_LEASE_TX:
-            sending_tx['recipient'] = "address:undefined"
+            sending_tx['recipient'] = "address:undefined";
             break;
     }
 }
 function getContractFields() {
-    sending_tx['initData'] = processContractData(sending_tx['initData'])
+    sending_tx['initData'] = processContractData(sending_tx['initData']);
 }
 function getFunctionFields(function_type) {
     let init_data = sending_tx['functionData'];
-    if ((function_type === constants.SEND_FUNCIDX && sending_tx['attachment'] !== undefined) || function_type === constants.SEND_FUNCIDX_SPLIT  ) {
+    if ((function_type === constants.SEND_FUNCIDX && stored_tx['attachment'] !== undefined) || function_type === constants.SEND_FUNCIDX_SPLIT  ) {
         sending_tx['attachment'] = processAttachment(sending_tx['attachment']);
-        sending_tx['functionData'] = processFunctionData(init_data, 'SEND')
+        sending_tx['functionData'] = processFunctionData(init_data, 'SEND');
     } else {
         delete sending_tx['attachment'];
-        sending_tx['functionData'] = processFunctionData(init_data, function_string_type[function_type])
+        sending_tx['functionData'] = processFunctionData(init_data, function_string_type[function_type]);
     }
 }
 
@@ -292,7 +289,7 @@ module.exports = class Transaction {
             timestamp: timestamp,
             transactionType: constants.LEASE_TX
         }
-        stored_tx = tx
+        stored_tx = tx;
         return tx;
     }
 
@@ -405,13 +402,24 @@ module.exports = class Transaction {
                 return tx_1.default.toBytes((cold_tx),field_type);
             case constants.OPC_FUNCTION:
                 function_type = stored_tx['functionIndex'];
-                if ((function_type === constants.SEND_FUNCIDX && sending_tx['attachment'] !== undefined) || function_type === constants.SEND_FUNCIDX_SPLIT  ) {
+                if ((function_type === constants.SEND_FUNCIDX && stored_tx['attachment'] !== undefined) || function_type === constants.SEND_FUNCIDX_SPLIT  ) {
                 cold_tx['functionData'] = processFunctionData(cold_tx['functionData'], 'SEND');
                 } else {
+                cold_tx['attachment'] = '';
                 cold_tx['functionData'] = processFunctionData(cold_tx['functionData'], function_string_type[function_type]);
                 }
                 field_type = 9 & (255);
                 return tx_1.default.toBytes((cold_tx),field_type);
         }
+    }
+
+    buildTransactionId(data_bytes) {
+        if (!data_bytes || !(data_bytes instanceof Uint8Array)) {
+            throw new Error('Missing or invalid data');
+        }
+        let output = new Uint8Array(32);
+        blake2b_1(output.length).update(data_bytes).digest(output);
+        let hash = output;
+        return base58_1.encode(hash);
     }
 };

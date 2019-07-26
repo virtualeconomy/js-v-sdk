@@ -4,10 +4,14 @@
   "version": "1.0.0",
   "license": "MIT",
   "dependencies": {
+    "axlsign": "^1.0.0",
+    "base-58": "0.0.1",
+    "blake2b": "^2.1.3",
     "babel-polyfill": "^6.26.0",
     "bignumber.js": "^7.2.1",
     "crypto-js": "^3.1.9-1",
     "identicon.js": "^2.3.2",
+    "js-sha3": "^0.8.0",
     "node-fetch": "^2.6.0",
     "request": "^2.88.0"
   },
@@ -16,14 +20,20 @@
     "@babel/core": "^7.0.0",
     "@babel/node": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.7",
     "babel-preset-env": "^1.7.0",
     "babel-preset-flow": "^6.23.0",
     "babel-preset-stage-0": "^6.24.1",
-    "flow-bin": "^0.92.1"
+    "chai": "^4.2.0",
+    "flow-bin": "^0.92.1",
+    "mocha": "^6.2.0"
   },
   "scripts": {
-    "test": "mocha ./test/test_account.js ./test/test_blockchain.js",
-    "test_tx": "npm run build && node libs/test_tx.js",
+    "test_token": "npm run build && mocha ./test/test_token.js",
+    "test_account": "npm run build && mocha ./test/test_account.js",
+    "test_blockchain": "npm run build && mocha ./test/test_blockchain.js",
+    "test_tx": "npm run build && mocha ./test/test_tx.js",
     "clean": "rm -rf libs",
     "build": "babel --source-maps -d libs src test"
   }

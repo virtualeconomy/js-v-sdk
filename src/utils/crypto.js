@@ -3,12 +3,12 @@
 //
 Object.defineProperty(exports, "__esModule", { value: true });
 var CryptoJS = require("crypto-js");
-var axlsign_1 = require("./axlsign");
-var base58_1 = require("./base58");
-var blake = require("./blake2b");
+var axlsign_1 = require("axlsign");
+var base58_1 = require("base-58");
+var blake2b_1 = require("blake2b");
 var converters_1 = require("./converters");
 var secure_random_1 = require("./secure-random");
-var sha3_1 = require("./sha3");
+var sha3_1 = require("js-sha3");
 var concat_1 = require("./concat");
 var constants = require("../constants");
 
@@ -25,7 +25,9 @@ function sha256(input) {
     return converters_1.default.wordArrayToByteArrayEx(resultWordArray);
 }
 function blake2b(input) {
-    return blake.blake2b(input, null, 32);
+    var output = new Uint8Array(32);
+    blake2b_1(output.length).update(input).digest(output)
+    return output;
 }
 function keccak(input) {
     return sha3_1.keccak256.array(input);
@@ -57,12 +59,12 @@ exports.default = {
         if (!privateKey || typeof privateKey !== 'string') {
             throw new Error('Missing or invalid private key');
         }
-        var privateKeyBytes = base58_1.default.decode(privateKey);
+        var privateKeyBytes = base58_1.decode(privateKey);
         if (privateKeyBytes.length !== constants.PRIVATE_KEY_BYTE_LENGTH) {
             throw new Error('Invalid private key');
         }
-        var signature = axlsign_1.default.sign(privateKeyBytes, dataBytes, secure_random_1.default.randomUint8Array(64));
-        return base58_1.default.encode(signature);
+        var signature = axlsign_1.sign(privateKeyBytes, dataBytes, secure_random_1.default.randomUint8Array(64));
+        return base58_1.encode(signature);
     },
     isValidTransactionSignature: function (dataBytes, signature, publicKey) {
         if (!dataBytes || !(dataBytes instanceof Uint8Array)) {
@@ -74,26 +76,26 @@ exports.default = {
         if (!publicKey || typeof publicKey !== 'string') {
             throw new Error('Missing or invalid public key');
         }
-        var signatureBytes = base58_1.default.decode(signature);
-        var publicKeyBytes = base58_1.default.decode(publicKey);
+        var signatureBytes = base58_1.decode(signature);
+        var publicKeyBytes = base58_1.decode(publicKey);
         if (publicKeyBytes.length !== constants.PUBLIC_KEY_BYTE_LENGTH) {
             throw new Error('Invalid public key');
         }
-        return axlsign_1.default.verify(publicKeyBytes, dataBytes, signatureBytes);
+        return axlsign_1.verify(publicKeyBytes, dataBytes, signatureBytes);
     },
     buildTransactionId: function (dataBytes) {
         if (!dataBytes || !(dataBytes instanceof Uint8Array)) {
             throw new Error('Missing or invalid data');
         }
         var hash = blake2b(dataBytes);
-        return base58_1.default.encode(hash);
+        return base58_1.encode(hash);
     },
     buildKeyPair: function (seed, nonce) {
         if (typeof seed !== 'string') {
             throw new Error('Invalid seed phrase');
         }
         var seedHash = buildSeedHash(seed, nonce);
-        var keys = axlsign_1.default.generateKeyPair(seedHash);
+        var keys = axlsign_1.generateKeyPair(seedHash);
         return {
             private_key: keys.private,
             public_key: keys.public
@@ -103,7 +105,7 @@ exports.default = {
         if (!address || typeof address !== 'string') {
             throw new Error('Missing or invalid address');
         }
-        var addressBytes = base58_1.default.decode(address);
+        var addressBytes = base58_1.decode(address);
         if (addressBytes[0] !== constants.ADDRESS_VERSION || addressBytes[1] !== networkByte) {
             return false;
         }
@@ -125,7 +127,7 @@ exports.default = {
         var publicKeyHashPart = Uint8Array.from(hashChain(publicKeyBytes).slice(0, 20));
         var rawAddress = concat_1.concatUint8Arrays(prefix, publicKeyHashPart);
         var addressHash = Uint8Array.from(hashChain(rawAddress).slice(0, 4));
-        return base58_1.default.encode(concat_1.concatUint8Arrays(rawAddress, addressHash));
+        return base58_1.encode(concat_1.concatUint8Arrays(rawAddress, addressHash));
     },
     encryptSeed: function (seed, password, encryptionRounds) {
         if (typeof seed !== 'string') {

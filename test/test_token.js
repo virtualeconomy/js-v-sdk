@@ -13,7 +13,7 @@ const recipient = "AUEMZKy23xvWixKySNDg448dXxwc4GEZCC3";
 const nonce = 0;
 const test_new_unity = 2;
 const test_issue_destroy_amount = 1;
-const test_new_issuer = 'AUEMZKy23xvWixKySNDg448dXxwc4GEZCC3';
+const test_new_issuer = 'AUAztxsft2v6rmjRRb72nLea6BNyRHHWpUR';
 const token_id = 'TWusvy35hepR6SKw7RM4zc3kX4DZ1FQsWEgf5S6XA';
 const test_contract_id = 'CFENccDVaB6G6HKoXpJHisPPeUwbaaQQ1ZM';
 /*================ Change end ==================*/
