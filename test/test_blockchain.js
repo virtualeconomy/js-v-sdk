@@ -18,7 +18,7 @@ const tx_id = "DfHnAowHFRNhYUGR3SbeATuBxYQCXCXihBDkcp6UPWeX";
 const height = 56;
 
 //slot_id:form 0 to 59
-const slot_id = 30;
+const slot_id = 10;
 
 const token_id = "TWtLLjtURLq5ybDHgNnFoQKvaBmUqbxMQgewzs8Ru";
 
@@ -96,8 +96,7 @@ async function testContractContent(chain, contract_id) {
     const result = await chain.getContractContent(contract_id);
     return result;
 }
-
-// Test Blockchain
+//Test Blockchain
 const chain = new Blockchain(host_ip, network_byte);
 
 //test balance
@@ -117,14 +116,14 @@ describe('testBalanceDetail', function () {
     });
     it('get available:', async () =>{
         let result = await testBalanceDetail(chain, address);
-        expect(result['available']).to.be.a('number');
+        expect(result['available']).to.be.a('string');
     });
 });
 
 //test TxHistory
 describe('testTxHistory', function () {
     it('get the TxHistory', async () =>{
-        let result = await testTxHistory(chain, address);
+        let result = await testTxHistory(chain, address, num);
         expect(result).to.not.be.empty;
     })
 });
