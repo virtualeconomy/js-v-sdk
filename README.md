@@ -148,7 +148,43 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
         console.log(result);
     }
     getContractContent(chain, "<contract_id>");
+
+    // Send payment tx to node
+    async function sendPaymentTx(chain, tx) {
+        const result = await chain.sendPaymentTx(tx);
+        console.log(result);
+    }
+    sendPaymentTx(chain, tx);
+
+    // Send leasing tx to node
+    async function sendLeasingTx(chain, tx) {
+        const result = await chain.sendLeasingTx(tx);
+        console.log(result);
+    }
+    sendLeasingTx(chain, tx);
+
+    // Send cancel leasing tx to node
+    async function sendCancelLeasingTx(chain, tx) {
+        const result = await chain.sendCancelLeasingTx(tx);
+        console.log(result);
+    }
+    sendCancelLeasingTx(chain, tx);
+
+    // Send register contract tx to node
+    async function sendRegisterContractTxx(chain, tx) {
+        const result = await chain.sendRegisterContractTx(tx);
+        console.log(result);
+    }
+    sendRegisterContractTx(chain, tx);
+
+    // Send execute contract tx to node
+    async function sendExecuteContractTxx(chain, tx) {
+        const result = await chain.sendExecuteContractTx(tx);
+        console.log(result);
+    }
+    sendExecuteContractTx(chain, tx);
     ```
+
 
 ### account object
 1. Create account by seed
@@ -221,7 +257,7 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
         const result = await acc.sendTransactionTx(node, tx);
         console.log(result);
     }
-    sendTransactionTx(acc, "<tx>", "<node>");
+    sendTransactionTx(acc, "<tx>", "<blockchain object>");
     ```
 
 ### transaction object
@@ -260,12 +296,12 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
 1. Send Payment transaction
 
     ```javascript
-    // tra: your transaction object, acc: your account object, build them first!
+    // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
-    async function sendPaymentTx(acc, tx) {
-        let node = node_address + '/vsys/broadcast/payment';
-        const result = await acc.sendTransactionTx(node, tx);
+    async function sendPaymentTx(tx) {
+        // const result = await chain.sendPaymentTx(tx);
+        const result = await acc.sendTransactionTx(chain, tx);
         console.log(result);
     }
 
@@ -284,7 +320,7 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
     let send_tx = tra.toJsonForSendingTx(signature);
 
     // Send transaction
-    sendPaymentTx(acc, send_tx);
+    sendPaymentTx(send_tx);
 
     // You can also get json for cold siganture
     let cold_tx = tra.toJsonForColdSignature();
@@ -295,12 +331,12 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
 2. Send Lease transaction
 
     ```javascript
-    // tra: your transaction object, acc: your account object, build them first!
+    // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
-    async function sendLeasingTx(acc, tx) {
-        let node = node_address + '/leasing/broadcast/lease';
-        const result = await acc.sendTransactionTx(node, tx);
+    async function sendLeasingTx(tx) {
+        // const result = await chain.sendLeasingTx(tx);
+        const result = await acc.sendTransactionTx(chain, tx);
         console.log(result);
     }
 
@@ -319,7 +355,7 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
     let send_tx = tra.toJsonForSendingTx(signature);
 
     // Send transaction
-    sendLeasingTx(acc, send_tx);
+    sendLeasingTx(send_tx);
 
     // You can also get json for cold siganture
     let cold_tx = tra.toJsonForColdSignature();
@@ -330,12 +366,12 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
 3. Send Cancel Lease transaction
 
     ```javascript
-    // tra: your transaction object, acc: your account object, build them first!
+    // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
-    async function sendCancelLeasingTx(acc, tx) {
-        let node = host_ip + '/leasing/broadcast/cancel';
-        let result = await acc.sendTransactionTx(node, tx);
+    async function sendCancelLeasingTx(tx) {
+        // const result = await chain.sendCancelLeasingTx(tx);
+        const result = await acc.sendTransactionTx(chain, tx);
         console.log(result);
     }
 
@@ -354,7 +390,7 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
     let send_tx = tra.toJsonForSendingTx(signature);
 
     // Send transaction
-    sendLeasingTx(acc, send_tx);
+    sendLeasingTx(send_tx);
 
     // You can also get json for cold siganture
     let cold_tx = tra.toJsonForColdSignature();
@@ -367,13 +403,12 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
 1. Register contract (Create token)
 
     ```javascript
-    // tra: your transaction object, acc: your account object, build them first!
+    // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     var contract_1 = require("../libs/contract");
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
-    async function sendRegisterContractTx(acc, tx) {
-        var node = node_address + '/contract/broadcast/register';
-        const result = await acc.sendTransactionTx(node, tx);
+    async function sendRegisterContractTx(tx) {
+        const result = await chain.sendRegisterContractTx(tx);
         console.log(result);
     }
 
@@ -400,7 +435,7 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
     let send_tx = tra.toJsonForSendingTx(signature);
 
     // Send transaction
-    sendRegisterContractTx(acc, send_tx);
+    sendRegisterContractTx(send_tx);
 
     // You can also get json for cold signature
     let cold_tx = tra.toJsonForColdSignature();
@@ -412,14 +447,13 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
 
     Issue token
     ```javascript
-    // tra: your transaction object, acc: your account object, build them first!
+    // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     var contract_1 = require("../libs/contract");
     var constants = require("../libs/constants");
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
-    async function sendExecuteContractTx(acc, tx) {
-        var node = node_address + '/contract/broadcast/execute';
-        const result = await acc.sendTransactionTx(node, tx);
+    async function sendExecuteContractTx(tx) {
+        const result = await chain.sendExecuteContractTx(tx);
         console.log(result);
     }
 
@@ -445,7 +479,7 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
     let send_tx = tra.toJsonForSendingTx(signature);
 
     // Send transaction
-    sendExecuteContractTx(acc, send_tx);
+    sendExecuteContractTx(send_tx);
 
     // You can also get json for cold signature
     let cold_tx = tra.toJsonForColdSignature();
@@ -454,14 +488,13 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
     ```
     Destroy token
     ```javascript
-    // tra: your transaction object, acc: your account object, build them first!
+    // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     var contract_1 = require("../libs/contract");
     var constants = require("../libs/constants");
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
-    async function sendExecuteContractTx(acc, tx) {
-        var node = node_address + '/contract/broadcast/execute';
-        const result = await acc.sendTransactionTx(node, tx);
+    async function sendExecuteContractTx(tx) {
+        const result = await chain.sendExecuteContractTx(tx);
         console.log(result);
     }
 
@@ -487,7 +520,7 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
     let send_tx = tra.toJsonForSendingTx(signature);
 
     // Send transaction
-    sendExecuteContractTx(acc, send_tx);
+    sendExecuteContractTx(send_tx);
 
     // You can also get json for cold signature
     let cold_tx = tra.toJsonForColdSignature();
@@ -496,14 +529,13 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
     ```
     Split token
     ```javascript
-    // tra: your transaction object, acc: your account object, build them first!
+    // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     var contract_1 = require("../libs/contract");
     var constants = require("../libs/constants");
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
-    async function sendExecuteContractTx(acc, tx) {
-        var node = node_address + '/contract/broadcast/execute';
-        const result = await acc.sendTransactionTx(node, tx);
+    async function sendExecuteContractTx(tx) {
+        const result = await chain.sendExecuteContractTx(tx);
         console.log(result);
     }
 
@@ -528,7 +560,7 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
     let send_tx = tra.toJsonForSendingTx(signature);
 
     // Send transaction
-    sendExecuteContractTx(acc, send_tx);
+    sendExecuteContractTx(send_tx);
 
     // You can also get json for cold signature
     let cold_tx = tra.toJsonForColdSignature();
@@ -537,14 +569,13 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
     ```
     Supersede token
     ```javascript
-    // tra: your transaction object, acc: your account object, build them first!
+    // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     var contract_1 = require("../libs/contract");
     var constants = require("../libs/constants");
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
-    async function sendExecuteContractTx(acc, tx) {
-        var node = node_address + '/contract/broadcast/execute';
-        const result = await acc.sendTransactionTx(node, tx);
+    async function sendExecuteContractTx(tx) {
+        const result = await chain.sendExecuteContractTx(tx);
         console.log(result);
     }
 
@@ -569,7 +600,48 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
     let send_tx = tra.toJsonForSendingTx(signature);
 
     // Send transaction
-    sendExecuteContractTx(acc, send_tx);
+    sendExecuteContractTx(send_tx);
+
+    // You can also get json for cold signature
+    let cold_tx = tra.toJsonForColdSignature();
+    console.log('Json for cold signature:');
+    console.log(cold_tx);
+    ```
+    Send token by function buildSendTokenTx ( )
+    ```javascript
+    // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
+    var contract_1 = require("../libs/contract");
+    var constants = require("../libs/constants");
+    const node_address = "http://test.v.systems:9922"; // change to your node address
+
+    async function sendExecuteContractTx(tx) {
+        const result = await chain.sendExecuteContractTx(tx);
+        console.log(result);
+    }
+
+    // Necessary data for send token
+    let public_key = acc.getPublicKey();
+    let token_id = "<token id>";
+    let recipient = "<recipient address>";
+    let amount = "<amount>";
+    let unity = "<unity of this token>"; //1e8
+    let is_split_supported = "<boolean>";
+    let attachment = "<attachment>";
+
+    // Build contract tx
+    tra.buildSendTokenTx(public_key, token_id, recipient, amount, unity, is_split_supported, attachment);
+
+    // Get bytes
+    let bytes = tra.toBytes();
+
+    // Get signature
+    let signature = acc.getSignature(bytes);
+
+    // Get json for sending tx
+    let send_tx = tra.toJsonForSendingTx(signature);
+
+    // Send transaction
+    sendExecuteContractTx(send_tx);
 
     // You can also get json for cold signature
     let cold_tx = tra.toJsonForColdSignature();
@@ -578,14 +650,13 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
     ```
     Send token
     ```javascript
-    // tra: your transaction object, acc: your account object, build them first!
+    // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     var contract_1 = require("../libs/contract");
     var constants = require("../libs/constants");
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
-    async function sendExecuteContractTx(acc, tx) {
-        var node = node_address + '/contract/broadcast/execute';
-        const result = await acc.sendTransactionTx(node, tx);
+    async function sendExecuteContractTx(tx) {
+        const result = await chain.sendExecuteContractTx(tx);
         console.log(result);
     }
 
@@ -612,13 +683,14 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
     let send_tx = tra.toJsonForSendingTx(signature);
 
     // Send transaction
-    sendExecuteContractTx(acc, send_tx);
+    sendExecuteContractTx(send_tx);
 
     // You can also get json for cold signature
     let cold_tx = tra.toJsonForColdSignature();
     console.log('Json for cold signature:');
     console.log(cold_tx);
     ```
+
 ## Sample Code and Testing
 
 

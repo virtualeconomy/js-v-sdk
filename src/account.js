@@ -2,26 +2,23 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 import 'babel-polyfill';
-import fetch from 'node-fetch';
-import crypto from '../libs/utils/crypto';
-import base58_1 from 'base-58';
-import axlsign_1 from 'axlsign';
-import { concatUint8Arrays } from '../libs/utils/concat';
-import secure_random_1 from '../libs/utils/secure-random';
-import { ADDRESS_VERSION, PRIVATE_KEY_BYTE_LENGTH, PUBLIC_KEY_BYTE_LENGTH } from '../libs/constants';
-async function postRequest (node, tx) {
-    const url = node;
-    const jsonData = JSON.stringify(tx).replace(/"amount":"(\d+)"/g, '"amount":$1');
-    const config = {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: jsonData
+import Crypto from '../libs/utils/Crypto';
+import Base58 from 'base-58';
+import Axlsign from 'axlsign';
+import Common from '../libs/utils/common';
+import SecureRandom from '../libs/utils/secure-random';
+import * as Constants from '../libs/constants';
+
+function getTxType(tx) {
+    if (tx.hasOwnProperty('transactionType')) {
+        return Constants.OPC_TRANSACTION;
+    } else if (tx.hasOwnProperty('contract')) {
+        return Constants.OPC_CONTRACT;
+    } else if (tx.hasOwnProperty('contractId')) {
+        return Constants.OPC_FUNCTION;
+    } else {
+        throw new Error('Invalid tx, build tx first! ')
     }
-    const response = await fetch(url, config);
-    return await response.json();
 }
 
 module.exports = class Account {
@@ -31,17 +28,17 @@ module.exports = class Account {
     }
 
     buildFromSeed(seed, nonce) {
-        let key_pair = crypto.buildKeyPair(seed, nonce);
-        this.private_key = base58_1.encode(key_pair.private_key);
-        this.public_key = base58_1.encode(key_pair.public_key);
+        let key_pair = Crypto.buildKeyPair(seed, nonce);
+        this.private_key = Base58.encode(key_pair.private_key);
+        this.public_key = Base58.encode(key_pair.public_key);
         this.address = this.convertPublicKeyToAddress(this.public_key, this.network_byte);
     }
 
     buildFromPrivateKey(private_key) {
-        let private_key_bytes = base58_1.decode(private_key);
-        let public_key_bytes = axlsign_1.derivePublicKey(private_key_bytes)
-        this.private_key = base58_1.encode(private_key_bytes);
-        this.public_key = base58_1.encode(public_key_bytes);
+        let private_key_bytes = Base58.decode(private_key);
+        let public_key_bytes = Axlsign.derivePublicKey(private_key_bytes);
+        this.private_key = Base58.encode(private_key_bytes);
+        this.public_key = Base58.encode(public_key_bytes);
         this.address = this.convertPublicKeyToAddress(this.public_key, this.network_byte);
     }
     buildColdWallet(public_key, address) {
@@ -58,19 +55,36 @@ module.exports = class Account {
     }
 
     async sendTransactionTx(node, tx) {
-        return await postRequest(node, tx);
+        // node = Blockchain object
+        let transaction_type = getTxType(tx);
+        switch (transaction_type) {
+            case Constants.OPC_TRANSACTION: {
+                if (tx['transactionType'] === Constants.PAYMENT_TX) {
+                    return await node.sendPaymentTx(tx);
+                } else if (tx['transactionType'] === Constants.LEASE_TX) {
+                    return await node.sendLeasingTx(tx);
+                } else if (tx['transactionType'] === Constants.CANCEL_LEASE_TX) {
+                    return await node.sendCancelLeasingTx(tx);
+                }
+
+            }
+            case Constants.OPC_CONTRACT:
+                return await node.sendRegisterContractTx(tx);
+            case Constants.OPC_FUNCTION:
+                return await node.sendRegisterContractTx(tx);
+        }
     }
 
     getSignature(data_bytes) {
         if (!this.private_key || typeof this.private_key !== 'string') {
             throw new Error('Missing or invalid private key');
         }
-        let private_key_bytes = base58_1.decode(this.private_key);
-        if (private_key_bytes.length !== PRIVATE_KEY_BYTE_LENGTH) {
+        let private_key_bytes = Base58.decode(this.private_key);
+        if (private_key_bytes.length !== Constants.PRIVATE_KEY_BYTE_LENGTH) {
             throw new Error('Invalid private key');
         }
-        let signature = axlsign_1.sign(private_key_bytes, data_bytes, secure_random_1.default.randomUint8Array(64));
-        return base58_1.encode(signature);
+        let signature = Axlsign.sign(private_key_bytes, data_bytes, SecureRandom.default.randomUint8Array(64));
+        return Base58.encode(signature);
     }
 
     getPublicKey() {
@@ -101,13 +115,13 @@ module.exports = class Account {
         if (!address || typeof address !== 'string') {
             throw new Error('Missing or invalid address');
         }
-        let address_bytes = base58_1.decode(address);
-        if (address_bytes[0] !== ADDRESS_VERSION || address_bytes[1] !== this.network_byte) {
+        let address_bytes = Base58.decode(address);
+        if (address_bytes[0] !== Constants.ADDRESS_VERSION || address_bytes[1] !== this.network_byte) {
             return false;
         }
         let key = address_bytes.slice(0, 22);
         let check = address_bytes.slice(22, 26);
-        let key_hash = crypto.hash(key).slice(0, 4);
+        let key_hash = Crypto.hash(key).slice(0, 4);
         for (let i = 0; i < 4; i++) {
             if (check[i] !== key_hash[i]) {
                 return false;
@@ -119,17 +133,17 @@ module.exports = class Account {
     convertPublicKeyToAddress(public_key, network_byte) {
         let public_key_bytes;
         if (typeof public_key === 'string' || public_key instanceof String) {
-            public_key_bytes = base58_1.decode(public_key);
+            public_key_bytes = Base58.decode(public_key);
         } else {
             public_key_bytes = public_key;
         }
-        if (!public_key_bytes || public_key_bytes.length !== PUBLIC_KEY_BYTE_LENGTH || !(public_key_bytes instanceof Uint8Array)) {
+        if (!public_key_bytes || public_key_bytes.length !== Constants.PUBLIC_KEY_BYTE_LENGTH || !(public_key_bytes instanceof Uint8Array)) {
             throw new Error('Missing or invalid public key');
         }
-        let prefix = Uint8Array.from([ADDRESS_VERSION, network_byte]);
-        let public_key_hash_part = Uint8Array.from(crypto.hash(public_key_bytes).slice(0, 20));
-        let raw_address = concatUint8Arrays(prefix, public_key_hash_part);
-        let address_hash = Uint8Array.from(crypto.hash(raw_address).slice(0, 4));
-        return base58_1.encode(concatUint8Arrays(raw_address, address_hash));
+        let prefix = Uint8Array.from([Constants.ADDRESS_VERSION, network_byte]);
+        let public_key_hash_part = Uint8Array.from(Crypto.hash(public_key_bytes).slice(0, 20));
+        let raw_address = Common.concatUint8Arrays(prefix, public_key_hash_part);
+        let address_hash = Uint8Array.from(Crypto.hash(raw_address).slice(0, 4));
+        return Base58.encode(Common.concatUint8Arrays(raw_address, address_hash));
     }
 };

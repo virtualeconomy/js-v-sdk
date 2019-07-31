@@ -1,7 +1,7 @@
 "use strict";
 
 import "babel-polyfill";
-const fetch = require("node-fetch");
+import Fetch from 'node-Fetch';
 
 async function getRequest(host, path) {
     const url = host + path;
@@ -11,8 +11,22 @@ async function getRequest(host, path) {
             'Accept': 'application/json'
         }
     }
-    const response = await fetch(url, config);
+    const response = await Fetch(url, config);
     return await response.text();
+}
+
+async function postRequest (url, tx) {
+    const jsonData = JSON.stringify(tx).replace(/"amount":"(\d+)"/g, '"amount":$1');
+    const config = {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: jsonData
+    }
+    const response = await Fetch(url, config);
+    return await response.json();
 }
 
 function textToSafeJson(str, keys) {
@@ -111,5 +125,30 @@ module.exports = class Blockchain {
     async getContractContent(contract_id) {
         let response = await getRequest(this.host_ip, '/contract/content/' + contract_id);
         return textToSafeJson(response);
+    }
+
+    async sendPaymentTx(tx) {
+        const url = this.host_ip + '/vsys/broadcast/payment';
+        return await postRequest(url, tx);
+    }
+
+    async sendLeasingTx(tx) {
+        const url = this.host_ip + '/leasing/broadcast/lease';
+        return await postRequest(url, tx);
+    }
+
+    async sendCancelLeasingTx(tx) {
+        const url = this.host_ip + '/leasing/broadcast/cancel';
+        return await postRequest(url, tx);
+    }
+
+    async sendRegisterContractTx(tx) {
+        const url = this.host_ip + '/contract/broadcast/register';
+        return await postRequest(url, tx);
+    }
+
+    async sendExecuteContractTx(tx) {
+        const url = this.host_ip + '/contract/broadcast/execute';
+        return await postRequest(url, tx);
     }
 };

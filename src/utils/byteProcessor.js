@@ -1,8 +1,8 @@
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
+    let extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        function (d, b) { for (let p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -10,11 +10,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 //Object.defineProperty(exports, "__esModule", { value: true });
-var bignumber_1 = require("bignumber.js");
-var base58_1 = require("base-58");
-var convert_1 = require("./convert");
-var concat_1 = require("./concat");
-// var constants = require("../constants");
+import BigNumber from 'bignumber.js';
+import Base58_1 from 'base-58';
+import Convert from './convert';
+// let constants = require("../constants");
 // ABSTRACT PARENT
 export var ByteProcessor = /** @class */ (function () {
     function ByteProcessor(name) {
@@ -29,7 +28,7 @@ export var Base58 = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     Base58.prototype.process = function (value) {
-        var bytes = base58_1.decode(value);
+        let bytes = Base58_1.decode(value);
         return bytes;
     };
     return Base58;
@@ -40,7 +39,7 @@ export var Short = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     Short.prototype.process = function (value) {
-        var bytes = convert_1.default.shortToByteArray(value);
+        let bytes = Convert.shortToByteArray(value);
         return Uint8Array.from(bytes);
     };
     return Short;
@@ -51,8 +50,8 @@ export var Long = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     Long.prototype.process = function (value) {
-        value = new bignumber_1.default(value);
-        var bytes = convert_1.default.bigNumberToByteArray(value);
+        value = new BigNumber.default(value);
+        let bytes = Convert.bigNumberToByteArray(value);
         return Uint8Array.from(bytes);
     };
     return Long;
@@ -64,7 +63,7 @@ export var AssetId = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     AssetId.prototype.process = function (value) {
-        var bytes = Uint8Array.from([0]);
+        let bytes = Uint8Array.from([0]);
         return bytes;
     };
     return AssetId;
@@ -76,12 +75,12 @@ export var Attachment = /** @class */ (function (_super) {
     }
     Attachment.prototype.process = function (value) {
         if (typeof value === 'string') {
-            value = Uint8Array.from(convert_1.default.stringToByteArray(value));
+            value = Uint8Array.from(Convert.stringToByteArray(value));
         }
         // if (value.length > constants.TRANSFER_ATTACHMENT_BYTE_LIMIT) {
         //     throw new Error('Maximum attachment length is exceeded');
         // }
-        var valueWithLength = convert_1.default.bytesToByteArrayWithSize(value);
+        let valueWithLength = Convert.bytesToByteArrayWithSize(value);
         return Uint8Array.from(valueWithLength);
     };
     return Attachment;
@@ -92,8 +91,8 @@ export var Data = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     Data.prototype.process = function (value) {
-        var dataBytes = base58_1.decode(value);
-        dataBytes = convert_1.default.bytesToByteArrayWithSize(dataBytes)
+        let dataBytes = Base58_1.decode(value);
+        dataBytes = Convert.bytesToByteArrayWithSize(dataBytes)
         return Uint8Array.from(dataBytes);
     };
     return Data;
@@ -104,7 +103,7 @@ export var Recipient = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     Recipient.prototype.process = function (value) {
-        var addressBytes = base58_1.decode(value);
+        let addressBytes = Base58_1.decode(value);
         return Uint8Array.from(addressBytes);
     };
     return Recipient;

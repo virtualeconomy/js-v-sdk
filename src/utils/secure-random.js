@@ -3,16 +3,16 @@
 //
 // Object.defineProperty(exports, "__esModule", { value: true });
 function nodeRandom(count, options) {
-    var crypto = require('crypto');
-    var buf = crypto.randomBytes(count);
+    let crypto = require('crypto');
+    let buf = crypto.randomBytes(count);
     switch (options.type) {
         case 'Array':
             return [].slice.call(buf);
         case 'Buffer':
             return buf;
         case 'Uint8Array':
-            var arr = new Uint8Array(count);
-            for (var i = 0; i < count; ++i) {
+            let arr = new Uint8Array(count);
+            for (let i = 0; i < count; ++i) {
                 arr[i] = buf.readUInt8(i);
             }
             return arr;
@@ -21,15 +21,15 @@ function nodeRandom(count, options) {
     }
 }
 function browserRandom(count, options) {
-    var nativeArr = new Uint8Array(count);
-    var crypto = self.crypto || self.msCrypto;
+    let nativeArr = new Uint8Array(count);
+    let crypto = self.crypto || self.msCrypto;
     crypto.getRandomValues(nativeArr);
     switch (options.type) {
         case 'Array':
             return [].slice.call(nativeArr);
         case 'Buffer':
             try {
-                var b = new Buffer(1);
+                let b = new Buffer(1);
             }
             catch (e) {
                 throw new Error('Buffer not supported in this environment. Use Node.js or Browserify for browser support.');

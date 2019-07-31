@@ -1,6 +1,7 @@
 // import "babel-polyfill";
 const Transaction = require('../libs/transaction');
 const Account = require('../libs/account');
+const Blockchain = require('../libs/blockchain');
 var constants = require("../libs/constants");
 var expect = require("chai").expect;
 const network_byte = constants.TESTNET_BYTE;
@@ -17,24 +18,31 @@ const nonce = 0;
 const amount = 1;
 /*================ Change end ==================*/
 
-async function sendPaymentTx(acc, tx) {
-    let node = host_ip + '/vsys/broadcast/payment';
-    const result = await acc.sendTransactionTx(node, tx);
+
+
+async function sendPaymentTx(tx) {
+    // const result = await chain.sendPaymentTx(tx);
+    let acc = new Account(network_byte);
+    const result = await acc.sendTransactionTx(chain, tx);
     return result;
 }
 
-async function sendLeasingTx(acc, tx) {
-    let node = host_ip + '/leasing/broadcast/lease';
-    const result = await acc.sendTransactionTx(node, tx);
+async function sendLeasingTx(tx) {
+    // const result = await chain.sendLeasingTx(tx);
+    let acc = new Account(network_byte);
+    const result = await acc.sendTransactionTx(chain, tx);
     return result;
 }
 
-async function sendCancelLeasingTx(acc, tx) {
-    let node = host_ip + '/leasing/broadcast/cancel';
-    cancel_lease_result = await acc.sendTransactionTx(node, tx);
+async function sendCancelLeasingTx(tx) {
+    let acc = new Account(network_byte);
+    // cancel_lease_result = await chain.sendCancelLeasingTx(tx);
+    cancel_lease_result = await acc.sendTransactionTx(chain, tx);
 }
 
-//test payment tx (send amount VSYS) and buildTransactionId
+
+const chain = new Blockchain(host_ip, network_byte);
+//test payment tx (send 1 amount VSYS) and buildTransactionId
 describe('test payment tx', function () {
     let acc =  new Account(network_byte);
     acc.buildFromSeed(seed, nonce);
@@ -73,7 +81,7 @@ describe('test payment tx', function () {
         expect(cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
     });
     it('get sendPayment tx result', async ()=>{
-        result = await sendPaymentTx(acc, send_tx);
+        result = await sendPaymentTx(send_tx);
         expect(result).to.not.be.empty;
         expect(result['recipient']).to.be.equal(recipient);
         expect(result['amount']).to.be.equal(send_tx['amount']);
@@ -86,7 +94,7 @@ describe('test payment tx', function () {
 });
 
 
-//test leasing tx (lease amount VSYS)
+//test leasing tx (lease 1 amount VSYS)
 describe('test leasing tx', function () {
     let acc =  new Account(network_byte);
     acc.buildFromSeed(seed, nonce);
@@ -127,7 +135,7 @@ describe('test leasing tx', function () {
         expect(cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
     });
     it('get leasing tx result', async ()=>{
-        let result = await sendLeasingTx(acc, send_tx);
+        let result = await sendLeasingTx(send_tx);
         expect(result).to.not.be.empty;
         expect(result['recipient']).to.be.equal(recipient);
         expect(result['amount']).to.be.equal(send_tx['amount']);
@@ -173,7 +181,7 @@ describe('test cancel leasing tx', function () {
         expect(cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
     });
     it('get cancel leasing tx result', async ()=>{
-        await sendCancelLeasingTx(acc, send_tx);
+        await sendCancelLeasingTx(send_tx);
         expect(cancel_lease_result).to.not.be.empty;
     });
 });

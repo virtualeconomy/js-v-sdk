@@ -1,6 +1,7 @@
 // import "babel-polyfill";
 const Transaction = require('../libs/transaction');
 const Account = require('../libs/account');
+const Blockchain = require('../libs/blockchain');
 var constants = require("../libs/constants");
 var contract_1 = require("../libs/contract");
 var expect = require("chai").expect;
@@ -11,25 +12,24 @@ const host_ip = 'http://test.v.systems:9922';
 const seed = "alter glare wealth alert about inmate wild foster nothing track brown chief primary acquire energy";
 const recipient = "AUEMZKy23xvWixKySNDg448dXxwc4GEZCC3";
 const nonce = 0;
-const test_new_unity = 2;
+const test_new_unity = 100000000;
 const test_issue_destroy_amount = 1;
 const test_new_issuer = 'AUAztxsft2v6rmjRRb72nLea6BNyRHHWpUR';
-const token_id = 'TWusvy35hepR6SKw7RM4zc3kX4DZ1FQsWEgf5S6XA';
+const test_token_id = 'TWusvy35hepR6SKw7RM4zc3kX4DZ1FQsWEgf5S6XA';
 const test_contract_id = 'CFENccDVaB6G6HKoXpJHisPPeUwbaaQQ1ZM';
 /*================ Change end ==================*/
 
-async function sendRegisterContractTx(acc, tx) {
-    var node = host_ip + '/contract/broadcast/register';
-    const result = await acc.sendTransactionTx(node, tx);
+async function sendRegisterContractTx(tx) {
+    const result = await chain.sendRegisterContractTx(tx);
     return result;
 }
 
-async function sendExecuteContractTx(acc, tx) {
-    var node = host_ip + '/contract/broadcast/execute';
-    const result = await acc.sendTransactionTx(node, tx);
+async function sendExecuteContractTx(tx) {
+    const result = await chain.sendExecuteContractTx(tx);
     return result;
 }
 
+const chain = new Blockchain(host_ip, network_byte);
 //test CreateToken
 describe('test create token', function () {
     // Build account and transaction
@@ -72,7 +72,7 @@ describe('test create token', function () {
     });
 
     it('get send register contractTx result', async() =>{
-        let result = await sendRegisterContractTx(acc, send_tx);
+        let result = await sendRegisterContractTx(send_tx);
         expect(result).to.not.be.empty;
         expect(result['description']).to.be.equal(contract_description);
         expect(result['initData']).to.be.equal(send_tx['initData']);
@@ -134,7 +134,7 @@ describe('test issue and destroy token', function () {
     });
 
     it('get send execute contractTx result (issue token)', async() =>{
-        let result = await sendExecuteContractTx(acc, issue_send_tx);
+        let result = await sendExecuteContractTx(issue_send_tx);
         expect(result).to.not.be.empty;
         expect(result['contractId']).to.be.equal(test_contract_id);
         expect(result['functionIndex']).to.be.equal(constants.ISSUE_FUNCIDX);
@@ -182,7 +182,7 @@ describe('test issue and destroy token', function () {
     });
 
     it('get send execute contractTx result (destroy token)', async() =>{
-        let result = await sendExecuteContractTx(acc, destroy_send_tx);
+        let result = await sendExecuteContractTx(destroy_send_tx);
         expect(result).to.not.be.empty;
         expect(result['contractId']).to.be.equal(test_contract_id);
         expect(result['functionIndex']).to.be.equal(constants.DESTROY_FUNCIDX);
@@ -244,7 +244,7 @@ describe('test split token', function () {
     });
 
     it('get send execute contractTx result (split token)', async() =>{
-        let result = await sendExecuteContractTx(acc, send_tx);
+        let result = await sendExecuteContractTx(send_tx);
         expect(result).to.not.be.empty;
         expect(result['contractId']).to.be.equal(test_contract_id);
         expect(result['functionIndex']).to.be.equal(constants.SPLIT_FUNCIDX);
@@ -306,7 +306,7 @@ describe('test supersede token', function () {
     });
 
     it('get send execute contractTx result (supersede token)', async() =>{
-        let result = await sendExecuteContractTx(acc, send_tx);
+        let result = await sendExecuteContractTx(send_tx);
         expect(result).to.not.be.empty;
         expect(result['contractId']).to.be.equal(test_contract_id);
         expect(result['functionIndex']).to.be.equal(constants.SUPERSEDE_FUNCIDX);
@@ -321,6 +321,68 @@ describe('test supersede token', function () {
         expect(cold_tx['address']).to.be.equal(address);
         expect(cold_tx['opc']).to.be.equal(constants.OPC_FUNCTION);
         expect(cold_tx['functionId']).to.be.equal(constants.SUPERSEDE_FUNCIDX);
+        expect(cold_tx['function']).to.not.be.empty;
+        expect(cold_tx['api']).to.be.equal(constants.API_VERSION);
+        expect(cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
+    });
+});
+
+//test send token by function buildSendTokenTx()
+describe('test send token', function () {
+    // Build account and transaction
+    let acc =  new Account(network_byte);
+    acc.buildFromSeed(seed, nonce);
+    let tra = new Transaction(network_byte);
+    let address = acc.getAddress();
+
+    // Necessary data for send token
+    let public_key = acc.getPublicKey();
+    let token_id = test_token_id;
+    let recipient = 'AUEMZKy23xvWixKySNDg448dXxwc4GEZCC3';
+    let amount = 10;
+    let unity = 100000000; //1e8
+    let is_split_supported = true;
+    let attachment = 'send token';
+
+    // Result of send token
+    // Only sendToken function needs attachment
+    let contract_tx = tra.buildSendTokenTx(public_key, token_id, recipient, amount, unity, is_split_supported, attachment);
+    it('get send token Tx', function () {
+        expect(contract_tx).to.not.be.empty;
+        expect(contract_tx['contractId']).to.be.a('string');
+        expect(contract_tx['functionIndex']).to.be.equal(constants.SEND_FUNCIDX_SPLIT);
+        expect(contract_tx['senderPublicKey']).to.be.equal(public_key);
+        expect(contract_tx['attachment']).to.be.equal(attachment);
+    });
+
+    let bytes = tra.toBytes();
+    let signature = acc.getSignature(bytes);
+    let send_tx = tra.toJsonForSendingTx(signature);
+    it('get json for sending tx (send token)', function () {
+        expect(send_tx).to.not.be.empty;
+        expect(send_tx['functionData']).to.not.be.empty;
+        expect(send_tx['contractId']).to.be.equal(test_contract_id);
+        expect(send_tx['senderPublicKey']).to.be.equal(public_key);
+        expect(send_tx['signature']).to.be.equal(signature);
+        expect(send_tx['timestamp']).to.be.a('number');
+    });
+
+    it('get send execute contractTx result (send token)', async() =>{
+        let result = await sendExecuteContractTx(send_tx);
+        expect(result).to.not.be.empty;
+        expect(result['contractId']).to.be.equal(test_contract_id);
+        expect(result['functionIndex']).to.be.equal(constants.SEND_FUNCIDX_SPLIT);
+        expect(result['functionData']).to.be.equal(send_tx['functionData']);
+        expect(result['attachment']).to.not.be.empty;
+    });
+
+    let cold_tx = tra.toJsonForColdSignature();
+    it('get json for cold signature (send token)', function () {
+        expect(cold_tx).to.not.be.empty;
+        expect(cold_tx['contractId']).to.be.equal(test_contract_id);
+        expect(cold_tx['address']).to.be.equal(address);
+        expect(cold_tx['opc']).to.be.equal(constants.OPC_FUNCTION);
+        expect(cold_tx['functionId']).to.be.equal(constants.SEND_FUNCIDX_SPLIT);
         expect(cold_tx['function']).to.not.be.empty;
         expect(cold_tx['api']).to.be.equal(constants.API_VERSION);
         expect(cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
@@ -370,7 +432,7 @@ describe('test send token', function () {
     });
 
     it('get send execute contractTx result (send token)', async() =>{
-        let result = await sendExecuteContractTx(acc, send_tx);
+        let result = await sendExecuteContractTx(send_tx);
         expect(result).to.not.be.empty;
         expect(result['contractId']).to.be.equal(test_contract_id);
         expect(result['functionIndex']).to.be.equal(constants.SEND_FUNCIDX_SPLIT);
