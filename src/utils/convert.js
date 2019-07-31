@@ -2,16 +2,16 @@
 // Derived from waves-api
 //
 Object.defineProperty(exports, "__esModule", { value: true });
-var bignumber_1 = require("bignumber.js");
-var converters_1 = require("./converters");
+import bignumber_1 from 'bignumber.js';
+import converters_1 from './converters';
 function performBitwiseAnd(a, b) {
-    var sa = a.toString(2).split('.')[0];
-    var sb = b.toString(2).split('.')[0];
-    var len = Math.min(sa.length, sb.length);
-    var s1 = sa.slice(sa.length - len);
-    var s2 = sb.slice(sb.length - len);
-    var result = new Array(len);
-    for (var i = len - 1; i >= 0; i--) {
+    let sa = a.toString(2).split('.')[0];
+    let sb = b.toString(2).split('.')[0];
+    let len = Math.min(sa.length, sb.length);
+    let s1 = sa.slice(sa.length - len);
+    let s2 = sb.slice(sb.length - len);
+    let result = new Array(len);
+    for (let i = len - 1; i >= 0; i--) {
         result[i] = (s1[i] === '1' && s2[i] === '1') ? '1' : '0';
     }
     return parseInt(result.join(''), 2);
@@ -33,36 +33,36 @@ exports.default = {
         if (!(input instanceof Array)) {
             input = Array.prototype.slice.call(input);
         }
-        var lengthBytes = converters_1.default.int16ToBytes(input.length, true);
+        let lengthBytes = converters_1.int16ToBytes(input.length, true);
         return lengthBytes.concat(input);
     },
     shortToByteArray: function (input) {
         if (typeof input !== 'number') {
             throw new Error('Numeric input is expected');
         }
-        return converters_1.default.int16ToBytes(input, true);
+        return converters_1.int16ToBytes(input, true);
     },
     longToByteArray: function (input) {
         if (typeof input !== 'number') {
             throw new Error('Numeric input is expected');
         }
-        var bytes = new Array(7);
-        for (var k = 7; k >= 0; k--) {
+        let bytes = new Array(7);
+        for (let k = 7; k >= 0; k--) {
             bytes[k] = input & (255);
             input = input / 256;
         }
         return bytes;
     },
     idxToByteArray: function (input) {
-        return converters_1.default.int32ToBytes(input, true);
+        return converters_1.int32ToBytes(input, true);
     },
     bigNumberToByteArray: function (input) {
         if (!(input instanceof bignumber_1.default)) {
             throw new Error('BigNumber input is expected');
         }
-        var performBitwiseAnd255 = performBitwiseAnd.bind(null, new bignumber_1.default(255));
-        var bytes = new Array(7);
-        for (var k = 7; k >= 0; k--) {
+        let performBitwiseAnd255 = performBitwiseAnd.bind(null, new bignumber_1.default(255));
+        let bytes = new Array(7);
+        for (let k = 7; k >= 0; k--) {
             bytes[k] = performBitwiseAnd255(input);
             input = input.div(256);
         }
@@ -72,14 +72,14 @@ exports.default = {
         if (typeof input !== 'string') {
             throw new Error('String input is expected');
         }
-        return converters_1.default.stringToByteArray(input);
+        return converters_1.stringToByteArray(input);
     },
     stringToByteArrayWithSize: function (input) {
         if (typeof input !== 'string') {
             throw new Error('String input is expected');
         }
-        var stringBytes = converters_1.default.stringToByteArray(input);
-        var lengthBytes = converters_1.default.int16ToBytes(stringBytes.length, true);
+        let stringBytes = converters_1.stringToByteArray(input);
+        let lengthBytes = converters_1.int16ToBytes(stringBytes.length, true);
         return lengthBytes.concat(stringBytes);
     }
 };

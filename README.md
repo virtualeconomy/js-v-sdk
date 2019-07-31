@@ -653,6 +653,9 @@ $ npm run test_token
 
 # Test tx
 $ npm run test_tx
+
+# Test all
+$ npm run test_all
 ```
 
 Feel free to modify these test example files. Write your own code as wallet client and integrate into your project.
