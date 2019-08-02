@@ -4,14 +4,13 @@ const Account = require('../libs/account');
 const Blockchain = require('../libs/blockchain');
 const constants = require("../libs/constants");
 const contract_1 = require("../libs/contract");
+const test_config = require('../libs/test_config');
 const expect = require("chai").expect;
 const network_byte = constants.TESTNET_BYTE;
 const host_ip = 'http://test.v.systems:9922';
 
 /*======= Change the below before run ==========*/
-const seed = "alter glare wealth alert about inmate wild foster nothing track brown chief primary acquire energy";
 const recipient = "AUEMZKy23xvWixKySNDg448dXxwc4GEZCC3";
-const nonce = 0;
 const test_new_unity = 100000000;
 const test_issue_destroy_amount = 1;
 const test_new_issuer = 'AUAztxsft2v6rmjRRb72nLea6BNyRHHWpUR';
@@ -34,7 +33,7 @@ const chain = new Blockchain(host_ip, network_byte);
 describe('test create token', function () {
     // Build account and transaction
     let acc =  new Account(network_byte);
-    acc.buildFromSeed(seed, nonce);
+    acc.buildFromSeed(test_config.seed, test_config.nonce);
     let tra = new Transaction(network_byte);
     let address = acc.getAddress();
 
@@ -95,7 +94,7 @@ describe('test create token', function () {
 describe('test issue and destroy token', function () {
     // Build account and transaction
     let acc =  new Account(network_byte);
-    acc.buildFromSeed(seed, nonce);
+    acc.buildFromSeed(test_config.seed, test_config.nonce);
     let tra = new Transaction(network_byte);
     let address = acc.getAddress();
 
@@ -207,7 +206,7 @@ describe('test issue and destroy token', function () {
 describe('test split token', function () {
     // Build account and transaction
     let acc =  new Account(network_byte);
-    acc.buildFromSeed(seed, nonce);
+    acc.buildFromSeed(test_config.seed, test_config.nonce);
     let tra = new Transaction(network_byte);
     let address = acc.getAddress();
 
@@ -269,7 +268,7 @@ describe('test split token', function () {
 describe('test supersede token', function () {
     // Build account and transaction
     let acc =  new Account(network_byte);
-    acc.buildFromSeed(seed, nonce);
+    acc.buildFromSeed(test_config.seed, test_config.nonce);
     let tra = new Transaction(network_byte);
     let address = acc.getAddress();
 
@@ -331,7 +330,7 @@ describe('test supersede token', function () {
 describe('test send token', function () {
     // Build account and transaction
     let acc =  new Account(network_byte);
-    acc.buildFromSeed(seed, nonce);
+    acc.buildFromSeed(test_config.seed, test_config.nonce);
     let tra = new Transaction(network_byte);
     let address = acc.getAddress();
 
@@ -393,7 +392,7 @@ describe('test send token', function () {
 describe('test send token', function () {
     // Build account and transaction
     let acc =  new Account(network_byte);
-    acc.buildFromSeed(seed, nonce);
+    acc.buildFromSeed(test_config.seed, test_config.nonce);
     let tra = new Transaction(network_byte);
     let address = acc.getAddress();
 

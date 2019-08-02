@@ -1,22 +1,21 @@
 // import "babel-polyfill";
 const Account = require('../libs/account');
 const constants = require("../libs/constants");
+const test_config = require('../libs/test_config');
 const expect = require("chai").expect;
 const network_byte = constants.TESTNET_BYTE;
 
 /*======= Change the below before run ==========*/
-const seed = "alter glare wealth alert about inmate wild foster nothing track brown chief primary acquire energy";
 const test_public_key= "DWKUGdT1HL4a3zrhoeRJd2zfKRPxmknRotdGVFrViK7o";
 const test_private_key = "6vca4fTLAsMuc3r2VMNkrMiMV387jdBLwGqVxxzZae1n";
 const test_address = "AUAztxsft2v6rmjRRb72nLea6BNyRHHWpUR";
-const nonce = 0;
 /*================ Change end ==================*/
 
 // Test Account
 //test account build with seed
 describe('test account built with seed', function () {
     let account =  new Account(network_byte);
-    account.buildFromSeed(seed, nonce);
+    account.buildFromSeed(test_config.seed, test_config.nonce);
     it('get publicKey', function () {
         let public_key = account.getPublicKey();
         expect(public_key).to.be.equal(test_public_key);

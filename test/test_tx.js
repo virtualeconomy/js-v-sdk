@@ -3,6 +3,7 @@ const Transaction = require('../libs/transaction');
 const Account = require('../libs/account');
 const Blockchain = require('../libs/blockchain');
 const constants = require("../libs/constants");
+const test_config = require('../libs/test_config');
 const expect = require("chai").expect;
 const network_byte = constants.TESTNET_BYTE;
 const host_ip = 'http://test.v.systems:9922';
@@ -10,11 +11,9 @@ var test_lease_id = '';
 var cancel_lease_result = '';
 
 /*======= Change the below before run ==========*/
-const seed = "alter glare wealth alert about inmate wild foster nothing track brown chief primary acquire energy";
 const recipient = "AUEMZKy23xvWixKySNDg448dXxwc4GEZCC3";
 const sender_public_key = "DWKUGdT1HL4a3zrhoeRJd2zfKRPxmknRotdGVFrViK7o";
 const attachment = "hello world";
-const nonce = 0;
 const amount = 1;
 /*================ Change end ==================*/
 
@@ -42,7 +41,7 @@ const chain = new Blockchain(host_ip, network_byte);
 //test payment tx (send 1 amount VSYS) and buildTransactionId
 describe('test payment tx', function () {
     let acc =  new Account(network_byte);
-    acc.buildFromSeed(seed, nonce);
+    acc.buildFromSeed(test_config.seed, test_config.nonce);
     let public_key = acc.getPublicKey();
     let tra = new Transaction(network_byte);
 
@@ -94,7 +93,7 @@ describe('test payment tx', function () {
 //test leasing tx (lease 1 amount VSYS)
 describe('test leasing tx', function () {
     let acc =  new Account(network_byte);
-    acc.buildFromSeed(seed, nonce);
+    acc.buildFromSeed(test_config.seed, test_config.nonce);
     let public_key = acc.getPublicKey();
     let tra = new Transaction(network_byte);
 
@@ -144,7 +143,7 @@ describe('test leasing tx', function () {
 //test cancel leasing tx ()
 describe('test cancel leasing tx', function () {
     let acc =  new Account(network_byte);
-    acc.buildFromSeed(seed, nonce);
+    acc.buildFromSeed(test_config.seed, test_config.nonce);
     let public_key = acc.getPublicKey();
     let tra = new Transaction(network_byte);
 
