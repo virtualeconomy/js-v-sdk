@@ -253,11 +253,11 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
     console.log(address);
 
     // Send transaction tx to node (you can know more details in 'send transaction' part)
-    async function sendTransactionTx(acc, tx, node) {
-        const result = await acc.sendTransactionTx(node, tx);
+    async function sendTransaction(acc, tx, node) {
+        const result = await acc.sendTransaction(node, tx);
         console.log(result);
     }
-    sendTransactionTx(acc, "<tx>", "<blockchain object>");
+    sendTransaction(acc, "<tx>", "<blockchain object>");
     ```
 
 ### transaction object
@@ -301,7 +301,7 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
 
     async function sendPaymentTx(tx) {
         // const result = await chain.sendPaymentTx(tx);
-        const result = await acc.sendTransactionTx(chain, tx);
+        const result = await acc.sendTransaction(chain, tx);
         console.log(result);
     }
 
@@ -336,7 +336,7 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
 
     async function sendLeasingTx(tx) {
         // const result = await chain.sendLeasingTx(tx);
-        const result = await acc.sendTransactionTx(chain, tx);
+        const result = await acc.sendTransaction(chain, tx);
         console.log(result);
     }
 
@@ -371,7 +371,7 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
 
     async function sendCancelLeasingTx(tx) {
         // const result = await chain.sendCancelLeasingTx(tx);
-        const result = await acc.sendTransactionTx(chain, tx);
+        const result = await acc.sendTransaction(chain, tx);
         console.log(result);
     }
 

@@ -54,7 +54,7 @@ module.exports = class Account {
         }
     }
 
-    async sendTransactionTx(node, tx) {
+    async sendTransaction(node, tx) {
         // node = Blockchain object
         let transaction_type = getTxType(tx);
         switch (transaction_type) {

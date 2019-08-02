@@ -1,7 +1,7 @@
 // import "babel-polyfill";
 const Blockchain = require('../libs/blockchain');
-var constants = require("../libs/constants");
-var expect = require("chai").expect;
+const constants = require("../libs/constants");
+const expect = require("chai").expect;
 
 const host_ip = "http://test.v.systems:9922";
 const network_byte = constants.TESTNET_BYTE;

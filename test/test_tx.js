@@ -2,8 +2,8 @@
 const Transaction = require('../libs/transaction');
 const Account = require('../libs/account');
 const Blockchain = require('../libs/blockchain');
-var constants = require("../libs/constants");
-var expect = require("chai").expect;
+const constants = require("../libs/constants");
+const expect = require("chai").expect;
 const network_byte = constants.TESTNET_BYTE;
 const host_ip = 'http://test.v.systems:9922';
 var test_lease_id = '';
@@ -21,23 +21,20 @@ const amount = 1;
 
 
 async function sendPaymentTx(tx) {
-    // const result = await chain.sendPaymentTx(tx);
     let acc = new Account(network_byte);
-    const result = await acc.sendTransactionTx(chain, tx);
+    const result = await acc.sendTransaction(chain, tx);
     return result;
 }
 
 async function sendLeasingTx(tx) {
-    // const result = await chain.sendLeasingTx(tx);
     let acc = new Account(network_byte);
-    const result = await acc.sendTransactionTx(chain, tx);
+    const result = await acc.sendTransaction(chain, tx);
     return result;
 }
 
 async function sendCancelLeasingTx(tx) {
     let acc = new Account(network_byte);
-    // cancel_lease_result = await chain.sendCancelLeasingTx(tx);
-    cancel_lease_result = await acc.sendTransactionTx(chain, tx);
+    cancel_lease_result = await acc.sendTransaction(chain, tx);
 }
 
 
