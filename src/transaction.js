@@ -224,14 +224,14 @@ function getFunctionColdFields(function_type, network_byte, acc) {
 function getTransactionFields(type) {
     switch (type) {
         case Constants.PAYMENT_TX:
-            sending_tx['recipient'] = "address:" + sending_tx['recipient'];
+            sending_tx['recipient'] = sending_tx['recipient'];
             sending_tx['attachment'] = processAttachment(sending_tx['attachment']);
             break;
         case Constants.LEASE_TX:
-            sending_tx['recipient'] = "address:" + sending_tx['recipient'];
+            sending_tx['recipient'] = sending_tx['recipient'];
             break;
         case Constants.CANCEL_LEASE_TX:
-            sending_tx['recipient'] = "address:undefined";
+            sending_tx['recipient'] = "undefined";
             break;
     }
 }
