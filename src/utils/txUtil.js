@@ -2,12 +2,13 @@
 var __assign = (this && this.__assign) || Object.assign || function(t) {
     for (let s, i = 1, n = arguments.length; i < n; i++) {
         s = arguments[i];
-        for (let p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
+        for (let p in s)
+            if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
     }
     return t;
 };
-import * as ByteProcessor from '../../libs/utils/byteProcessor';
+import ByteProcessor from '../../libs/utils/byteProcessor';
 import Crypto from '../../libs/utils/crypto';
 import Common from '../../libs/utils/common';
 import Base58 from 'base-58';
@@ -38,15 +39,15 @@ var cancelLeasingField = {
 var executeContractField = {
     contractId: new ByteProcessor.Base58('contractId'),
     functionIndex: new ByteProcessor.Short('functionIndex'),
-    functionData: new ByteProcessor.Data('functionData'),
+    functionData: new ByteProcessor.DataEntry('functionData'),
     attachment: new ByteProcessor.Attachment('attachment'),
     fee: new ByteProcessor.Long('fee'),
     feeScale: new ByteProcessor.Short('feeScale'),
     timestamp: new ByteProcessor.Long('timestamp'),
 }
 var registerContractField = {
-    contract: new ByteProcessor.Data('contract'),
-    initData: new ByteProcessor.Data('initData'),
+    contract: new ByteProcessor.Contract('contract'),
+    initData: new ByteProcessor.DataEntry('initData'),
     description: new ByteProcessor.Attachment('description'),
     fee: new ByteProcessor.Long('fee'),
     feeScale: new ByteProcessor.Short('feeScale'),
@@ -83,8 +84,7 @@ function makeByteProviders(tx_type) {
         if (storedFields[name] instanceof ByteProcessor.ByteProcessor) {
             // All user data must be represented as bytes
             byteProviders.push(function(data) { return storedFields[name].process(data[name]); });
-        }
-        else {
+        } else {
             throw new Error('Invalid field is passed to the createTransactionClass function');
         }
     }
@@ -106,7 +106,7 @@ function getBytes(transferData, tx_type) {
     if (transferData === void 0) { transferData = {}; }
     // Save all needed values from user data
     getData(transferData);
-    let _dataHolders = byteProviders.map(function (provider) {
+    let _dataHolders = byteProviders.map(function(provider) {
         if (typeof provider === 'function') {
             return provider(userData);
         } else {
@@ -141,7 +141,7 @@ function castToAPISchema(data, tx_type) {
     if (tx_type === Constants.PAYMENT_TX) {
         __assign(apiSchema, { attachment: transformAttachment() });
     }
-    __assign(apiSchema, { recipient : transformRecipient() });
+    __assign(apiSchema, { recipient: transformRecipient() });
     return apiSchema;
 }
 
@@ -162,6 +162,6 @@ exports.default = {
     prepareColdForAPI: function(transferData, signature, publicKey, tx_type) {
         getFields(tx_type);
         getData(transferData);
-        return __assign({}, (tx_type ? {transactionType: tx_type} : {}), {senderPublicKey: publicKey}, castToAPISchema(userData, tx_type), {signature:signature});
+        return __assign({}, (tx_type ? { transactionType: tx_type } : {}), { senderPublicKey: publicKey }, castToAPISchema(userData, tx_type), { signature: signature });
     }
 };
