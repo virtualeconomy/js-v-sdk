@@ -413,7 +413,7 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
     }
 
     // Necessary data for creating token, init_data should contain 'amount', 'unity', 'token_description' three keys.
-    let contract = contract_1.CONTRACT; // contract_1.CONTRACT_WITH_SPLIT
+    let contract = contract_1.TOKEN_CONTRACT; // contract_1.TOKEN_CONTRACT_WITH_SPLIT
     let public_key = acc.getPublicKey();
     let amount = "<amount>";
     let unity = "<unity>";

@@ -181,7 +181,7 @@ function getContractColdFields(network_byte, acc) {
     let token_description = init_data['token_description'];
     let public_key_bytes = Base58.decode(cold_tx['senderPublicKey']);
     cold_tx['address'] = acc.convertPublicKeyToAddress(public_key_bytes, network_byte);
-    cold_tx['contractInitExplain'] = 'Create token' + (cold_tx['contract'] === Contract.CONTRACT ? ' ' : ' (support split) ') + 'with max supply ' + BigNumber(amount);
+    cold_tx['contractInitExplain'] = 'Create token' + (cold_tx['contract'] === Contract.TOKEN_CONTRACT ? ' ' : ' (support split) ') + 'with max supply ' + BigNumber(amount);
     cold_tx['contractInitTextual'] = "init(max=" + BigNumber(amount) + ",unity= "+ BigNumber(unity) + ",tokenDescription='" + token_description + "')";
     cold_tx['contractInit'] = processContractData(cold_tx['initData']);
     delete cold_tx['senderPublicKey'];
