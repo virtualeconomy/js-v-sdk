@@ -13,8 +13,6 @@ import TxUtil from '../libs/utils/txUtil';
 import * as Constants from '../libs/constants';
 import * as Contract from '../libs/contract';
 
-var cold_tx = {}; // Fields for ColdSignature
-var sending_tx = {}; //Fields for sending to API
 const function_string_type = ['SUPERSEDE', 'ISSUE', 'DESTROY', 'SPLIT', 'SEND'];
 function getTxType(stored_tx) {
     if (stored_tx.hasOwnProperty('transactionType')) {
@@ -27,7 +25,7 @@ function getTxType(stored_tx) {
         throw new Error('Invalid tx, build tx first! ')
     }
 }
-function getApi() {
+function getApi(cold_tx) {
     if (!cold_tx.hasOwnProperty('amount')) {
         return 1;
     }
@@ -163,7 +161,7 @@ function processFunctionData(init_data, type) {
 
 
 // Fields-process functions for cold signature
-function getContractColdFields(network_byte, acc) {
+function getContractColdFields(cold_tx, network_byte, acc) {
     let init_data = cold_tx['initData'];
     if(!init_data.hasOwnProperty('amount')) {
         throw new Error("There is no field 'amount' in initData");
@@ -186,7 +184,7 @@ function getContractColdFields(network_byte, acc) {
     delete cold_tx['initData'];
 }
 
-function getFunctionColdFields(stored_tx, function_type, network_byte, acc) {
+function getFunctionColdFields(cold_tx, stored_tx, function_type, network_byte, acc) {
     let init_data = cold_tx['functionData'];
     switch (function_type) {
         case Constants.SUPERSEDE_FUNCIDX:
@@ -219,7 +217,7 @@ function getFunctionColdFields(stored_tx, function_type, network_byte, acc) {
 }
 
 // Fields-process functions for sending TX
-function getTransactionFields(type) {
+function getTransactionFields(sending_tx,type) {
     switch (type) {
         case Constants.PAYMENT_TX:
             sending_tx['recipient'] = sending_tx['recipient'];
@@ -232,11 +230,12 @@ function getTransactionFields(type) {
             sending_tx['recipient'] = "undefined";
             break;
     }
+    return sending_tx;
 }
-function getContractFields() {
+function getContractFields(sending_tx) {
     sending_tx['initData'] = processContractData(sending_tx['initData']);
 }
-function getFunctionFields(stored_tx, function_type) {
+function getFunctionFields(sending_tx, stored_tx, function_type) {
     let init_data = sending_tx['functionData'];
     if ((function_type === Constants.SEND_FUNCIDX && stored_tx['attachment'] !== undefined) || function_type === Constants.SEND_FUNCIDX_SPLIT  ) {
         sending_tx['attachment'] = processAttachment(sending_tx['attachment']);
@@ -252,6 +251,8 @@ module.exports = class Transaction {
 
     constructor(network_byte) {
         this.stored_tx = {}; // Fields for original data
+        this.cold_tx = {}; // Fields for ColdSignature
+        this.sending_tx = {}; //Fields for sending to API
         this.network_byte = network_byte;
         this.acc = new Account(network_byte);
     }
@@ -372,67 +373,67 @@ module.exports = class Transaction {
     toJsonForColdSignature() {
         let tx_type = getTxType(this.stored_tx);
         checkStoredTx(this.stored_tx);
-        cold_tx = JSON.parse(JSON.stringify(this.stored_tx));// deep copy
+        this.cold_tx = JSON.parse(JSON.stringify(this.stored_tx));// deep copy
         switch (tx_type) {
             case Constants.OPC_TRANSACTION:
-                cold_tx['api'] = getApi();
+                this.cold_tx['api'] = getApi(this.cold_tx);
                 break;
             case Constants.OPC_CONTRACT:
-                cold_tx['api'] = Constants.API_VERSION;
-                getContractColdFields(this.network_byte, this.acc);
+                this.cold_tx['api'] = Constants.API_VERSION;
+                getContractColdFields(this.cold_tx, this.network_byte, this.acc);
                 break;
             case Constants.OPC_FUNCTION:
-                cold_tx['api'] = Constants.API_VERSION;
-                getFunctionColdFields(this.stored_tx, this.stored_tx['functionIndex'], this.network_byte, this.acc);
+                this.cold_tx['api'] = Constants.API_VERSION;
+                getFunctionColdFields(this.cold_tx, this.stored_tx, this.stored_tx['functionIndex'], this.network_byte, this.acc);
                 break;
         }
-        cold_tx['opc'] = tx_type;
-        cold_tx['protocol'] = Constants.PROTOCOL;
-        return cold_tx;
+        this.cold_tx['opc'] = tx_type;
+        this.cold_tx['protocol'] = Constants.PROTOCOL;
+        return this.cold_tx;
     }
 
     toJsonForSendingTx(signature) {
         let tx_type = getTxType(this.stored_tx);
         checkStoredTx(this.stored_tx);
-        sending_tx = JSON.parse(JSON.stringify(this.stored_tx));// deep copy
+        this.sending_tx = JSON.parse(JSON.stringify(this.stored_tx));// deep copy
         switch (tx_type) {
             case Constants.OPC_TRANSACTION:
-                getTransactionFields(sending_tx['transactionType']);
+                this.sending_tx = getTransactionFields(this.sending_tx, this.sending_tx['transactionType']);
                 break;
             case Constants.OPC_CONTRACT:
-                getContractFields();
+                getContractFields(this.sending_tx);
                 break;
             case Constants.OPC_FUNCTION:
-                getFunctionFields(this.stored_tx, this.stored_tx['functionIndex']);
+                getFunctionFields(this.sending_tx, this.stored_tx, this.stored_tx['functionIndex']);
                 break;
         }
-        sending_tx['signature'] = signature;
-        return sending_tx;
+        this.sending_tx['signature'] = signature;
+        return this.sending_tx;
     }
 
     toBytes() {
         let tx_type = getTxType(this.stored_tx);
         let field_type, function_type;
         checkStoredTx(this.stored_tx);
-        cold_tx = JSON.parse(JSON.stringify(this.stored_tx));// deep copy
+        this.cold_tx = JSON.parse(JSON.stringify(this.stored_tx));// deep copy
         switch (tx_type) {
             case Constants.OPC_TRANSACTION:
                 field_type = this.stored_tx['transactionType'];
-                return (TxUtil.default.toBytes((cold_tx),field_type));
+                return (TxUtil.default.toBytes((this.cold_tx),field_type));
             case Constants.OPC_CONTRACT:
-                cold_tx['initData'] = processContractData(cold_tx['initData']);
+                this.cold_tx['initData'] = processContractData(this.cold_tx['initData']);
                 field_type = 8 & (255);
-                return TxUtil.default.toBytes((cold_tx),field_type);
+                return TxUtil.default.toBytes((this.cold_tx),field_type);
             case Constants.OPC_FUNCTION:
                 function_type = this.stored_tx['functionIndex'];
                 if ((function_type === Constants.SEND_FUNCIDX && this.stored_tx['attachment'] !== undefined) || function_type === Constants.SEND_FUNCIDX_SPLIT  ) {
-                cold_tx['functionData'] = processFunctionData(cold_tx['functionData'], 'SEND');
+                this.cold_tx['functionData'] = processFunctionData(this.cold_tx['functionData'], 'SEND');
                 } else {
-                cold_tx['attachment'] = '';
-                cold_tx['functionData'] = processFunctionData(cold_tx['functionData'], function_string_type[function_type]);
+                this.cold_tx['attachment'] = '';
+                this.cold_tx['functionData'] = processFunctionData(this.cold_tx['functionData'], function_string_type[function_type]);
                 }
                 field_type = 9 & (255);
-                return TxUtil.default.toBytes((cold_tx),field_type);
+                return TxUtil.default.toBytes((this.cold_tx),field_type);
         }
     }
 
