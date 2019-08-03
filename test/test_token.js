@@ -23,9 +23,8 @@ async function sendRegisterContractTx(tx) {
     return result;
 }
 
-// Send transaction tx to node (you can know more details in 'send transaction' part)
-async function sendTransaction(acc, tx, node) {
-    const result = await acc.sendTransaction(node, tx);
+async function sendExecuteContractTx(tx) {
+    const result = await chain.sendExecuteContractTx(tx);
     return result;
 }
 
@@ -134,7 +133,7 @@ describe('test issue and destroy token', function () {
     });
 
     it('get send execute contractTx result (issue token)', async() =>{
-        let result = await sendTransaction(acc, issue_send_tx, chain);
+        let result = await sendExecuteContractTx(issue_send_tx);
         expect(result).to.not.be.empty;
         expect(result['contractId']).to.be.equal(test_contract_id);
         expect(result['functionIndex']).to.be.equal(constants.ISSUE_FUNCIDX);
@@ -182,7 +181,7 @@ describe('test issue and destroy token', function () {
     });
 
     it('get send execute contractTx result (destroy token)', async() =>{
-        let result = await await sendTransaction(acc, destroy_send_tx, chain);
+        let result = await sendExecuteContractTx(destroy_send_tx);
         expect(result).to.not.be.empty;
         expect(result['contractId']).to.be.equal(test_contract_id);
         expect(result['functionIndex']).to.be.equal(constants.DESTROY_FUNCIDX);
@@ -244,7 +243,7 @@ describe('test split token', function () {
     });
 
     it('get send execute contractTx result (split token)', async() =>{
-        let result = await await sendTransaction(acc, send_tx, chain);
+        let result = await sendExecuteContractTx(send_tx);
         expect(result).to.not.be.empty;
         expect(result['contractId']).to.be.equal(test_contract_id);
         expect(result['functionIndex']).to.be.equal(constants.SPLIT_FUNCIDX);
@@ -306,7 +305,7 @@ describe('test supersede token', function () {
     });
 
     it('get send execute contractTx result (supersede token)', async() =>{
-        let result = await sendTransaction(acc, send_tx, chain);
+        let result = await sendExecuteContractTx(send_tx);
         expect(result).to.not.be.empty;
         expect(result['contractId']).to.be.equal(test_contract_id);
         expect(result['functionIndex']).to.be.equal(constants.SUPERSEDE_FUNCIDX);
@@ -368,7 +367,7 @@ describe('test send token', function () {
     });
 
     it('get send execute contractTx result (send token)', async() =>{
-        let result = await sendTransaction(acc, send_tx, chain);
+        let result = await sendExecuteContractTx(send_tx);
         expect(result).to.not.be.empty;
         expect(result['contractId']).to.be.equal(test_contract_id);
         expect(result['functionIndex']).to.be.equal(constants.SEND_FUNCIDX_SPLIT);
@@ -432,7 +431,7 @@ describe('test send token', function () {
     });
 
     it('get send execute contractTx result (send token)', async() =>{
-        let result = await sendTransaction(acc, send_tx, chain);
+        let result = await sendExecuteContractTx(send_tx);
         expect(result).to.not.be.empty;
         expect(result['contractId']).to.be.equal(test_contract_id);
         expect(result['functionIndex']).to.be.equal(constants.SEND_FUNCIDX_SPLIT);
