@@ -71,7 +71,7 @@ module.exports = class Account {
             case Constants.OPC_CONTRACT:
                 return await node.sendRegisterContractTx(tx);
             case Constants.OPC_FUNCTION:
-                return await node.sendRegisterContractTx(tx);
+                return await node.sendExecuteContractTx(tx);
         }
     }
 

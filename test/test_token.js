@@ -38,7 +38,7 @@ describe('test create token', function () {
     let address = acc.getAddress();
 
     // Necessary data for creating token
-    let contract = contract_1.CONTRACT;
+    let contract = contract_1.TOKEN_CONTRACT;
     let public_key = acc.getPublicKey();
     let amount = 9999;
     let unity = 100000000; // 1e8
