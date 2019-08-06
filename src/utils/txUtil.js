@@ -22,20 +22,20 @@ var paymentField = {
     feeScale: new ByteProcessor.Short('feeScale'),
     recipient: new ByteProcessor.Recipient('recipient'),
     attachment: new ByteProcessor.Attachment('attachment')
-}
+};
 var leaseField = {
     recipient: new ByteProcessor.Recipient('recipient'),
     amount: new ByteProcessor.Long('amount'),
     fee: new ByteProcessor.Long('fee'),
     feeScale: new ByteProcessor.Short('feeScale'),
     timestamp: new ByteProcessor.Long('timestamp')
-}
+};
 var cancelLeasingField = {
     fee: new ByteProcessor.Long('fee'),
     feeScale: new ByteProcessor.Short('feeScale'),
     timestamp: new ByteProcessor.Long('timestamp'),
     txId: new ByteProcessor.Base58('transactionId')
-}
+};
 var executeContractField = {
     contractId: new ByteProcessor.Base58('contractId'),
     functionIndex: new ByteProcessor.Short('functionIndex'),
@@ -44,7 +44,7 @@ var executeContractField = {
     fee: new ByteProcessor.Long('fee'),
     feeScale: new ByteProcessor.Short('feeScale'),
     timestamp: new ByteProcessor.Long('timestamp'),
-}
+};
 var registerContractField = {
     contract: new ByteProcessor.Contract('contract'),
     initData: new ByteProcessor.DataEntry('initData'),
@@ -52,12 +52,10 @@ var registerContractField = {
     fee: new ByteProcessor.Long('fee'),
     feeScale: new ByteProcessor.Short('feeScale'),
     timestamp: new ByteProcessor.Long('timestamp'),
-}
-var storedFields = {};
+};
 
 
-
-function getFields(type) {
+function getFields(type, storedFields) {
     switch (type) {
         case Constants.PAYMENT_TX:
             storedFields = paymentField;
@@ -75,9 +73,10 @@ function getFields(type) {
             storedFields = registerContractField;
             break;
     }
+    return storedFields;
 }
 
-function makeByteProviders(tx_type) {
+function makeByteProviders(tx_type, storedFields) {
     let byteProviders = [];
     byteProviders.push(Uint8Array.from([tx_type]));
     for (let name in storedFields) {
@@ -91,21 +90,21 @@ function makeByteProviders(tx_type) {
     return byteProviders;
 }
 
-var userData;
 // Save all needed values from user data
-function getData(transferData) {
-    userData = {}
+function getData(transferData, storedFields, userData) {
     userData = Object.keys(storedFields).reduce(function(store, key) {
         store[key] = transferData[key];
         return store;
     }, {});
+    return userData;
 }
 
-function getBytes(transferData, tx_type) {
-    let byteProviders = makeByteProviders(tx_type);
+function getBytes(transferData, tx_type, storedFields) {
+    let userData = {};
+    let byteProviders = makeByteProviders(tx_type, storedFields);
     if (transferData === void 0) { transferData = {}; }
     // Save all needed values from user data
-    getData(transferData);
+    userData = getData(transferData, storedFields, userData);
     let _dataHolders = byteProviders.map(function(provider) {
         if (typeof provider === 'function') {
             return provider(userData);
@@ -116,30 +115,30 @@ function getBytes(transferData, tx_type) {
     return Common.concatUint8Arrays.apply(void 0, _dataHolders);
 }
 
-function getExactBytes(fieldName) {
+function getExactBytes(fieldName, storedFields, userData) {
     if (!(fieldName in storedFields)) {
         throw new Error("There is no field '" + fieldName + "' in transfer transaction");
     }
     return storedFields[fieldName].process(userData[fieldName]);
 }
 
-function getSignature(transferData, keyPair, tx_type) {
-    return Crypto.default.buildTransactionSignature(getBytes(__assign({}, transferData), tx_type), keyPair.privateKey);
+function getSignature(transferData, keyPair, tx_type, storedFields) {
+    return Crypto.default.buildTransactionSignature(getBytes(__assign({}, transferData, storedFields), tx_type, storedFields), keyPair.privateKey);
 }
 
-function transformAttachment() {
-    return Base58.encode(Uint8Array.from(Array.prototype.slice.call(getExactBytes('attachment'), 2)));
+function transformAttachment(storedFields, userData) {
+    return Base58.encode(Uint8Array.from(Array.prototype.slice.call(getExactBytes('attachment', storedFields, userData), 2)));
 }
 
-function transformRecipient() {
+function transformRecipient(userData) {
     return remap_1.addRecipientPrefix(userData['recipient']);
 }
 
-function castToAPISchema(data, tx_type) {
+function castToAPISchema(data, tx_type, storedFields, userData) {
     let apiSchema = data;
 
     if (tx_type === Constants.PAYMENT_TX) {
-        __assign(apiSchema, { attachment: transformAttachment() });
+        __assign(apiSchema, { attachment: transformAttachment(storedFields, userData) });
     }
     __assign(apiSchema, { recipient: transformRecipient() });
     return apiSchema;
@@ -147,21 +146,13 @@ function castToAPISchema(data, tx_type) {
 
 exports.default = {
     toBytes: function(transferData, tx_type) {
-        getFields(tx_type);
-        return getBytes(__assign(tx_type ? { transactionType: tx_type } : {}, transferData), tx_type);
-    },
-    prepareForAPI: function(transferData, keyPair, tx_type) {
-        getFields(tx_type);
-        let signature = getSignature(transferData, keyPair, tx_type);
-        return __assign({}, (tx_type ? { transactionType: tx_type } : {}), { senderPublicKey: keyPair.publicKey }, castToAPISchema(userData, tx_type), { signature: signature });
+        var storedFields = {};
+        storedFields = getFields(tx_type, storedFields);
+        return getBytes(__assign(tx_type ? { transactionType: tx_type } : {}, transferData), tx_type, storedFields);
     },
     isValidSignature: function(data, signature, publicKey, tx_type) {
-        getFields(tx_type);
-        return Crypto.default.isValidTransactionSignature(getBytes(data, tx_type), signature, publicKey);
-    },
-    prepareColdForAPI: function(transferData, signature, publicKey, tx_type) {
-        getFields(tx_type);
-        getData(transferData);
-        return __assign({}, (tx_type ? { transactionType: tx_type } : {}), { senderPublicKey: publicKey }, castToAPISchema(userData, tx_type), { signature: signature });
+        var storedFields = {};
+        storedFields = getFields(tx_type);
+        return Crypto.default.isValidTransactionSignature(getBytes(data, tx_type, storedFields), signature, publicKey);
     }
 };
