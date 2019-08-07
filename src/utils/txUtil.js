@@ -55,7 +55,8 @@ var registerContractField = {
 };
 
 
-function getFields(type, storedFields) {
+function getFields(type) {
+    let storedFields = {};
     switch (type) {
         case Constants.PAYMENT_TX:
             storedFields = paymentField;
@@ -91,20 +92,20 @@ function makeByteProviders(tx_type, storedFields) {
 }
 
 // Save all needed values from user data
-function getData(transferData, storedFields, userData) {
-    userData = Object.keys(storedFields).reduce(function(store, key) {
+function getData(transferData, storedFields) {
+    let userData = Object.keys(storedFields).reduce(function(store, key) {
         store[key] = transferData[key];
         return store;
     }, {});
     return userData;
 }
 
-function getBytes(transferData, tx_type, storedFields) {
-    let userData = {};
+function getBytes(transferData, tx_type) {
+    let storedFields = getFields(tx_type);
     let byteProviders = makeByteProviders(tx_type, storedFields);
     if (transferData === void 0) { transferData = {}; }
     // Save all needed values from user data
-    userData = getData(transferData, storedFields, userData);
+    let userData = getData(transferData, storedFields );
     let _dataHolders = byteProviders.map(function(provider) {
         if (typeof provider === 'function') {
             return provider(userData);
@@ -130,9 +131,6 @@ function transformAttachment(storedFields, userData) {
     return Base58.encode(Uint8Array.from(Array.prototype.slice.call(getExactBytes('attachment', storedFields, userData), 2)));
 }
 
-function transformRecipient(userData) {
-    return remap_1.addRecipientPrefix(userData['recipient']);
-}
 
 function castToAPISchema(data, tx_type, storedFields, userData) {
     let apiSchema = data;
@@ -140,19 +138,14 @@ function castToAPISchema(data, tx_type, storedFields, userData) {
     if (tx_type === Constants.PAYMENT_TX) {
         __assign(apiSchema, { attachment: transformAttachment(storedFields, userData) });
     }
-    __assign(apiSchema, { recipient: transformRecipient() });
     return apiSchema;
 }
 
 exports.default = {
     toBytes: function(transferData, tx_type) {
-        var storedFields = {};
-        storedFields = getFields(tx_type, storedFields);
-        return getBytes(__assign(tx_type ? { transactionType: tx_type } : {}, transferData), tx_type, storedFields);
+        return getBytes(__assign(tx_type ? { transactionType: tx_type } : {}, transferData), tx_type);
     },
     isValidSignature: function(data, signature, publicKey, tx_type) {
-        var storedFields = {};
-        storedFields = getFields(tx_type);
-        return Crypto.default.isValidTransactionSignature(getBytes(data, tx_type, storedFields), signature, publicKey);
+        return Crypto.default.isValidTransactionSignature(getBytes(data, tx_type), signature, publicKey);
     }
 };

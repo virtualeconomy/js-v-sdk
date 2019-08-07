@@ -101,6 +101,7 @@ const chain = new Blockchain(host_ip, network_byte);
 
 //test balance
 describe('test get balance by address', function () {
+    this.timeout(5000);
     it('get the balance', async () =>{
         let result = await testBalance(chain, address);
         expect(result['address']).to.be.equal(address);
@@ -110,6 +111,7 @@ describe('test get balance by address', function () {
 
 //test balanceDetail
 describe('testBalanceDetail', function () {
+    this.timeout(5000);
     it('get address:', async () =>{
         let result = await testBalanceDetail(chain, address);
         expect(result['address']).to.be.equal(address);
@@ -122,6 +124,7 @@ describe('testBalanceDetail', function () {
 
 //test TxHistory
 describe('testTxHistory', function () {
+    this.timeout(5000);
     it('get the TxHistory', async () =>{
         let result = await testTxHistory(chain, address, num);
         expect(result).to.not.be.empty;
@@ -130,6 +133,7 @@ describe('testTxHistory', function () {
 
 //test TxById
 describe('testTxById', function () {
+    this.timeout(5000);
     it('get the TxById', async () =>{
         let result = await testTxById(chain, tx_id);
         expect(result).to.not.be.empty;
@@ -142,6 +146,7 @@ describe('testTxById', function () {
 
 //test unconfirmedTxById
 describe('testUnconfirmedTxById', function () {
+    this.timeout(5000);
     it('get the unconfirmedTxById', async () =>{
         let result = await testUnconfirmedTxById(chain, address);
         expect(result).to.not.be.empty;
@@ -154,6 +159,7 @@ describe('testUnconfirmedTxById', function () {
 
 //test Height
 describe('testHeight', function () {
+    this.timeout(5000);
     it('get the height', async () =>{
         let result = await testHeight(chain);
         expect(result['height']).to.be.a('number');
@@ -162,6 +168,7 @@ describe('testHeight', function () {
 
 //test LastBlock
 describe('testLastBlock', function () {
+    this.timeout(5000);
     it('get the lastBlock', async () =>{
         let result = await testLastBlock(chain);
         expect(result).to.not.be.empty;
@@ -170,6 +177,7 @@ describe('testLastBlock', function () {
 
 //test BlockByHeight
 describe('testBlockByHeight', function () {
+    this.timeout(5000);
     it('get the BlockByHeight', async () =>{
         let result = await testBlockByHeight(chain, height);
         expect(result).to.not.be.empty;
@@ -183,6 +191,7 @@ describe('testBlockByHeight', function () {
 
 //test SlotInfo
 describe('testSlotInfo', function () {
+    this.timeout(5000);
     it('get the SlotInfo', async () =>{
         let result = await testSlotInfo(chain, slot_id);
         expect(result).to.not.be.empty;
@@ -191,6 +200,7 @@ describe('testSlotInfo', function () {
 
 //test AllSlotsInfo
 describe('testAllSlotsInfo', function () {
+    this.timeout(5000);
     it('get the AllSlotsInfo', async () =>{
         let result = await testAllSlotsInfo(chain);
         expect(result).to.not.be.empty;
@@ -200,6 +210,7 @@ describe('testAllSlotsInfo', function () {
 
 //test TokenInfo
 describe('testTokenInfo', function () {
+    this.timeout(5000);
     it('get the TokenInfo', async () =>{
         let result = await testTokenInfo(chain, token_id);
         expect(result).to.not.be.empty;
@@ -212,6 +223,7 @@ describe('testTokenInfo', function () {
 
 //test TokenBalance
 describe('testTokenBalance', function () {
+    this.timeout(5000);
     it('get the TokenBalance', async () =>{
         let result = await testTokenBalance(chain, address, token_id);
         expect(result).to.not.be.empty;
@@ -228,6 +240,7 @@ describe('testTokenBalance', function () {
 
 //test ContractInfo
 describe('testContractInfo', function () {
+    this.timeout(5000);
     it('get the ContractInfo', async () =>{
         let result = await testContractInfo(chain, contract_id);
         expect(result).to.not.be.empty;
@@ -240,6 +253,7 @@ describe('testContractInfo', function () {
 
 //test ContractContent
 describe('testContractContent', function () {
+    this.timeout(5000);
     it('get the ContractContent', async () =>{
         let result = await testContractContent(chain, contract_id);
         expect(result).to.not.be.empty;
