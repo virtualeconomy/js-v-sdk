@@ -19,23 +19,37 @@ const amount = 1;
 
 
 
-async function sendPaymentTx(tx) {
+async function sendPaymentTxByAccount(tx) {
     let acc = new Account(network_byte);
     const result = await acc.sendTransaction(chain, tx);
     return result;
 }
 
-async function sendLeasingTx(tx) {
+async function sendPaymentTxByChain(tx) {
+    const result = await chain.sendPaymentTx(tx);
+    return result;
+}
+
+async function sendLeasingTxByAccount(tx) {
     let acc = new Account(network_byte);
     const result = await acc.sendTransaction(chain, tx);
     return result;
 }
 
-async function sendCancelLeasingTx(tx) {
+async function sendLeasingTxByChain(tx) {
+    const result = await chain.sendLeasingTx(tx);
+    return result;
+}
+
+async function sendCancelLeasingTxByAccount(tx) {
     let acc = new Account(network_byte);
     cancel_lease_result = await acc.sendTransaction(chain, tx);
 }
 
+async function sendCancelLeasingTxByChain(tx) {
+    const result = await chain.sendCancelLeasingTx(tx);
+    return result;
+}
 
 const chain = new Blockchain(host_ip, network_byte);
 //test payment tx (send 1 amount VSYS) and buildTransactionId
@@ -76,8 +90,16 @@ describe('test payment tx', function () {
     it('get protocol in cold tx', function () {
         expect(cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
     });
-    it('get sendPayment tx result', async ()=>{
-        result = await sendPaymentTx(send_tx);
+    it('get sendPayment tx result by Account', async ()=>{
+        result = await sendPaymentTxByAccount(send_tx);
+        expect(result).to.not.be.empty;
+        expect(result['recipient']).to.be.equal(recipient);
+        expect(result['amount']).to.be.equal(send_tx['amount']);
+        expect(result['attachment']).to.be.equal(send_tx['attachment']);
+        expect(result['type']).to.be.equal(constants.PAYMENT_TX);
+    });
+    it('get sendPayment tx result by Chain', async ()=>{
+        result = await sendPaymentTxByChain(send_tx);
         expect(result).to.not.be.empty;
         expect(result['recipient']).to.be.equal(recipient);
         expect(result['amount']).to.be.equal(send_tx['amount']);
@@ -130,8 +152,15 @@ describe('test leasing tx', function () {
     it('get protocol in cold tx', function () {
         expect(cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
     });
-    it('get leasing tx result', async ()=>{
-        let result = await sendLeasingTx(send_tx);
+    it('get leasing tx result by Account', async ()=>{
+        let result = await sendLeasingTxByAccount(send_tx);
+        expect(result).to.not.be.empty;
+        expect(result['recipient']).to.be.equal(recipient);
+        expect(result['amount']).to.be.equal(send_tx['amount']);
+        expect(result['type']).to.be.equal(constants.LEASE_TX);
+    });
+    it('get leasing tx result by Chain', async ()=>{
+        let result = await sendLeasingTxByChain(send_tx);
         expect(result).to.not.be.empty;
         expect(result['recipient']).to.be.equal(recipient);
         expect(result['amount']).to.be.equal(send_tx['amount']);
@@ -176,8 +205,12 @@ describe('test cancel leasing tx', function () {
     it('get protocol in cold tx', function () {
         expect(cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
     });
-    it('get cancel leasing tx result', async ()=>{
-        await sendCancelLeasingTx(send_tx);
+    it('get cancel leasing tx result by Account', async ()=>{
+        await sendCancelLeasingTxByAccount(send_tx);
+        expect(cancel_lease_result).to.not.be.empty;
+    });
+    it('get cancel leasing tx result by Chain', async ()=>{
+        await sendCancelLeasingTxByChain(send_tx);
         expect(cancel_lease_result).to.not.be.empty;
     });
 });
