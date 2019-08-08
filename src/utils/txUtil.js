@@ -77,9 +77,9 @@ function getFields(type) {
     return storedFields;
 }
 
-function makeByteProviders(tx_type, storedFields) {
+function makeByteProviders(txType, storedFields) {
     let byteProviders = [];
-    byteProviders.push(Uint8Array.from([tx_type]));
+    byteProviders.push(Uint8Array.from([txType]));
     for (let name in storedFields) {
         if (storedFields[name] instanceof ByteProcessor.ByteProcessor) {
             // All user data must be represented as bytes
@@ -100,9 +100,9 @@ function getData(transferData, storedFields) {
     return userData;
 }
 
-function getBytes(transferData, tx_type) {
-    let storedFields = getFields(tx_type);
-    let byteProviders = makeByteProviders(tx_type, storedFields);
+function getBytes(transferData, txType) {
+    let storedFields = getFields(txType);
+    let byteProviders = makeByteProviders(txType, storedFields);
     if (transferData === void 0) { transferData = {}; }
     // Save all needed values from user data
     let userData = getData(transferData, storedFields );
@@ -123,8 +123,8 @@ function getExactBytes(fieldName, storedFields, userData) {
     return storedFields[fieldName].process(userData[fieldName]);
 }
 
-function getSignature(transferData, keyPair, tx_type, storedFields) {
-    return Crypto.default.buildTransactionSignature(getBytes(__assign({}, transferData, storedFields), tx_type, storedFields), keyPair.privateKey);
+function getSignature(transferData, keyPair, txType, storedFields) {
+    return Crypto.default.buildTransactionSignature(getBytes(__assign({}, transferData, storedFields), txType, storedFields), keyPair.privateKey);
 }
 
 function transformAttachment(storedFields, userData) {
@@ -132,20 +132,20 @@ function transformAttachment(storedFields, userData) {
 }
 
 
-function castToAPISchema(data, tx_type, storedFields, userData) {
+function castToAPISchema(data, txType, storedFields, userData) {
     let apiSchema = data;
 
-    if (tx_type === Constants.PAYMENT_TX) {
+    if (txType === Constants.PAYMENT_TX) {
         __assign(apiSchema, { attachment: transformAttachment(storedFields, userData) });
     }
     return apiSchema;
 }
 
 exports.default = {
-    toBytes: function(transferData, tx_type) {
-        return getBytes(__assign(tx_type ? { transactionType: tx_type } : {}, transferData), tx_type);
+    toBytes: function(transferData, txType) {
+        return getBytes(__assign(txType ? { transactionType: txType } : {}, transferData), txType);
     },
-    isValidSignature: function(data, signature, publicKey, tx_type) {
-        return Crypto.default.isValidTransactionSignature(getBytes(data, tx_type), signature, publicKey);
+    isValidSignature: function(data, signature, publicKey, txType) {
+        return Crypto.default.isValidTransactionSignature(getBytes(data, txType), signature, publicKey);
     }
 };
