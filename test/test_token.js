@@ -31,6 +31,7 @@ async function sendExecuteContractTx(tx) {
 const chain = new Blockchain(host_ip, network_byte);
 //test CreateToken
 describe('test create token', function () {
+    this.timeout(5000);
     // Build account and transaction
     let acc =  new Account(network_byte);
     acc.buildFromSeed(test_config.seed, test_config.nonce);
@@ -93,6 +94,7 @@ describe('test create token', function () {
 //test issue and destroy token
 describe('test issue and destroy token', function () {
     // Build account and transaction
+    this.timeout(5000);
     let acc =  new Account(network_byte);
     acc.buildFromSeed(test_config.seed, test_config.nonce);
     let tra = new Transaction(network_byte);
@@ -205,6 +207,7 @@ describe('test issue and destroy token', function () {
 //test split token
 describe('test split token', function () {
     // Build account and transaction
+    this.timeout(5000);
     let acc =  new Account(network_byte);
     acc.buildFromSeed(test_config.seed, test_config.nonce);
     let tra = new Transaction(network_byte);
@@ -267,6 +270,7 @@ describe('test split token', function () {
 //test supersede token
 describe('test supersede token', function () {
     // Build account and transaction
+    this.timeout(5000);
     let acc =  new Account(network_byte);
     acc.buildFromSeed(test_config.seed, test_config.nonce);
     let tra = new Transaction(network_byte);
@@ -329,6 +333,7 @@ describe('test supersede token', function () {
 //test send token by function buildSendTokenTx()
 describe('test send token', function () {
     // Build account and transaction
+    this.timeout(5000);
     let acc =  new Account(network_byte);
     acc.buildFromSeed(test_config.seed, test_config.nonce);
     let tra = new Transaction(network_byte);
@@ -391,6 +396,7 @@ describe('test send token', function () {
 //test send token
 describe('test send token', function () {
     // Build account and transaction
+    this.timeout(5000);
     let acc =  new Account(network_byte);
     acc.buildFromSeed(test_config.seed, test_config.nonce);
     let tra = new Transaction(network_byte);
