@@ -1,6 +1,6 @@
 {
   "name": "@zjw-tp/js-v-sdk",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "license": "MIT",
   "main": "./dist/index.js",
   "dependencies": {
@@ -46,7 +46,7 @@
     "test_account": "npm run build && mocha ./test/test_account.js",
     "test_blockchain": "npm run build && mocha ./test/test_blockchain.js",
     "test_tx": "npm run build && mocha ./test/test_tx.js",
-    "clean": "rm -rf libs",
+    "clean": "rm -rf dist",
     "build": "cross-env BABEL_ENV=production babel-node build/bundle.js esm,cjs"
   }
 }
