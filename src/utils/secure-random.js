@@ -53,16 +53,18 @@ function secureRandom(count, options) {
         throw new Error('Your environment is not defined');
     }
 }
-exports.default = {
+
+export default {
     secureRandom: secureRandom,
-    randomArray: function (byteCount) {
+    randomArray(byteCount) {
         return secureRandom(byteCount, { type: 'Array' });
     },
-    randomUint8Array: function (byteCount) {
+    randomUint8Array(byteCount) {
         return secureRandom(byteCount, { type: 'Uint8Array' });
     },
-    randomBuffer: function (byteCount) {
+    randomBuffer(byteCount) {
         return secureRandom(byteCount, { type: 'Buffer' });
-    }
+    },
 };
+
 //# sourceMappingURL=secure-random.js.map

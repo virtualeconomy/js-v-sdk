@@ -279,5 +279,5 @@ var converters = function () {
     };
 }();
 /** END OF THE LICENSED CODE */
-exports.default = converters;
+export default Converters;
 //# sourceMappingURL=converters.js.map

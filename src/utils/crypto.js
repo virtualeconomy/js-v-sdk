@@ -139,4 +139,6 @@ exports.default = {
         return hashChain(input);
     }
 };
+
+export default Crypto;
 //# sourceMappingURL=crypto.js.map

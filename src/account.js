@@ -2,12 +2,12 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 import 'babel-polyfill';
-import Crypto from '../libs/utils/Crypto';
+import Crypto from './utils/crypto';
 import Base58 from 'base-58';
 import Axlsign from 'axlsign';
-import Common from '../libs/utils/common';
-import SecureRandom from '../libs/utils/secure-random';
-import * as Constants from '../libs/constants';
+import Common from './utils/common';
+import SecureRandom from './utils/secure-random';
+import * as Constants from './constants';
 
 function getTxType(tx) {
     if (tx.hasOwnProperty('transactionType')) {
@@ -21,7 +21,7 @@ function getTxType(tx) {
     }
 }
 
-module.exports = class Account {
+export default class Account {
 
     constructor(network_byte) {
         this.network_byte = network_byte;

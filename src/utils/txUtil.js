@@ -8,11 +8,11 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     }
     return t;
 };
-import ByteProcessor from '../../libs/utils/byteProcessor';
-import Crypto from '../../libs/utils/crypto';
-import Common from '../../libs/utils/common';
+import ByteProcessor from './byteProcessor';
+import Crypto from './crypto';
+import Common from './common';
 import Base58 from 'base-58';
-import * as Constants from '../../libs/constants';
+import * as Constants from '../constants';
 
 // Fields of the original data object
 var paymentField = {
@@ -141,11 +141,37 @@ function castToAPISchema(data, txType, storedFields, userData) {
     return apiSchema;
 }
 
-exports.default = {
+
+const TxUtil = {
     toBytes: function(transferData, txType) {
-        return getBytes(__assign(txType ? { transactionType: txType } : {}, transferData), txType);
+        return getBytes(
+            __assign(txType ? { transactionType: txType } : {}, transferData),
+            txType,
+        );
+    },
+    prepareForAPI: function(transferData, keyPair, txType) {
+        let signature = getSignature(transferData, keyPair, txType);
+        return __assign({},
+            txType ? { transactionType: txType } : {}, { senderPublicKey: keyPair.publicKey },
+            castToAPISchema(userData, txType), { signature: signature },
+        );
     },
     isValidSignature: function(data, signature, publicKey, txType) {
-        return Crypto.default.isValidTransactionSignature(getBytes(data, txType), signature, publicKey);
-    }
+        return Crypto.isValidTransactionSignature(
+            getBytes(data, txType),
+            signature,
+            publicKey,
+        );
+    },
+    prepareColdForAPI: function(transferData, signature, publicKey, txType) {
+        let storedFields = getFields(txType);
+        let userData = getData(transferData, storedFields);
+        return __assign({},
+            txType ? { transactionType: txType } : {}, { senderPublicKey: publicKey },
+            castToAPISchema(userData, txType), { signature: signature },
+        );
+    },
 };
+
+export default TxUtil;
+

@@ -83,4 +83,6 @@ exports.default = {
         return lengthBytes.concat(stringBytes);
     }
 };
+
+export default Convert;
 //# sourceMappingURL=convert.js.map
