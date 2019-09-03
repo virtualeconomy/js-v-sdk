@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 
 import "babel-polyfill";
+import QRCode from 'qrcode'
 import BigNumber from 'bignumber.js';
 import Account from '../libs/account';
 import Convert from '../libs/utils/convert';
@@ -392,6 +393,13 @@ module.exports = class Transaction {
         return this.cold_tx;
     }
 
+    async getQrBase64(cold_tx) {
+        try {
+            return await QRCode.toDataURL(JSON.stringify(cold_tx));
+        } catch (err) {
+            throw new Error(err);
+        }
+    }
     toJsonForSendingTx(signature) {
         let tx_type = getTxType(this.stored_tx);
         checkStoredTx(this.stored_tx);

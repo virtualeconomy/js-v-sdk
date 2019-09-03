@@ -69,6 +69,9 @@ describe('test payment tx', function () {
     let send_tx = tra.toJsonForSendingTx(signature);
 
     let cold_tx = tra.toJsonForColdSignature();
+    tra.getQrBase64(cold_tx).then(result => {
+        console.log(result)
+    })
     it('get send tx', function () {
         expect(send_tx).to.not.be.empty;
     });
