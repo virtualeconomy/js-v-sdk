@@ -67,8 +67,8 @@ describe('test payment tx', function () {
     let transaction_id = tra.buildTransactionId(bytes);
     let signature = acc.getSignature(bytes);
     let send_tx = tra.toJsonForSendingTx(signature);
-
     let cold_tx = tra.toJsonForColdSignature();
+
     it('get send tx', function () {
         expect(send_tx).to.not.be.empty;
     });
@@ -109,6 +109,12 @@ describe('test payment tx', function () {
     it('build correct transactionId', function () {
         expect(result['id']).to.be.equal(transaction_id);
     });
+    it('get base64 string of QRCode Image for toJsonForColdSignature', async ()=> {
+        base64 = await tra.getQrBase64ForColdSignature();
+        base64_by_cold_tx = await tra.getQrBase64(cold_tx);
+        expect(base64).match(/^data:image\/[a-z]+;base64,{1}/);
+        expect(base64_by_cold_tx).match(/^data:image\/[a-z]+;base64,{1}/);
+    })
 });
 
 

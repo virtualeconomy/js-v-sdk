@@ -13,6 +13,7 @@
     "identicon.js": "^2.3.2",
     "js-sha3": "^0.8.0",
     "node-fetch": "^2.6.0",
+    "qrcode": "^1.4.1",
     "request": "^2.88.0"
   },
   "devDependencies": {
