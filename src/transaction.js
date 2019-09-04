@@ -400,6 +400,10 @@ module.exports = class Transaction {
             throw new Error(err);
         }
     }
+    async getQrBase64ForColdSignature() {
+        const result = this.toJsonForColdSignature();
+        return await this.getQrBase64(result);
+    }
     toJsonForSendingTx(signature) {
         let tx_type = getTxType(this.stored_tx);
         checkStoredTx(this.stored_tx);
