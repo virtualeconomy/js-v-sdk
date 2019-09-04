@@ -46,7 +46,7 @@ function strengthenPassword(password, rounds) {
         password = Converters.byteArrayToHexString(sha256(password));
     return password;
 }
-exports.default = {
+const Crypto = {
     sha256ForCheckSum: function (input) {
         let checkSum = Converters.byteArrayToHexString(sha256(input));
         return checkSum.slice(0, 8);
