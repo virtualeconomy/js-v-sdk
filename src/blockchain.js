@@ -1,7 +1,7 @@
 "use strict";
 
 import "babel-polyfill";
-import Fetch from 'node-Fetch';
+import Fetch from 'node-fetch';
 
 async function getRequest(host, path) {
     const url = host + path;
@@ -40,7 +40,7 @@ function textToSafeJson(str, keys) {
     return JSON.parse(str);
 }
 
-module.exports = class Blockchain {
+export default class Blockchain {
 
     constructor(host_ip, network_byte) {
         this.network_byte = network_byte;

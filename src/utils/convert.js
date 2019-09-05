@@ -16,7 +16,7 @@ function performBitwiseAnd(a, b) {
     }
     return parseInt(result.join(''), 2);
 }
-exports.default = {
+const Convert = {
     booleanToBytes: function (input) {
         if (typeof input !== 'boolean') {
             throw new Error('Boolean input is expected');
@@ -83,4 +83,6 @@ exports.default = {
         return lengthBytes.concat(stringBytes);
     }
 };
+
+export default Convert;
 //# sourceMappingURL=convert.js.map

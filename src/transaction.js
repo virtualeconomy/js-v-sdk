@@ -5,14 +5,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 import "babel-polyfill";
 import QRCode from 'qrcode'
 import BigNumber from 'bignumber.js';
-import Account from '../libs/account';
-import Convert from '../libs/utils/convert';
+import Account from './account';
+import Convert from './utils/convert';
 import Base58 from 'base-58';
 import Blake2b from 'blake2b';
-import Common from '../libs/utils/common'
-import TxUtil from '../libs/utils/txUtil';
-import * as Constants from '../libs/constants';
-import * as Contract from '../libs/contract';
+import Common from './utils/common'
+import TxUtil from './utils/txUtil';
+import * as Constants from './constants';
+import * as Contract from './contract';
 
 const function_string_type = ['SUPERSEDE', 'ISSUE', 'DESTROY', 'SPLIT', 'SEND'];
 function getTxType(stored_tx) {
@@ -248,7 +248,7 @@ function getFunctionFields(sending_tx, stored_tx, function_type) {
 }
 
 
-module.exports = class Transaction {
+export default class Transaction {
 
     constructor(network_byte) {
         this.stored_tx = {}; // Fields for original data

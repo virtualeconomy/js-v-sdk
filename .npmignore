@@ -1,0 +1,7 @@
+node_modules
+LICENCE
+dist/**/*.map
+src/**/*
+test/**/*
+build/**/*
+libs/**/*
