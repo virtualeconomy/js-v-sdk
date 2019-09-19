@@ -1,7 +1,7 @@
 "use strict";
 // Derived from waves-api
 //
-Object.defineProperty(exports, "__esModule", { value: true });
+// Object.defineProperty(exports, "__esModule", { value: true });
 import CryptoJS from 'crypto-js';
 import Axlsign from 'axlsign';
 import Base58 from 'base-58';

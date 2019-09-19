@@ -1,7 +1,7 @@
 "use strict";
 
-Object.defineProperty(exports, "__esModule", { value: true });
-import 'babel-polyfill';
+// Object.defineProperty(exports, "__esModule", { value: true });
+// import 'babel-polyfill';
 import Crypto from './utils/crypto';
 import Base58 from 'base-58';
 import Axlsign from 'axlsign';
