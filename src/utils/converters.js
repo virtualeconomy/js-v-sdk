@@ -1,7 +1,7 @@
 "use strict";
 // Derived from waves-api
 //
-Object.defineProperty(exports, "__esModule", { value: true });
+// Object.defineProperty(exports, "__esModule", { value: true });
 import CryptoJS from 'crypto-js';
 /** START OF THE LICENSED CODE */
 /******************************************************************************
@@ -128,7 +128,7 @@ const Converters = {
     },
     // assumes wordArray is Big-Endian
     wordArrayToByteArray: function (wordArray) {
-        return converters.wordArrayToByteArrayImpl(wordArray, true);
+        return Converters.wordArrayToByteArrayImpl(wordArray, true);
     },
     wordArrayToByteArrayImpl: function (wordArray, isFirstByteHasSign) {
         let len = wordArray.words.length;
@@ -237,10 +237,10 @@ const Converters = {
         return bytes;
     },
     int32ToBytes: function (x, opt_bigEndian) {
-        return converters.intToBytes_(x, 4, 4294967295, opt_bigEndian);
+        return Converters.intToBytes_(x, 4, 4294967295, opt_bigEndian);
     },
     int16ToBytes: function (x, opt_bigEndian) {
-        return converters.intToBytes_(x, 2, 65535, opt_bigEndian);
+        return Converters.intToBytes_(x, 2, 65535, opt_bigEndian);
     },
     /**
      * Based on https://groups.google.com/d/msg/crypto-js/TOb92tcJlU0/Eq7VZ5tpi-QJ
