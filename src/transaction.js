@@ -1,8 +1,8 @@
 "use strict";
 
-Object.defineProperty(exports, "__esModule", { value: true });
+// Object.defineProperty(exports, "__esModule", { value: true });
 
-import "babel-polyfill";
+// import "babel-polyfill";
 import QRCode from 'qrcode'
 import BigNumber from 'bignumber.js';
 import Account from './account';
@@ -428,14 +428,15 @@ export default class Transaction {
         let field_type, function_type;
         checkStoredTx(this.stored_tx);
         this.cold_tx = JSON.parse(JSON.stringify(this.stored_tx));// deep copy
+        this.cold_tx['timestamp'] /= 1e6
         switch (tx_type) {
             case Constants.OPC_TRANSACTION:
                 field_type = this.stored_tx['transactionType'];
-                return (TxUtil.default.toBytes((this.cold_tx),field_type));
+                return (TxUtil.toBytes((this.cold_tx),field_type));
             case Constants.OPC_CONTRACT:
                 this.cold_tx['initData'] = processContractData(this.cold_tx['initData']);
                 field_type = 8 & (255);
-                return TxUtil.default.toBytes((this.cold_tx),field_type);
+                return TxUtil.toBytes((this.cold_tx),field_type);
             case Constants.OPC_FUNCTION:
                 function_type = this.stored_tx['functionIndex'];
                 if ((function_type === Constants.SEND_FUNCIDX && this.stored_tx['attachment'] !== undefined) || function_type === Constants.SEND_FUNCIDX_SPLIT  ) {
@@ -445,7 +446,7 @@ export default class Transaction {
                 this.cold_tx['functionData'] = processFunctionData(this.cold_tx['functionData'], function_string_type[function_type]);
                 }
                 field_type = 9 & (255);
-                return TxUtil.default.toBytes((this.cold_tx),field_type);
+                return TxUtil.toBytes((this.cold_tx),field_type);
         }
     }
 

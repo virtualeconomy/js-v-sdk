@@ -1,6 +1,6 @@
 "use strict";
 
-import "babel-polyfill";
+// import "babel-polyfill";
 import Fetch from 'node-fetch';
 
 async function getRequest(host, path) {

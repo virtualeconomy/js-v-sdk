@@ -1,7 +1,7 @@
 "use strict";
 // Derived from waves-api
 //
-Object.defineProperty(exports, "__esModule", { value: true });
+// Object.defineProperty(exports, "__esModule", { value: true });
 import bignumber_1 from 'bignumber.js';
 import converters_1 from './converters';
 function performBitwiseAnd(a, b) {

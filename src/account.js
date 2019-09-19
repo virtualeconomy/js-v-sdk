@@ -1,7 +1,7 @@
 "use strict";
 
-Object.defineProperty(exports, "__esModule", { value: true });
-import 'babel-polyfill';
+// Object.defineProperty(exports, "__esModule", { value: true });
+// import 'babel-polyfill';
 import Crypto from './utils/crypto';
 import Base58 from 'base-58';
 import Axlsign from 'axlsign';
@@ -83,7 +83,7 @@ export default class Account {
         if (private_key_bytes.length !== Constants.PRIVATE_KEY_BYTE_LENGTH) {
             throw new Error('Invalid private key');
         }
-        let signature = Axlsign.sign(private_key_bytes, data_bytes, SecureRandom.default.randomUint8Array(64));
+        let signature = Axlsign.sign(private_key_bytes, data_bytes, SecureRandom.randomUint8Array(64));
         return Base58.encode(signature);
     }
 
