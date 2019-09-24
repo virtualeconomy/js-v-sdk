@@ -26,7 +26,7 @@ async function postRequest (url, tx) {
         body: jsonData
     }
     const response = await Fetch(url, config);
-    return await response.json();
+    return await response.text();;
 }
 
 function textToSafeJson(str, keys) {
@@ -69,6 +69,12 @@ export default class Blockchain {
         let response = await getRequest(this.host_ip, '/transactions/info/' + tx_id);
         let keys = ['amount'];
         return textToSafeJson(response, keys);
+    }
+
+    async getTxByType(address, record_limit, type) {
+        let response = await getRequest(this.host_ip, '/transactions/list?address=' + address + '&limit=' + record_limit + '&txType=' + type)
+        let keys =['amount']
+        return textToSafeJson(response, keys)
     }
 
     async getUnconfirmedTxById(tx_id) {
@@ -134,7 +140,9 @@ export default class Blockchain {
 
     async sendLeasingTx(tx) {
         const url = this.host_ip + '/leasing/broadcast/lease';
-        return await postRequest(url, tx);
+        let response = await postRequest(url, tx);
+        let keys = ['amount', 'unity'];
+        return textToSafeJson(response, keys);
     }
 
     async sendCancelLeasingTx(tx) {
