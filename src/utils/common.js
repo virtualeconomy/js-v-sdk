@@ -18,7 +18,7 @@ export default {
         amount = amount.toFixed(Math.max(0, (m[1] || '').length - m[2]))
         return !(amount.toString().split('.')[1] && amount.toString().split('.')[1].length > unity)
     },
-    isNumFormatValid(amount) {
+    isValidNumFormat(amount) {
         return !(/[eE]/.test(amount.toString()) || (/^[0+]/.test(amount.toString()) && !/^0\./.test(amount.toString()))|| BigNumber(amount).isNaN())
     },
     concatUint8Arrays() {
@@ -44,26 +44,26 @@ export default {
     },
     contractIDToTokenID(contraId) {
 
-        var conId = Base58.decode(contraId)
-        var firstArr = [132]
-        var secondArr = Array.from(conId.slice(1,conId.length-4))
-        var thirdArr = Convert.idxToByteArray(0)
-        var encodeArr = firstArr.concat(secondArr.concat(thirdArr))
-        var hashArr = Crypto.hash(Uint8Array.from(encodeArr))
-        var checkArr = hashArr.slice(0, 4)
-        var tokenArr = encodeArr.concat(checkArr)
-        var tokenString = Base58.encode(tokenArr)
+        let conId = Base58.decode(contraId)
+        let firstArr = [132]
+        let secondArr = Array.from(conId.slice(1,conId.length-4))
+        let thirdArr = Convert.idxToByteArray(0)
+        let encodeArr = firstArr.concat(secondArr.concat(thirdArr))
+        let hashArr = Crypto.hash(Uint8Array.from(encodeArr))
+        let checkArr = hashArr.slice(0, 4)
+        let tokenArr = encodeArr.concat(checkArr)
+        let tokenString = Base58.encode(tokenArr)
         return tokenString
     },
     tokenIDToContractID(tokenId) {
-        var tokenArr = Base58.decode(tokenId)
-        var firstArr = [6]
-        var secondArr = Array.from(tokenArr.slice(1,tokenArr.length-8))
-        var encodeArr = firstArr.concat(secondArr)
-        var hashArr = Crypto.hash(Uint8Array.from(encodeArr))
-        var checkArr = hashArr.slice(0, 4)
-        var contractArr = encodeArr.concat(checkArr)
-        var contractString = Base58.encode(contractArr)
+        let tokenArr = Base58.decode(tokenId)
+        let firstArr = [6]
+        let secondArr = Array.from(tokenArr.slice(1,tokenArr.length-8))
+        let encodeArr = firstArr.concat(secondArr)
+        let hashArr = Crypto.hash(Uint8Array.from(encodeArr))
+        let checkArr = hashArr.slice(0, 4)
+        let contractArr = encodeArr.concat(checkArr)
+        let contractString = Base58.encode(contractArr)
         return contractString
     }
 }

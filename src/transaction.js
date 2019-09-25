@@ -375,7 +375,7 @@ export default class Transaction {
         let tx_type = getTxType(this.stored_tx);
         checkStoredTx(this.stored_tx);
         this.cold_tx = JSON.parse(JSON.stringify(this.stored_tx));// deep copy
-        this.cold_tx['timestamp'] /= 1e6
+        this.cold_tx['timestamp'] = BigNumber(this.cold_tx['timestamp']).dividedBy(1e6).toNumber()
         switch (tx_type) {
             case Constants.OPC_TRANSACTION:
                 this.cold_tx['api'] = getApi(this.cold_tx);

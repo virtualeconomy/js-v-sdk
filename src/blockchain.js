@@ -71,8 +71,13 @@ export default class Blockchain {
         return textToSafeJson(response, keys);
     }
 
-    async getTxByType(address, record_limit, type) {
-        let response = await getRequest(this.host_ip, '/transactions/list?address=' + address + '&limit=' + record_limit + '&txType=' + type)
+    async getTxByType(address, record_limit, type, without_type) {
+        let response
+        if (!without_type) {
+            response = await getRequest(this.host_ip, '/transactions/list?address=' + address + '&limit=' + record_limit + '&txType=' + type)
+        } else {
+            response = await getRequest(this.host_ip, '/transactions/list?address=' + address + '&limit=' + record_limit)
+        }
         let keys =['amount']
         return textToSafeJson(response, keys)
     }
@@ -135,7 +140,8 @@ export default class Blockchain {
 
     async sendPaymentTx(tx) {
         const url = this.host_ip + '/vsys/broadcast/payment';
-        return await postRequest(url, tx);
+        let response = await postRequest(url, tx);
+        return textToSafeJson(response);
     }
 
     async sendLeasingTx(tx) {
@@ -147,16 +153,19 @@ export default class Blockchain {
 
     async sendCancelLeasingTx(tx) {
         const url = this.host_ip + '/leasing/broadcast/cancel';
-        return await postRequest(url, tx);
+        let response = await postRequest(url, tx);
+        return textToSafeJson(response);
     }
 
     async sendRegisterContractTx(tx) {
         const url = this.host_ip + '/contract/broadcast/register';
-        return await postRequest(url, tx);
+        let response = await postRequest(url, tx);
+        return textToSafeJson(response);
     }
 
     async sendExecuteContractTx(tx) {
         const url = this.host_ip + '/contract/broadcast/execute';
-        return await postRequest(url, tx);
+        let response = await postRequest(url, tx);
+        return textToSafeJson(response);
     }
 };
