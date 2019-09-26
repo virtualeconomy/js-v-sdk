@@ -322,7 +322,7 @@ export default class Transaction {
         let tx = {
             contract: contract,
             description: description,
-            fee: Constants.TOKEN_FEE * Constants.VSYS_PRECISION,
+            fee: Constants.CONTRACT_REGISTER_FEE * Constants.VSYS_PRECISION,
             feeScale: Constants.FEE_SCALE,
             initData: init_data,
             senderPublicKey: public_key,
