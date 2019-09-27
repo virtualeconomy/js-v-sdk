@@ -71,13 +71,8 @@ export default class Blockchain {
         return textToSafeJson(response, keys);
     }
 
-    async getTxByType(address, record_limit, type, without_type) {
-        let response
-        if (!without_type) {
-            response = await getRequest(this.host_ip, '/transactions/list?address=' + address + '&limit=' + record_limit + '&txType=' + type)
-        } else {
-            response = await getRequest(this.host_ip, '/transactions/list?address=' + address + '&limit=' + record_limit)
-        }
+    async getTxByType(address, record_limit, type) {
+        let response = await getRequest(this.host_ip, '/transactions/list?address=' + address + '&limit=' + record_limit + '&txType=' + type)
         let keys =['amount']
         return textToSafeJson(response, keys)
     }
