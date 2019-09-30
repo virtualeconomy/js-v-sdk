@@ -1,9 +1,9 @@
 // import "babel-polyfill";
-const Transaction = require('../src/transaction');
-const Account = require('../src/account');
-const Blockchain = require('../src/blockchain');
-const constants = require("../src/constants");
-const test_config = require('./test_config');
+const Transaction = require('../libs/transaction');
+const Account = require('../libs/account');
+const Blockchain = require('../libs/blockchain');
+const constants = require("../libs/constants");
+const test_config = require('../libs/test_config');
 const expect = require("chai").expect;
 const network_byte = constants.TESTNET_BYTE;
 const host_ip = 'http://test.v.systems:9922';

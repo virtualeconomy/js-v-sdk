@@ -1,7 +1,7 @@
 // import "babel-polyfill";
-const Account = require('../src/account');
-const constants = require("../src/constants");
-const test_config = require('./test_config');
+const Account = require('../libs/account');
+const constants = require("../libs/constants");
+const test_config = require('../libs/test_config');
 const expect = require("chai").expect;
 const network_byte = constants.TESTNET_BYTE;
 
