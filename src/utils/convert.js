@@ -4,6 +4,7 @@
 // Object.defineProperty(exports, "__esModule", { value: true });
 import bignumber_1 from 'bignumber.js';
 import converters_1 from './converters';
+import Base58 from 'base-58';
 function performBitwiseAnd(a, b) {
     let sa = a.toString(2).split('.')[0];
     let sb = b.toString(2).split('.')[0];
@@ -67,6 +68,21 @@ const Convert = {
             input = input.div(256);
         }
         return bytes;
+    },
+    parseFunctionData: function (base_string) {
+        let bytes = Base58.decode(base_string);
+        if (bytes[1] !== 2) {
+            throw  new Error('Wrong function data, it should have two parameters.')
+        }
+        let recipient = Base58.encode(bytes.slice(3, bytes.length - 9))
+        let amount = bytes.slice(bytes.length - 8)
+        let result = ''
+        for (let k = 0; k <= 7; k++) {
+            let len = 8 - amount[k].toString(2).length
+            result += '0'.repeat(len) + amount[k].toString(2)
+        }
+        amount = bignumber_1.default(result, 2)
+        return {recipient, amount}
     },
     stringToByteArray: function (input) {
         if (typeof input !== 'string') {
