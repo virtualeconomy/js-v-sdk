@@ -26,7 +26,7 @@ async function postRequest (url, tx) {
         body: jsonData
     }
     const response = await Fetch(url, config);
-    return await response.text();;
+    return await response.text();
 }
 
 function textToSafeJson(str, keys) {
