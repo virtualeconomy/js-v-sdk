@@ -17,6 +17,14 @@ function performBitwiseAnd(a, b) {
     }
     return parseInt(result.join(''), 2);
 }
+function parseAmountData(bytes, bytes_length) {
+    let result = ''
+    for (let k = 0; k < bytes_length; k++) {
+        let len = 8 - bytes[k].toString(2).length
+        result += '0'.repeat(len) + bytes[k].toString(2)
+    }
+    return bytes_length === 8 ? bignumber_1.default(result, 2) : bignumber_1.default(result, 2).toNumber()
+}
 const Convert = {
     booleanToBytes: function (input) {
         if (typeof input !== 'boolean') {
@@ -70,19 +78,33 @@ const Convert = {
         return bytes;
     },
     parseFunctionData: function (base_string) {
-        let bytes = Base58.decode(base_string);
-        if (bytes[1] !== 2) {
-            throw  new Error('Wrong function data, it should have two parameters.')
+        let bytes = Base58.decode(base_string)
+        let parameters_num = bytes[1]
+        bytes = bytes.slice(2)
+        let function_data = []
+        for (let i = 0; i < parameters_num; i++) {
+            let type = bytes[0]
+            if (type === 1) {
+                function_data.push(Base58.encode(bytes.slice(1, 33)))
+                bytes = bytes.slice(33)
+            } else if (type === 2 || type === 6 || type === 7) {
+                function_data.push(Base58.encode(bytes.slice(1, 27)))
+                bytes = bytes.slice(27)
+            } else if (type === 3) {
+                function_data.push(parseAmountData(bytes.slice(1, 9), 8))
+                bytes = bytes.slice(9)
+            } else if (type === 4) {
+                function_data.push(parseAmountData(bytes.slice(1, 5), 4))
+                bytes = bytes.slice(5)
+            } else if (type === 5) {
+                let short_text_length = bytes[2]
+                function_data.push(converters_1.byteArrayToString(bytes.slice(3, short_text_length + 3)))
+                bytes = bytes.slice(short_text_length + 3)
+            } else {
+                throw new Error('Wrong parameter type')
+            }
         }
-        let recipient = Base58.encode(bytes.slice(3, bytes.length - 9))
-        let amount = bytes.slice(bytes.length - 8)
-        let result = ''
-        for (let k = 0; k <= 7; k++) {
-            let len = 8 - amount[k].toString(2).length
-            result += '0'.repeat(len) + amount[k].toString(2)
-        }
-        amount = bignumber_1.default(result, 2)
-        return {recipient, amount}
+        return function_data
     },
     stringToByteArray: function (input) {
         if (typeof input !== 'string') {
