@@ -73,11 +73,11 @@ describe('test create token', function () {
     let bytes = tra.toBytes();
     let signature = acc.getSignature(bytes);
     let send_tx = tra.toJsonForSendingTx(signature);
-    let create_parse_function_data = convert.parseFunctionData(send_tx['initData']);
-    let create_original_data = BigNumber(contractTx['initData']['amount']).multipliedBy(contractTx['initData']['unity']);
+    let parse_function_data = convert.parseFunctionData(send_tx['initData']);
+    let original_data = BigNumber(contractTx['initData']['amount']).multipliedBy(contractTx['initData']['unity']);
     it('unit test for parseFunctionData', function() {
-        expect(create_original_data.isEqualTo(create_parse_function_data[0])).to.be.equal(true);
-        expect(contractTx['initData']['token_description']).to.be.equal(create_parse_function_data[2]);
+        expect(original_data.toString()).to.be.equal(parse_function_data[0].toString());
+        expect(contractTx['initData']['token_description']).to.be.equal(parse_function_data[2]);
     });
     it('get json for sending tx', function () {
         expect(send_tx).to.not.be.empty;
@@ -152,7 +152,7 @@ describe('test issue and destroy token', function () {
     let issue_parse_function_data = convert.parseFunctionData(issue_send_tx['functionData']);
     let issue_original_data = BigNumber(issue_contract_tx['functionData']['amount']).multipliedBy(issue_contract_tx['functionData']['unity']);
     it('unit test for parseFunctionData when issue token', function() {
-        expect(issue_original_data.isEqualTo(issue_parse_function_data[0])).to.be.equal(true)
+        expect(issue_original_data.toString()).to.be.equal(issue_parse_function_data[0].toString());
     });
     it('get json for sending tx (issue token)', function () {
         expect(issue_send_tx).to.not.be.empty;
@@ -215,7 +215,7 @@ describe('test issue and destroy token', function () {
     let destroy_parse_function_data = convert.parseFunctionData(destroy_send_tx['functionData']);
     let destroy_original_data = BigNumber(issue_contract_tx['functionData']['amount']).multipliedBy(issue_contract_tx['functionData']['unity']);
     it('unit test for parseFunctionData when destroy token', function() {
-        expect(destroy_original_data.isEqualTo(destroy_parse_function_data[0])).to.be.equal(true)
+        expect(destroy_original_data.toString()).to.be.equal(destroy_parse_function_data[0].toString());
     });
     it('get json for sending tx (destroy token)', function () {
         expect(destroy_send_tx).to.not.be.empty;
@@ -290,7 +290,7 @@ describe('test split token', function () {
     let parse_function_data = convert.parseFunctionData(send_tx['functionData']);
     let original_data = BigNumber(contract_tx['functionData']['new_unity']);
     it('unit test for parseFunctionData', function() {
-        expect(original_data.isEqualTo(parse_function_data[0])).to.be.equal(true)
+        expect(original_data.toString()).to.be.equal(parse_function_data[0].toString());
     });
     it('get json for sending tx (split token)', function () {
         expect(send_tx).to.not.be.empty;
@@ -444,7 +444,7 @@ describe('test send token', function () {
     let original_data = BigNumber(contract_tx['functionData']['amount']).multipliedBy(contract_tx['functionData']['unity']);
     it('unit test for parseFunctionData', function() {
         expect(contract_tx['functionData']['recipient']).to.be.equal(parse_function_data[0]);
-        expect(original_data.isEqualTo(parse_function_data[1])).to.be.equal(true)
+        expect(original_data.toString()).to.be.equal(parse_function_data[1].toString());
     });
     it('get json for sending tx (send token)', function () {
         expect(send_tx).to.not.be.empty;
@@ -524,7 +524,7 @@ describe('test send token', function () {
     let original_data = BigNumber(contract_tx['functionData']['amount']).multipliedBy(contract_tx['functionData']['unity']);
     it('unit test for parseFunctionData', function() {
         expect(contract_tx['functionData']['recipient']).to.be.equal(parse_function_data[0]);
-        expect(original_data.isEqualTo(parse_function_data[1])).to.be.equal(true)
+        expect(original_data.toString()).to.be.equal(parse_function_data[1].toString());
     });
     it('get json for sending tx (send token)', function () {
         expect(send_tx).to.not.be.empty;

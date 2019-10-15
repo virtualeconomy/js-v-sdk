@@ -162,14 +162,14 @@ describe('test leasing tx', function () {
         let result = await sendLeasingTxByAccount(send_tx);
         expect(result).to.not.be.empty;
         expect(result['recipient']).to.be.equal(recipient);
-        expect(BigNumber(result['amount']).isEqualTo(BigNumber(send_tx['amount']))).to.be.equal(true);
+        expect(BigNumber(result['amount']).toString()).to.be.equal(BigNumber(send_tx['amount']).toString());
         expect(result['type']).to.be.equal(constants.LEASE_TX);
     });
     it('get leasing tx result by Chain', async ()=>{
         let result = await sendLeasingTxByChain(send_tx);
         expect(result).to.not.be.empty;
         expect(result['recipient']).to.be.equal(recipient);
-        expect(BigNumber(result['amount']).isEqualTo(BigNumber(send_tx['amount']))).to.be.equal(true);
+        expect(BigNumber(result['amount']).toString()).to.be.equal(BigNumber(send_tx['amount']).toString());
         expect(result['type']).to.be.equal(constants.LEASE_TX);
     });
 });
