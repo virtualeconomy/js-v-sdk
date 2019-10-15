@@ -6,6 +6,7 @@ const test_config = require('../libs/test_config');
 const expect = require("chai").expect;
 const network_byte = constants.TESTNET_BYTE;
 const host_ip = 'http://test.v.systems:9922';
+const BigNumber = require('bignumber.js').default;
 var test_lease_id = '';
 var cancel_lease_result = '';
 
@@ -161,14 +162,14 @@ describe('test leasing tx', function () {
         let result = await sendLeasingTxByAccount(send_tx);
         expect(result).to.not.be.empty;
         expect(result['recipient']).to.be.equal(recipient);
-        expect(result['amount']).to.be.equal(send_tx['amount']);
+        expect(BigNumber(result['amount']).isEqualTo(BigNumber(send_tx['amount']))).to.be.equal(true);
         expect(result['type']).to.be.equal(constants.LEASE_TX);
     });
     it('get leasing tx result by Chain', async ()=>{
         let result = await sendLeasingTxByChain(send_tx);
         expect(result).to.not.be.empty;
         expect(result['recipient']).to.be.equal(recipient);
-        expect(result['amount']).to.be.equal(send_tx['amount']);
+        expect(BigNumber(result['amount']).isEqualTo(BigNumber(send_tx['amount']))).to.be.equal(true);
         expect(result['type']).to.be.equal(constants.LEASE_TX);
     });
 });

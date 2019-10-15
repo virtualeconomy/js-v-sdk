@@ -47,7 +47,8 @@
         "test_account": "npm run build && mocha ./test/test_account.js",
         "test_blockchain": "npm run build && mocha ./test/test_blockchain.js",
         "test_tx": "npm run build && mocha ./test/test_tx.js",
-        "clean": "rm -rf dist",
-        "build": "cross-env BABEL_ENV=production babel-node build/bundle.js esm,cjs"
+        "clean": "rm -rf dist libs",
+        "pre-build": "babel --source-maps -d libs src test",
+        "build": "npm run pre-build && cross-env BABEL_ENV=production babel-node build/bundle.js esm,cjs"
     }
 }

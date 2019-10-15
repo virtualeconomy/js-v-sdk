@@ -75,7 +75,7 @@ describe('test create token', function () {
     let send_tx = tra.toJsonForSendingTx(signature);
     let create_parse_function_data = convert.parseFunctionData(send_tx['initData']);
     let create_original_data = BigNumber(contractTx['initData']['amount']).multipliedBy(contractTx['initData']['unity']);
-    it('unit test for parseFunctionData when destroy token', function() {
+    it('unit test for parseFunctionData', function() {
         expect(create_original_data.isEqualTo(create_parse_function_data[0])).to.be.equal(true);
         expect(contractTx['initData']['token_description']).to.be.equal(create_parse_function_data[2]);
     });
@@ -276,7 +276,6 @@ describe('test split token', function () {
     // Only sendToken function needs attachment
     let function_index = constants.SPLIT_FUNCIDX;
     let contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
-    console.log('contract_tx:  ', contract_tx);
     it('get split token Tx', function () {
         expect(contract_tx).to.not.be.empty;
         expect(contract_tx['contractId']).to.be.a('string');
@@ -289,7 +288,6 @@ describe('test split token', function () {
     let signature = acc.getSignature(bytes);
     let send_tx = tra.toJsonForSendingTx(signature);
     let parse_function_data = convert.parseFunctionData(send_tx['functionData']);
-    console.log('result: ', parse_function_data);
     let original_data = BigNumber(contract_tx['functionData']['new_unity']);
     it('unit test for parseFunctionData', function() {
         expect(original_data.isEqualTo(parse_function_data[0])).to.be.equal(true)
