@@ -1,14 +1,14 @@
-// import "babel-polyfill";
-const Transaction = require('../libs/transaction');
-const Account = require('../libs/account');
-const Blockchain = require('../libs/blockchain');
+const Transaction = require('../libs/transaction').default;
+const Account = require('../libs/account').default;
+const Blockchain = require('../libs/blockchain').default;
 const constants = require("../libs/constants");
 const contract_1 = require("../libs/contract");
 const test_config = require('../libs/test_config');
+const convert = require('../libs/utils/convert').default;
 const expect = require("chai").expect;
 const network_byte = constants.TESTNET_BYTE;
 const host_ip = 'http://test.v.systems:9922';
-
+const BigNumber = require('bignumber.js').default;
 /*======= Change the below before run ==========*/
 const recipient = "AUEMZKy23xvWixKySNDg448dXxwc4GEZCC3";
 const test_new_unity = 100000000;
@@ -73,7 +73,12 @@ describe('test create token', function () {
     let bytes = tra.toBytes();
     let signature = acc.getSignature(bytes);
     let send_tx = tra.toJsonForSendingTx(signature);
-
+    let create_parse_function_data = convert.parseFunctionData(send_tx['initData']);
+    let create_original_data = BigNumber(contractTx['initData']['amount']).multipliedBy(contractTx['initData']['unity']);
+    it('unit test for parseFunctionData when destroy token', function() {
+        expect(create_original_data.isEqualTo(create_parse_function_data[0])).to.be.equal(true);
+        expect(contractTx['initData']['token_description']).to.be.equal(create_parse_function_data[2]);
+    });
     it('get json for sending tx', function () {
         expect(send_tx).to.not.be.empty;
         expect(send_tx['contract']).to.be.a('string');
@@ -133,7 +138,6 @@ describe('test issue and destroy token', function () {
     // Only sendToken function needs attachment
     let function_index = constants.ISSUE_FUNCIDX;
     let issue_contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
-
     it('get issue token Tx', function () {
         expect(issue_contract_tx).to.not.be.empty;
         expect(issue_contract_tx['contractId']).to.be.a('string');
@@ -145,6 +149,11 @@ describe('test issue and destroy token', function () {
     let issue_bytes = tra.toBytes();
     let issue_signature = acc.getSignature(issue_bytes);
     let issue_send_tx = tra.toJsonForSendingTx(issue_signature);
+    let issue_parse_function_data = convert.parseFunctionData(issue_send_tx['functionData']);
+    let issue_original_data = BigNumber(issue_contract_tx['functionData']['amount']).multipliedBy(issue_contract_tx['functionData']['unity']);
+    it('unit test for parseFunctionData when issue token', function() {
+        expect(issue_original_data.isEqualTo(issue_parse_function_data[0])).to.be.equal(true)
+    });
     it('get json for sending tx (issue token)', function () {
         expect(issue_send_tx).to.not.be.empty;
         expect(issue_send_tx['functionData']).to.not.be.empty;
@@ -203,6 +212,11 @@ describe('test issue and destroy token', function () {
     let bytes = tra.toBytes();
     let destroy_signature = acc.getSignature(bytes);
     let destroy_send_tx = tra.toJsonForSendingTx(destroy_signature);
+    let destroy_parse_function_data = convert.parseFunctionData(destroy_send_tx['functionData']);
+    let destroy_original_data = BigNumber(issue_contract_tx['functionData']['amount']).multipliedBy(issue_contract_tx['functionData']['unity']);
+    it('unit test for parseFunctionData when destroy token', function() {
+        expect(destroy_original_data.isEqualTo(destroy_parse_function_data[0])).to.be.equal(true)
+    });
     it('get json for sending tx (destroy token)', function () {
         expect(destroy_send_tx).to.not.be.empty;
         expect(destroy_send_tx['contractId']).to.be.a('string');
@@ -262,6 +276,7 @@ describe('test split token', function () {
     // Only sendToken function needs attachment
     let function_index = constants.SPLIT_FUNCIDX;
     let contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
+    console.log('contract_tx:  ', contract_tx);
     it('get split token Tx', function () {
         expect(contract_tx).to.not.be.empty;
         expect(contract_tx['contractId']).to.be.a('string');
@@ -273,6 +288,12 @@ describe('test split token', function () {
     let bytes = tra.toBytes();
     let signature = acc.getSignature(bytes);
     let send_tx = tra.toJsonForSendingTx(signature);
+    let parse_function_data = convert.parseFunctionData(send_tx['functionData']);
+    console.log('result: ', parse_function_data);
+    let original_data = BigNumber(contract_tx['functionData']['new_unity']);
+    it('unit test for parseFunctionData', function() {
+        expect(original_data.isEqualTo(parse_function_data[0])).to.be.equal(true)
+    });
     it('get json for sending tx (split token)', function () {
         expect(send_tx).to.not.be.empty;
         expect(send_tx['functionData']).to.not.be.empty;
@@ -313,7 +334,7 @@ describe('test split token', function () {
     });
 });
 
-//test supersede token
+// test supersede token
 describe('test supersede token', function () {
     // Build account and transaction
     this.timeout(5000);
@@ -345,6 +366,10 @@ describe('test supersede token', function () {
     let bytes = tra.toBytes();
     let signature = acc.getSignature(bytes);
     let send_tx = tra.toJsonForSendingTx(signature);
+    let parse_function_data = convert.parseFunctionData(send_tx['functionData']);
+    it('unit test for parseFunctionData', function() {
+        expect(contract_tx['functionData']['new_issuer']).to.be.equal(parse_function_data[0]);
+    });
     it('get json for sending tx (supersede token)', function () {
         expect(send_tx).to.not.be.empty;
         expect(send_tx['functionData']).to.not.be.empty;
@@ -417,6 +442,12 @@ describe('test send token', function () {
     let bytes = tra.toBytes();
     let signature = acc.getSignature(bytes);
     let send_tx = tra.toJsonForSendingTx(signature);
+    let parse_function_data = convert.parseFunctionData(send_tx['functionData']);
+    let original_data = BigNumber(contract_tx['functionData']['amount']).multipliedBy(contract_tx['functionData']['unity']);
+    it('unit test for parseFunctionData', function() {
+        expect(contract_tx['functionData']['recipient']).to.be.equal(parse_function_data[0]);
+        expect(original_data.isEqualTo(parse_function_data[1])).to.be.equal(true)
+    });
     it('get json for sending tx (send token)', function () {
         expect(send_tx).to.not.be.empty;
         expect(send_tx['functionData']).to.not.be.empty;
@@ -491,6 +522,12 @@ describe('test send token', function () {
     let bytes = tra.toBytes();
     let signature = acc.getSignature(bytes);
     let send_tx = tra.toJsonForSendingTx(signature);
+    let parse_function_data = convert.parseFunctionData(send_tx['functionData']);
+    let original_data = BigNumber(contract_tx['functionData']['amount']).multipliedBy(contract_tx['functionData']['unity']);
+    it('unit test for parseFunctionData', function() {
+        expect(contract_tx['functionData']['recipient']).to.be.equal(parse_function_data[0]);
+        expect(original_data.isEqualTo(parse_function_data[1])).to.be.equal(true)
+    });
     it('get json for sending tx (send token)', function () {
         expect(send_tx).to.not.be.empty;
         expect(send_tx['functionData']).to.not.be.empty;

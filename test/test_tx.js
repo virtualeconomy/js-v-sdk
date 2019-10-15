@@ -1,7 +1,6 @@
-// import "babel-polyfill";
-const Transaction = require('../libs/transaction');
-const Account = require('../libs/account');
-const Blockchain = require('../libs/blockchain');
+const Transaction = require('../libs/transaction').default;
+const Account = require('../libs/account').default;
+const Blockchain = require('../libs/blockchain').default;
 const constants = require("../libs/constants");
 const test_config = require('../libs/test_config');
 const expect = require("chai").expect;
