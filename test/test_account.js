@@ -1,5 +1,4 @@
-// import "babel-polyfill";
-const Account = require('../libs/account');
+const Account = require('../libs/account').default;
 const constants = require("../libs/constants");
 const test_config = require('../libs/test_config');
 const expect = require("chai").expect;

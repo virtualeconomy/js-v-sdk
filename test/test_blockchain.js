@@ -1,5 +1,4 @@
-// import "babel-polyfill";
-const Blockchain = require('../libs/blockchain');
+const Blockchain = require('../libs/blockchain').default;
 const constants = require("../libs/constants");
 const expect = require("chai").expect;
 
