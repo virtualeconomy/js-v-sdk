@@ -125,8 +125,8 @@ const Crypto = {
         if (!length || length < 0) {
             throw new Error('Missing or invalid array length');
         }
-        let a = SecureRandom.default.randomUint8Array(length);
-        let b = SecureRandom.default.randomUint8Array(length);
+        let a = SecureRandom.randomUint8Array(length);
+        let b = SecureRandom.randomUint8Array(length);
         let result = new Uint32Array(length);
         for (let i = 0; i < length; i++) {
             let hash = Converters.byteArrayToHexString(sha256("" + a[i] + b[i]));
