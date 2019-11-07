@@ -379,6 +379,9 @@ export default class Transaction {
         switch (tx_type) {
             case Constants.OPC_TRANSACTION:
                 this.cold_tx['api'] = getApi(this.cold_tx);
+                if (this.cold_tx.hasOwnProperty('attachment')) {
+                    this.cold_tx['attachment'] = processAttachment(this.cold_tx['attachment'])
+                }
                 break;
             case Constants.OPC_CONTRACT:
                 this.cold_tx['api'] = Constants.API_VERSION;
