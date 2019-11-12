@@ -381,6 +381,7 @@ export default class Transaction {
                 this.cold_tx['api'] = getApi(this.cold_tx);
                 if (this.cold_tx.hasOwnProperty('attachment')) {
                     this.cold_tx['attachment'] = processAttachment(this.cold_tx['attachment'])
+                    if (this.cold_tx['attachment']) this.cold_tx['api'] = 4
                 }
                 break;
             case Constants.OPC_CONTRACT:
