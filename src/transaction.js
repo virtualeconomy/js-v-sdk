@@ -45,7 +45,7 @@ function checkStoredTx(stored_tx) {
 }
 
 function convertAmountToMinimumUnit(amount_str) {
-    let amount = Number(amount_str) * Constants.VSYS_PRECISION;
+    let amount = BigNumber(amount_str).multipliedBy(Constants.VSYS_PRECISION).toNumber();
     if (amount > Number.MAX_SAFE_INTEGER) {
         amount = BigNumber(amount_str).multipliedBy(Constants.VSYS_PRECISION).toFixed(0);
     }
