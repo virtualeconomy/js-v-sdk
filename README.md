@@ -1,24 +1,7 @@
 # js-vsystems
 JavaScript library for V Systems
 
-## Install from git
-
-  1. install node.js (homebrew or https://nodejs.org/)
-
-  2. clone this project
-
-``` bash
-$ git clone https://github.com/virtualeconomy/js-v-sdk.git
-```
-
-  3. install packages
-
-```bash
-$ cd js-v-sdk
-$ npm install
-```
-
-## Install from npm
+## Install from npm （recommended)
 
   1. install packages
 
@@ -26,8 +9,20 @@ $ npm install
 $ npm i @virtualeconomy/js-v-sdk
 ```
 
-## Usage
+## Install from git
 
+  1. install node.js (homebrew or https://nodejs.org/)
+
+  2. clone this project as a submodule
+
+``` bash
+$ git submodule add https://github.com/virtualeconomy/js-v-sdk.git js-v-sdk
+$ git submodule update --init --recursive
+```
+
+
+## Usage
+Here we introduce how to use this package installed from npm in detail.
 ### chain object
 1. For testnet chain:
 
