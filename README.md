@@ -405,7 +405,8 @@ Here we introduce how to use this package installed from npm in detail.
 
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
-    var contract_1 = require("../libs/contract");
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const contract_1 = vsys.contract;
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
     async function sendRegisterContractTx(tx) {
@@ -450,8 +451,9 @@ Here we introduce how to use this package installed from npm in detail.
     
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
-    var contract_1 = require("../libs/contract");
-    var constants = require("../libs/constants");
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const contract_1 = vsys.contract;
+    const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
     async function sendExecuteContractTx(tx) {
@@ -493,8 +495,9 @@ Here we introduce how to use this package installed from npm in detail.
     
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
-    var contract_1 = require("../libs/contract");
-    var constants = require("../libs/constants");
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const contract_1 = vsys.contract;
+    const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
     async function sendExecuteContractTx(tx) {
@@ -536,8 +539,9 @@ Here we introduce how to use this package installed from npm in detail.
     
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
-    var contract_1 = require("../libs/contract");
-    var constants = require("../libs/constants");
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const contract_1 = vsys.contract;
+    const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
     async function sendExecuteContractTx(tx) {
@@ -577,8 +581,9 @@ Here we introduce how to use this package installed from npm in detail.
     
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
-    var contract_1 = require("../libs/contract");
-    var constants = require("../libs/constants");
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const contract_1 = vsys.contract;
+    const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
     async function sendExecuteContractTx(tx) {
@@ -619,8 +624,9 @@ Here we introduce how to use this package installed from npm in detail.
     
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
-    var contract_1 = require("../libs/contract");
-    var constants = require("../libs/constants");
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const contract_1 = vsys.contract;
+    const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
     async function sendExecuteContractTx(tx) {
@@ -662,8 +668,9 @@ Here we introduce how to use this package installed from npm in detail.
     
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
-    var contract_1 = require("../libs/contract");
-    var constants = require("../libs/constants");
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const contract_1 = vsys.contract;
+    const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
     async function sendExecuteContractTx(tx) {
