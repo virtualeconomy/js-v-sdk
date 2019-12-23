@@ -1,52 +1,53 @@
 # js-vsystems
 JavaScript library for V Systems
 
-## Install
+## Install from npm （recommended)
+
+  1. install packages
+
+```bash
+$ npm i @virtualeconomy/js-v-sdk
+```
+
+## Install from git
 
   1. install node.js (homebrew or https://nodejs.org/)
 
-  2. clone this project
+  2. clone this project as a submodule
 
 ``` bash
-$ git clone https://github.com/virtualeconomy/js-v-sdk.git
+$ git submodule add https://github.com/virtualeconomy/js-v-sdk.git js-v-sdk
+$ git submodule update --init --recursive
 ```
 
-  3. install packages
-
-```bash
-  $ cd js-v-sdk
-  $ npm install
-```
-
-  4. build project and then you can use JS library for V Systems
-
-```bash
-  $ npm run build
-```
 
 ## Usage
 
+Here we introduce how to use this package installed from npm in detail.
+
 ### chain object
+
 1. For testnet chain:
 
     ```javascript
-    const Blockchain = require('../libs/blockchain');
-    const constants = require("../libs/constants");
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
     const network_byte = constants.TESTNET_BYTE;
-    var chain = new Blockchain(node_address, network_byte);
+    var chain = new vsys.Blockchain(node_address, network_byte);
     ```
 
 2. For mainnet chain:
 
     ```javascript
-    const Blockchain = require('../libs/blockchain');
-    const constants = require("../libs/constants");
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const constants = vsys.constants;
     const node_address = "https://wallet.v.systems/api"; // change to your node address
     const network_byte = constants.TESTNET_BYTE;
-    var chain = new Blockchain(node_address, network_byte);
+    var chain = new vsys.Blockchain(node_address, network_byte);
     ```
 3. Methods in chain object:
+
     ```javascript
     // Get Balance
     async function getBalance(chain, address) {
@@ -190,36 +191,36 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
 1. Create account by seed
 
     ```javascript
-    const Account = require('../libs/account');
-    const constants = require("../libs/constants");
-    var acc = new Account(constants.TESTNET_BYTE);
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const constants = vsys.constants;
+    var acc = new vsys.Account(constants.TESTNET_BYTE);
     acc.buildFromSeed("<your seed>", 0);
     ```
 
 2. Create account by private key
 
     ```javascript
-        const Account = require('../libs/account');
-        const constants = require("../libs/constants");
-        var acc = new Account(constants.TESTNET_BYTE);
-        acc.buildFromPrivateKey("<private key>");
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const constants = vsys.constants;
+    var acc = new vsys.Account(constants.TESTNET_BYTE);
+    acc.buildFromPrivateKey("<private key>");
     ```
 
 3. Create account by public key
 
     ```javascript
-    const Account = require('../libs/account');
-    const constants = require("../libs/constants");
-    var acc = new Account(constants.TESTNET_BYTE);
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const constants = vsys.constants;
+    var acc = new vsys.Account(constants.TESTNET_BYTE);
     acc.buildColdWallet("<public key>", '');
     ```
 
 4. Create account by address
 
     ```javascript
-    const Account = require('../libs/account');
-    const constants = require("../libs/constants");
-    var acc = new Account(constants.TESTNET_BYTE);
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const constants = vsys.constants;
+    var acc = new vsys.Account(constants.TESTNET_BYTE);
     acc.buildColdWallet('', "<address>");
     ```
 5. Methods in account object
@@ -264,10 +265,10 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
 1. Build transaction object
 
     ```javascript
-    const Transaction = require('../libs/transaction');
-    var constants = require("../libs/constants");
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    var constants = vsys.constants;
     const network_byte = constants.TESTNET_BYTE;
-    var tra = new Transaction(network_byte);
+    var tra = new vsys.Transaction(network_byte);
     ```
 
 2. Some methods in transaction object
@@ -404,7 +405,8 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
 
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
-    var contract_1 = require("../libs/contract");
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const contract_1 = vsys.contract;
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
     async function sendRegisterContractTx(tx) {
@@ -446,10 +448,12 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
 2. Execute contract
 
     Issue token
+    
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
-    var contract_1 = require("../libs/contract");
-    var constants = require("../libs/constants");
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const contract_1 = vsys.contract;
+    const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
     async function sendExecuteContractTx(tx) {
@@ -486,11 +490,14 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
     console.log('Json for cold signature:');
     console.log(cold_tx);
     ```
+    
     Destroy token
+    
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
-    var contract_1 = require("../libs/contract");
-    var constants = require("../libs/constants");
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const contract_1 = vsys.contract;
+    const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
     async function sendExecuteContractTx(tx) {
@@ -527,11 +534,14 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
     console.log('Json for cold signature:');
     console.log(cold_tx);
     ```
+    
     Split token
+    
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
-    var contract_1 = require("../libs/contract");
-    var constants = require("../libs/constants");
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const contract_1 = vsys.contract;
+    const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
     async function sendExecuteContractTx(tx) {
@@ -568,10 +578,12 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
     console.log(cold_tx);
     ```
     Supersede token
+    
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
-    var contract_1 = require("../libs/contract");
-    var constants = require("../libs/constants");
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const contract_1 = vsys.contract;
+    const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
     async function sendExecuteContractTx(tx) {
@@ -607,11 +619,14 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
     console.log('Json for cold signature:');
     console.log(cold_tx);
     ```
+    
     Send token by function buildSendTokenTx ( )
+    
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
-    var contract_1 = require("../libs/contract");
-    var constants = require("../libs/constants");
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const contract_1 = vsys.contract;
+    const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
     async function sendExecuteContractTx(tx) {
@@ -648,11 +663,14 @@ $ git clone https://github.com/virtualeconomy/js-v-sdk.git
     console.log('Json for cold signature:');
     console.log(cold_tx);
     ```
+    
     Send token
+    
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
-    var contract_1 = require("../libs/contract");
-    var constants = require("../libs/constants");
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const contract_1 = vsys.contract;
+    const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
     async function sendExecuteContractTx(tx) {
