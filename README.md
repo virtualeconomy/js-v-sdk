@@ -22,8 +22,11 @@ $ git submodule update --init --recursive
 
 
 ## Usage
+
 Here we introduce how to use this package installed from npm in detail.
+
 ### chain object
+
 1. For testnet chain:
 
     ```javascript
@@ -44,6 +47,7 @@ Here we introduce how to use this package installed from npm in detail.
     var chain = new vsys.Blockchain(node_address, network_byte);
     ```
 3. Methods in chain object:
+
     ```javascript
     // Get Balance
     async function getBalance(chain, address) {
@@ -443,6 +447,7 @@ Here we introduce how to use this package installed from npm in detail.
 2. Execute contract
 
     Issue token
+    
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     var contract_1 = require("../libs/contract");
@@ -483,7 +488,9 @@ Here we introduce how to use this package installed from npm in detail.
     console.log('Json for cold signature:');
     console.log(cold_tx);
     ```
+    
     Destroy token
+    
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     var contract_1 = require("../libs/contract");
@@ -524,7 +531,9 @@ Here we introduce how to use this package installed from npm in detail.
     console.log('Json for cold signature:');
     console.log(cold_tx);
     ```
+    
     Split token
+    
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     var contract_1 = require("../libs/contract");
@@ -565,6 +574,7 @@ Here we introduce how to use this package installed from npm in detail.
     console.log(cold_tx);
     ```
     Supersede token
+    
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     var contract_1 = require("../libs/contract");
@@ -604,7 +614,9 @@ Here we introduce how to use this package installed from npm in detail.
     console.log('Json for cold signature:');
     console.log(cold_tx);
     ```
+    
     Send token by function buildSendTokenTx ( )
+    
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     var contract_1 = require("../libs/contract");
@@ -645,7 +657,9 @@ Here we introduce how to use this package installed from npm in detail.
     console.log('Json for cold signature:');
     console.log(cold_tx);
     ```
+    
     Send token
+    
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     var contract_1 = require("../libs/contract");
