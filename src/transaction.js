@@ -258,7 +258,8 @@ export default class Transaction {
         this.acc = new Account(network_byte);
     }
 
-    buildPaymentTx(public_key, recipient, amount, attachment, timestamp) {
+    buildPaymentTx(public_key, recipient, amount, attachment, timestamp, fee) {
+        fee = typeof fee !== 'undefined' ? fee : Constants.TX_FEE
         if (!timestamp) {
             timestamp = Date.now() * 1e6;
         }
@@ -269,7 +270,7 @@ export default class Transaction {
             senderPublicKey: public_key,
             recipient: recipient,
             amount: convertAmountToMinimumUnit(amount),
-            fee: Constants.TX_FEE * Constants.VSYS_PRECISION,
+            fee: fee * Constants.VSYS_PRECISION,
             feeScale: Constants.FEE_SCALE,
             timestamp: timestamp,
             attachment: attachment,
@@ -279,7 +280,8 @@ export default class Transaction {
         return tx;
     }
 
-    buildLeasingTx(public_key, recipient, amount, timestamp) {
+    buildLeasingTx(public_key, recipient, amount, timestamp, fee) {
+        fee = typeof fee !== 'undefined' ? fee : Constants.TX_FEE
         if (!timestamp) {
             timestamp = Date.now() * 1e6;
         }
@@ -287,7 +289,7 @@ export default class Transaction {
             senderPublicKey: public_key,
             recipient: recipient,
             amount: convertAmountToMinimumUnit(amount),
-            fee: Constants.TX_FEE * Constants.VSYS_PRECISION,
+            fee: fee * Constants.VSYS_PRECISION,
             feeScale: Constants.FEE_SCALE,
             timestamp: timestamp,
             transactionType: Constants.LEASE_TX
@@ -296,14 +298,15 @@ export default class Transaction {
         return tx;
     }
 
-    buildCancelLeasingTx(public_key, lease_id, timestamp) {
+    buildCancelLeasingTx(public_key, lease_id, timestamp, fee) {
+        fee = typeof fee !== 'undefined' ? fee : Constants.TX_FEE
         if (!timestamp) {
             timestamp = Date.now() * 1e6;
         }
         let tx = {
             senderPublicKey: public_key,
             txId: lease_id,
-            fee: Constants.TX_FEE * Constants.VSYS_PRECISION,
+            fee: fee * Constants.VSYS_PRECISION,
             feeScale: Constants.FEE_SCALE,
             timestamp: timestamp,
             transactionType: Constants.CANCEL_LEASE_TX
@@ -312,7 +315,8 @@ export default class Transaction {
         return tx;
     }
 
-    buildRegisterContractTx(public_key, contract, init_data, description, timestamp) {
+    buildRegisterContractTx(public_key, contract, init_data, description, timestamp, fee) {
+        fee = typeof fee !== 'undefined' ? fee : Constants.CONTRACT_REGISTER_FEE
         if (!timestamp) {
             timestamp = Date.now() * 1e6;
         }
@@ -322,7 +326,7 @@ export default class Transaction {
         let tx = {
             contract: contract,
             description: description,
-            fee: Constants.CONTRACT_REGISTER_FEE * Constants.VSYS_PRECISION,
+            fee: fee * Constants.VSYS_PRECISION,
             feeScale: Constants.FEE_SCALE,
             initData: init_data,
             senderPublicKey: public_key,
@@ -332,13 +336,14 @@ export default class Transaction {
         return tx;
     }
 
-    buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment) {
+    buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment, fee) {
+        fee = typeof fee !== 'undefined' ? fee : Constants.CONTRACT_EXEC_FEE
         if (!timestamp) {
             timestamp = Date.now() * 1e6;
         }
         let tx = {
             contractId: contract_id,
-            fee: Constants.CONTRACT_EXEC_FEE * Constants.VSYS_PRECISION,
+            fee: fee * Constants.VSYS_PRECISION,
             feeScale: Constants.FEE_SCALE,
             functionData: function_data,
             functionIndex: function_index,
@@ -350,7 +355,8 @@ export default class Transaction {
         return tx;
     }
 
-    buildSendTokenTx(public_key, token_id, recipient, amount, unity, is_split_supported, attachment) {
+    buildSendTokenTx(public_key, token_id, recipient, amount, unity, is_split_supported, attachment, fee) {
+        fee = typeof fee !== 'undefined' ? fee : Constants.CONTRACT_EXEC_FEE
         if (attachment === undefined) {
             attachment = '';
         }
@@ -359,7 +365,7 @@ export default class Transaction {
         let contract_id = Common.tokenIDToContractID(token_id);
         let tx = {
             contractId: contract_id,
-            fee: Constants.CONTRACT_EXEC_FEE * Constants.VSYS_PRECISION,
+            fee: fee * Constants.VSYS_PRECISION,
             feeScale: Constants.FEE_SCALE,
             functionData: function_data,
             functionIndex: function_index,
