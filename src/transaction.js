@@ -280,6 +280,7 @@ export default class Transaction {
     }
 
     buildLeasingTx(public_key, recipient, amount, timestamp, fee) {
+        fee = typeof fee !== 'undefined' ? fee : Constants.TX_FEE
         if (!timestamp) {
             timestamp = Date.now() * 1e6;
         }
