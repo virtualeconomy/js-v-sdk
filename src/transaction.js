@@ -279,7 +279,7 @@ export default class Transaction {
         return tx;
     }
 
-    buildLeasingTx(public_key, recipient, amount, timestamp) {
+    buildLeasingTx(public_key, recipient, amount, timestamp, fee) {
         if (!timestamp) {
             timestamp = Date.now() * 1e6;
         }
@@ -287,7 +287,7 @@ export default class Transaction {
             senderPublicKey: public_key,
             recipient: recipient,
             amount: convertAmountToMinimumUnit(amount),
-            fee: Constants.TX_FEE * Constants.VSYS_PRECISION,
+            fee: fee * Constants.VSYS_PRECISION,
             feeScale: Constants.FEE_SCALE,
             timestamp: timestamp,
             transactionType: Constants.LEASE_TX
