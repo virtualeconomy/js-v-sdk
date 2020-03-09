@@ -355,8 +355,11 @@ export default class Transaction {
         return tx;
     }
 
-    buildSendTokenTx(public_key, token_id, recipient, amount, unity, is_split_supported, attachment, fee) {
+    buildSendTokenTx(public_key, token_id, recipient, amount, unity, is_split_supported, attachment, timestamp, fee) {
         fee = typeof fee !== 'undefined' ? fee : Constants.CONTRACT_EXEC_FEE
+        if (!timestamp) {
+            timestamp = Date.now() * 1e6;
+        }
         if (attachment === undefined) {
             attachment = '';
         }
@@ -370,7 +373,7 @@ export default class Transaction {
             functionData: function_data,
             functionIndex: function_index,
             senderPublicKey: public_key,
-            timestamp: Date.now() * 1e6,
+            timestamp: timestamp,
             attachment: attachment
         };
         this.stored_tx = tx;

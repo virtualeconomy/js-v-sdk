@@ -448,7 +448,7 @@ Here we introduce how to use this package installed from npm in detail.
 2. Execute contract
 
     Issue token
-    
+
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     const vsys = require("@virtualeconomy/js-v-sdk");
@@ -490,9 +490,9 @@ Here we introduce how to use this package installed from npm in detail.
     console.log('Json for cold signature:');
     console.log(cold_tx);
     ```
-    
+
     Destroy token
-    
+
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     const vsys = require("@virtualeconomy/js-v-sdk");
@@ -534,9 +534,9 @@ Here we introduce how to use this package installed from npm in detail.
     console.log('Json for cold signature:');
     console.log(cold_tx);
     ```
-    
+
     Split token
-    
+
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     const vsys = require("@virtualeconomy/js-v-sdk");
@@ -578,7 +578,7 @@ Here we introduce how to use this package installed from npm in detail.
     console.log(cold_tx);
     ```
     Supersede token
-    
+
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     const vsys = require("@virtualeconomy/js-v-sdk");
@@ -619,9 +619,9 @@ Here we introduce how to use this package installed from npm in detail.
     console.log('Json for cold signature:');
     console.log(cold_tx);
     ```
-    
+
     Send token by function buildSendTokenTx ( )
-    
+
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     const vsys = require("@virtualeconomy/js-v-sdk");
@@ -642,9 +642,10 @@ Here we introduce how to use this package installed from npm in detail.
     let unity = "<unity of this token>"; //1e8
     let is_split_supported = "<boolean>";
     let attachment = "<attachment>";
+    let timestamp = Date.now() * 1e6;
 
     // Build contract tx
-    tra.buildSendTokenTx(public_key, token_id, recipient, amount, unity, is_split_supported, attachment);
+    tra.buildSendTokenTx(public_key, token_id, recipient, amount, unity, is_split_supported, attachment, timestamp);
 
     // Get bytes
     let bytes = tra.toBytes();
@@ -663,9 +664,9 @@ Here we introduce how to use this package installed from npm in detail.
     console.log('Json for cold signature:');
     console.log(cold_tx);
     ```
-    
+
     Send token
-    
+
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     const vsys = require("@virtualeconomy/js-v-sdk");
