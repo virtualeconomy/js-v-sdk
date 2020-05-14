@@ -229,7 +229,7 @@ describe('testTokenBalance', function () {
     });
     it('get the address', async () =>{
         let result = await testTokenBalance(chain, address, token_id);
-        expect(result['address']).to.be.equal(address);
+        expect(result['address/contractId']).to.be.equal(address);
     });
     it('get the tokenId', async () =>{
         let result = await testTokenBalance(chain, address, token_id);
