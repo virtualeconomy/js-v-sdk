@@ -82,7 +82,7 @@ function transferAccount(account) {
 }
 
 
-// Data process function for registering contract and executing contract
+// Data process function for registering contract and executing contract(P.S.:name will be changed to 'processTokenContractData' or support all kinds of Contract Data within the function in the future)
 function processContractData(init_data) {
     if(!init_data.hasOwnProperty('amount')) {
         throw new Error("There is no field 'amount' in initData");
@@ -163,24 +163,34 @@ function processFunctionData(init_data, type) {
 
 // Fields-process functions for cold signature
 function getContractColdFields(cold_tx, network_byte, acc) {
+    // Another Solution: throw Error.
+    // if(cold_tx['contract'] !== Contract.TOKEN_CONTRACT && cold_tx['contract'] !== Contract.TOKEN_CONTRACT_WITH_SPLIT) {
+    //     throw new Error("This contract is not supported in the current SDK version");
+    // }
     let init_data = cold_tx['initData'];
-    if(!init_data.hasOwnProperty('amount')) {
-        throw new Error("There is no field 'amount' in initData");
-    }
-    if(!init_data.hasOwnProperty('unity')) {
-        throw new Error("There is no field 'unity' in initData");
-    }
-    if(!init_data.hasOwnProperty('token_description')) {
-        throw new Error("There is no field 'token_description' in initData");
-    }
     let amount = init_data['amount'];
     let unity = init_data['unity'];
     let token_description = init_data['token_description'];
     let public_key_bytes = Base58.decode(cold_tx['senderPublicKey']);
     cold_tx['address'] = acc.convertPublicKeyToAddress(public_key_bytes, network_byte);
-    cold_tx['contractInitExplain'] = 'Create token' + (cold_tx['contract'] === Contract.TOKEN_CONTRACT ? ' ' : ' (support split) ') + 'with max supply ' + BigNumber(amount);
-    cold_tx['contractInitTextual'] = "init(max=" + BigNumber(amount) + ",unity= "+ BigNumber(unity) + ",tokenDescription='" + token_description + "')";
-    cold_tx['contractInit'] = processContractData(cold_tx['initData']);
+    if(cold_tx['contract'] === Contract.TOKEN_CONTRACT || cold_tx['contract'] === Contract.TOKEN_CONTRACT_WITH_SPLIT) {
+        if(!init_data.hasOwnProperty('amount')) {
+            throw new Error("There is no field 'amount' in initData");
+        }
+        if(!init_data.hasOwnProperty('unity')) {
+            throw new Error("There is no field 'unity' in initData");
+        }
+        if(!init_data.hasOwnProperty('token_description')) {
+            throw new Error("There is no field 'token_description' in initData");
+        }
+        cold_tx['contractInitExplain'] = 'Create token' + (cold_tx['contract'] === Contract.TOKEN_CONTRACT ? ' ' : ' (support split) ') + 'with max supply ' + BigNumber(amount);
+        cold_tx['contractInitTextual'] = "init(max=" + BigNumber(amount) + ",unity= "+ BigNumber(unity) + ",tokenDescription='" + token_description + "')";
+        cold_tx['contractInit'] = processContractData(init_data);
+    } else {
+        cold_tx['contractInitExplain'] = ''
+        cold_tx['contractInitTextual'] = ''
+        cold_tx['contractInit'] = init_data
+    }
     delete cold_tx['senderPublicKey'];
     delete cold_tx['initData'];
 }
@@ -234,7 +244,9 @@ function getTransactionFields(sending_tx,type) {
     return sending_tx;
 }
 function getContractFields(sending_tx) {
-    sending_tx['initData'] = processContractData(sending_tx['initData']);
+    if(sending_tx['contract'] === Contract.TOKEN_CONTRACT || sending_tx['contract'] === Contract.TOKEN_CONTRACT_WITH_SPLIT) {
+        sending_tx['initData'] = processContractData(sending_tx['initData']);
+    }
 }
 function getFunctionFields(sending_tx, stored_tx, function_type) {
     let init_data = sending_tx['functionData'];
@@ -447,7 +459,9 @@ export default class Transaction {
                 field_type = this.stored_tx['transactionType'];
                 return (TxUtil.toBytes((this.cold_tx),field_type));
             case Constants.OPC_CONTRACT:
-                this.cold_tx['initData'] = processContractData(this.cold_tx['initData']);
+                if(this.cold_tx['contract'] === Contract.TOKEN_CONTRACT || this.cold_tx['contract'] === Contract.TOKEN_CONTRACT_WITH_SPLIT) {
+                    this.cold_tx['initData'] = processContractData(this.cold_tx['initData']);
+                }
                 field_type = 8 & (255);
                 return TxUtil.toBytes((this.cold_tx),field_type);
             case Constants.OPC_FUNCTION:
