@@ -30,7 +30,7 @@ export const AMOUNT_TYPE = 3;
 export const CONTRACT_TYPE = 6;
 export const SHORTTEXT_TYPE = 5;
 export const ACCOUNT_ADDR_TYPE = 2;
-
+export const TOKEN_ID_TYPE = 8;
 
 // function index
 export const SUPERSEDE_FUNCIDX = 0

@@ -41,6 +41,130 @@ async function sendExecuteContractTxByAccount(tx) {
 }
 
 const chain = new Blockchain(host_ip, network_byte);
+//test register payment contract
+describe('test register payment contract', function () {
+    this.timeout(5000);
+    // Build account and transaction
+    let acc =  new Account(network_byte);
+    acc.buildFromSeed(test_config.seed, test_config.nonce);
+    let tra = new Transaction(network_byte);
+    let address = acc.getAddress();
+
+    // Necessary data for registering payment contract
+    let contract = contract_1.PAYMENT_CONTRACT;
+    let public_key = acc.getPublicKey();
+    let token_id = test_token_id;
+    let contract_description = 'contract';
+    let timestamp = Date.now() * 1e6;
+    let init_data = {token_id};
+
+    // Result
+    let contractTx = tra.buildRegisterContractTx(public_key, contract, init_data, contract_description, timestamp);
+    it('get register contractTx', function () {
+        expect(contractTx).to.not.be.empty;
+        expect(contractTx['contract']).to.be.a('string');
+        expect(contractTx['senderPublicKey']).to.be.equal(public_key);
+        expect(contractTx['description']).to.be.equal(contract_description);
+        expect(contractTx['timestamp']).to.be.equal(timestamp);
+    });
+    let bytes = tra.toBytes();
+    let signature = acc.getSignature(bytes);
+    let send_tx = tra.toJsonForSendingTx(signature);
+    it('get json for sending tx', function () {
+        expect(send_tx).to.not.be.empty;
+        expect(send_tx['contract']).to.be.a('string');
+        expect(send_tx['initData']).to.not.be.empty;
+        expect(send_tx['signature']).to.not.be.empty;
+        expect(send_tx['senderPublicKey']).to.be.equal(public_key);
+        expect(send_tx['description']).to.be.equal(contract_description);
+    });
+
+    it('get send register contractTx result by Chain', async() =>{
+        let result = await sendRegisterContractTxByChain(send_tx);
+        expect(result).to.not.be.empty;
+        expect(result['description']).to.be.equal(contract_description);
+        expect(result['initData']).to.be.equal(send_tx['initData']);
+    });
+
+    it('get send register contractTx result by Account', async() =>{
+        let result = await sendRegisterContractTxByAccount(send_tx);
+        expect(result).to.not.be.empty;
+        expect(result['description']).to.be.equal(contract_description);
+        expect(result['initData']).to.be.equal(send_tx['initData']);
+    });
+
+    let cold_tx = tra.toJsonForColdSignature();
+    it('get json for cold signature', function () {
+        expect(cold_tx).to.not.be.empty;
+        expect(cold_tx['contract']).to.be.a('string');
+        expect(cold_tx['address']).to.be.equal(address);
+        expect(cold_tx['opc']).to.be.equal(constants.OPC_CONTRACT);
+        expect(cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
+        expect(cold_tx['api']).to.be.equal(constants.API_VERSION);
+    });
+})
+//test register lock contract
+describe('test register lock contract', function () {
+    this.timeout(5000);
+    // Build account and transaction
+    let acc =  new Account(network_byte);
+    acc.buildFromSeed(test_config.seed, test_config.nonce);
+    let tra = new Transaction(network_byte);
+    let address = acc.getAddress();
+
+    // Necessary data for registering lock contract
+    let contract = contract_1.LOCK_CONTRACT;
+    let public_key = acc.getPublicKey();
+    let token_id = test_token_id;
+    let contract_description = 'contract';
+    let timestamp = Date.now() * 1e6;
+    let init_data = {token_id};
+
+    // Result
+    let contractTx = tra.buildRegisterContractTx(public_key, contract, init_data, contract_description, timestamp);
+    it('get register contractTx', function () {
+        expect(contractTx).to.not.be.empty;
+        expect(contractTx['contract']).to.be.a('string');
+        expect(contractTx['senderPublicKey']).to.be.equal(public_key);
+        expect(contractTx['description']).to.be.equal(contract_description);
+        expect(contractTx['timestamp']).to.be.equal(timestamp);
+    });
+    let bytes = tra.toBytes();
+    let signature = acc.getSignature(bytes);
+    let send_tx = tra.toJsonForSendingTx(signature);
+    it('get json for sending tx', function () {
+        expect(send_tx).to.not.be.empty;
+        expect(send_tx['contract']).to.be.a('string');
+        expect(send_tx['initData']).to.not.be.empty;
+        expect(send_tx['signature']).to.not.be.empty;
+        expect(send_tx['senderPublicKey']).to.be.equal(public_key);
+        expect(send_tx['description']).to.be.equal(contract_description);
+    });
+
+    it('get send register contractTx result by Chain', async() =>{
+        let result = await sendRegisterContractTxByChain(send_tx);
+        expect(result).to.not.be.empty;
+        expect(result['description']).to.be.equal(contract_description);
+        expect(result['initData']).to.be.equal(send_tx['initData']);
+    });
+
+    it('get send register contractTx result by Account', async() =>{
+        let result = await sendRegisterContractTxByAccount(send_tx);
+        expect(result).to.not.be.empty;
+        expect(result['description']).to.be.equal(contract_description);
+        expect(result['initData']).to.be.equal(send_tx['initData']);
+    });
+
+    let cold_tx = tra.toJsonForColdSignature();
+    it('get json for cold signature', function () {
+        expect(cold_tx).to.not.be.empty;
+        expect(cold_tx['contract']).to.be.a('string');
+        expect(cold_tx['address']).to.be.equal(address);
+        expect(cold_tx['opc']).to.be.equal(constants.OPC_CONTRACT);
+        expect(cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
+        expect(cold_tx['api']).to.be.equal(constants.API_VERSION);
+    });
+})
 //test CreateToken
 describe('test create token', function () {
     this.timeout(5000);

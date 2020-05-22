@@ -401,8 +401,10 @@ Here we introduce how to use this package installed from npm in detail.
 
 ### contract related
 
-1. Register contract (Create token)
+1. Register contract
 
+    (1) Token Contract (Create token)
+    
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     const vsys = require("@virtualeconomy/js-v-sdk");
@@ -444,7 +446,91 @@ Here we introduce how to use this package installed from npm in detail.
     console.log('Json for cold signature:');
     console.log(cold_tx);
     ```
+    
+    (2)Payment Channel Contract
+    
+    ```javascript
+    // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const contract_1 = vsys.contract;
+    const node_address = "http://test.v.systems:9922"; // change to your node address
 
+    async function sendRegisterContractTx(tx) {
+        const result = await chain.sendRegisterContractTx(tx);
+        console.log(result);
+    }
+
+    // Necessary data for payment channel contract, init_data should contain 'token_id' key.
+    let contract = contract_1.PAYMENT_CONTRACT; // contract_1.PAYMENT_CONTRACT
+    let public_key = acc.getPublicKey();
+    let token_id = "<token_id>";
+    let contract_description = "<description for contract>";
+    let timestamp = Date.now() * 1e6;
+    let init_data = {token_id};
+
+    // Build contract tx
+    tra.buildRegisterContractTx(public_key, contract, init_data, contract_description, timestamp);
+
+    // Get bytes
+    let bytes = tra.toBytes();
+
+    // Get signature
+    let signature = acc.getSignature(bytes);
+
+    // Get json for sending tx
+    let send_tx = tra.toJsonForSendingTx(signature);
+
+    // Send transaction
+    sendRegisterContractTx(send_tx);
+
+    // You can also get json for cold signature
+    let cold_tx = tra.toJsonForColdSignature();
+    console.log('Json for cold signature:');
+    console.log(cold_tx);
+    ```
+    
+    (3)Lock Contract
+    
+    ```javascript
+    // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const contract_1 = vsys.contract;
+    const node_address = "http://test.v.systems:9922"; // change to your node address
+
+    async function sendRegisterContractTx(tx) {
+        const result = await chain.sendRegisterContractTx(tx);
+        console.log(result);
+    }
+
+    // Necessary data for lock contract, init_data should contain 'token_id' key.
+    let contract = contract_1.LOCK_CONTRACT; // contract_1.LOCK_CONTRACT
+    let public_key = acc.getPublicKey();
+    let token_id = "<token_id>";
+    let contract_description = "<description for contract>";
+    let timestamp = Date.now() * 1e6;
+    let init_data = {token_id};
+
+    // Build contract tx
+    tra.buildRegisterContractTx(public_key, contract, init_data, contract_description, timestamp);
+
+    // Get bytes
+    let bytes = tra.toBytes();
+
+    // Get signature
+    let signature = acc.getSignature(bytes);
+
+    // Get json for sending tx
+    let send_tx = tra.toJsonForSendingTx(signature);
+
+    // Send transaction
+    sendRegisterContractTx(send_tx);
+
+    // You can also get json for cold signature
+    let cold_tx = tra.toJsonForColdSignature();
+    console.log('Json for cold signature:');
+    console.log(cold_tx);
+    ```
+    
 2. Execute contract
 
     Issue token
