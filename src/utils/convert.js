@@ -100,6 +100,8 @@ const Convert = {
                 let short_text_length = bytes[2]
                 function_data.push(converters_1.byteArrayToString(bytes.slice(3, short_text_length + 3)))
                 bytes = bytes.slice(short_text_length + 3)
+            } else if (type === 8) {
+                function_data.push(Base58.encode(bytes.slice(1)))
             } else {
                 throw new Error('Wrong parameter type')
             }

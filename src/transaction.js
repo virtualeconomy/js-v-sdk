@@ -14,7 +14,6 @@ import TxUtil from './utils/txUtil';
 import * as Constants from './constants';
 import * as Contract from './contract';
 
-const function_string_type = ['SUPERSEDE', 'ISSUE', 'DESTROY', 'SPLIT', 'SEND'];
 function getTxType(stored_tx) {
     if (stored_tx.hasOwnProperty('transactionType')) {
         return Constants.OPC_TRANSACTION;
@@ -24,6 +23,21 @@ function getTxType(stored_tx) {
         return Constants.OPC_FUNCTION;
     } else {
         throw new Error('Invalid tx, build tx first! ')
+    }
+}
+
+function getContractType(contract) {
+    switch (contract) {
+        case Contract.TOKEN_CONTRACT:
+            return 'TOKEN_CONTRACT';
+        case Contract.TOKEN_CONTRACT_WITH_SPLIT:
+            return 'TOKEN_CONTRACT_WITH_SPLIT';
+        case Contract.PAYMENT_CONTRACT:
+            return 'PAYMENT_CONTRACT';
+        case Contract.LOCK_CONTRACT:
+            return 'LOCK_CONTRACT';
+        default:
+            throw new Error('Invalid contract! ')
     }
 }
 function getApi(cold_tx) {
@@ -52,50 +66,41 @@ function convertAmountToMinimumUnit(amount_str) {
     return amount;
 }
 
-function transferAmount(amount_data) {
-    let byte_arr = Convert.bigNumberToByteArray(amount_data);
-    let type_arr = new Array(1);
-    type_arr[0] = Constants.AMOUNT_TYPE;
-    let data_arr = type_arr.concat(byte_arr);
-    return data_arr;
-}
-
-function transferShortTxt(description) {
-    let byte_arr = Convert.stringToByteArray(description);
-
-    let type_arr = new Array(1);
-    type_arr[0] = Constants.SHORTTEXT_TYPE ;
-    let length = byte_arr.length;
-    let length_arr = Convert.shortToByteArray(length);
-    return type_arr.concat(length_arr.concat(byte_arr));
-}
-
 function processAttachment(description) {
     return Base58.encode(Convert.stringToByteArray(description));
 }
 
-function transferAccount(account) {
-    let account_arr = Base58.decode(account);
-    let type_arr = [Constants.ACCOUNT_ADDR_TYPE];
-    type_arr = type_arr.concat(Array.from(account_arr));
-    return type_arr;
-}
-
-function transferTokenId(token_id) {
-    let token_id_arr = Base58.decode(token_id)
-    let type_arr = [Constants.TOKEN_ID_TYPE];
-    type_arr = type_arr.concat(Array.from(token_id_arr))
-    return type_arr;
-}
-
-// Data process function for registering contract and executing contract(P.S.:name will be changed to 'processTokenContractData' or support all kinds of Contract Data within the function in the future)
-function processContractData(init_data) {
-    let contract_type = "TOKEN_CONTRACT"
-    if (init_data.hasOwnProperty('token_id')) {
-        contract_type = "CONTRACT"
+function data_bytes_gen(data, data_type) {
+    let data_bytes;
+    switch (data_type) {
+        case Constants.AMOUNT_TYPE:
+            data_bytes = Convert.bigNumberToByteArray(data);
+            break;
+        case Constants.SHORTTEXT_TYPE:
+            let byte_arr = Convert.stringToByteArray(data);
+            let length = byte_arr.length;
+            let length_arr = Convert.shortToByteArray(length);
+            data_bytes = length_arr.concat(byte_arr)
+            break;
+        case Constants.TOKEN_ID_TYPE:
+            let token_id_arr = Base58.decode(data);
+            data_bytes = Array.from(token_id_arr);
+            break;
+        case Constants.ACCOUNT_ADDR_TYPE:
+            let account_arr = Base58.decode(data);
+            data_bytes = Array.from(account_arr);
+            break;
+        case Constants.CONTRACT_ACCOUNT_TYPE:
+            let contract_account_arr = Base58.decode(data);
+            data_bytes = Array.from(contract_account_arr);
     }
+    return [data_type].concat(data_bytes);
+}
+
+// Data process function for registering contract
+function processContractData(init_data, contract_type) {
     switch (contract_type) {
-        case 'TOKEN_CONTRACT':
+        case 'TOKEN_CONTRACT': case 'TOKEN_CONTRACT_WITH_SPLIT':
             if(!init_data.hasOwnProperty('amount')) {
                 throw new Error("There is no field 'amount' in initData");
             }
@@ -108,37 +113,31 @@ function processContractData(init_data) {
             let max = BigNumber(init_data['amount']).multipliedBy(BigNumber(init_data['unity']));
             let unity = BigNumber(init_data['unity']);
             let token_description = init_data['token_description'];
-            let max_arr = transferAmount(max);
-            let unity_arr = transferAmount(unity);
-            let des_arr = transferShortTxt(token_description);
+            let max_arr = data_bytes_gen(max, Constants.AMOUNT_TYPE);
+            let unity_arr = data_bytes_gen(unity, Constants.AMOUNT_TYPE);
+            let des_arr = data_bytes_gen(token_description, Constants.SHORTTEXT_TYPE);
             let parameters_num = Convert.shortToByteArray(3);
             let encode_arr = parameters_num.concat(max_arr.concat(unity_arr.concat(des_arr)));
             return Base58.encode(encode_arr);
-        case 'CONTRACT':
+        case 'PAYMENT_CONTRACT': case 'LOCK_CONTRACT':
             if(!init_data.hasOwnProperty('token_id')) {
                 throw new Error("There is no field 'token_id' in initData");
             }
             parameters_num = Convert.shortToByteArray(1);
-            let token_id_arr = transferTokenId(init_data['token_id'])
+            let token_id_arr = data_bytes_gen(init_data['token_id'], Constants.TOKEN_ID_TYPE);
             encode_arr = parameters_num.concat(token_id_arr)
             return Base58.encode(encode_arr)
-
     }
 }
-function processFunctionData(init_data, type) {
-    let parameters_num,encode_arr,amount,account_arr,amount_arr;
-    switch (type) {
-        case 'SUPERSEDE' :
-            if(init_data.hasOwnProperty('new_issuer')) {
-                let new_issuer = init_data['new_issuer'];
-                account_arr = transferAccount(new_issuer);
-                parameters_num = Convert.shortToByteArray(1);
-                encode_arr = parameters_num.concat(account_arr);
-                return Base58.encode(Uint8Array.from(encode_arr));
-            } else {
-                throw new Error("There is no field 'new_issuer' in functionData");
-            }
-        case 'ISSUE' : case 'DESTROY':
+
+function processFunctionData(init_data) {
+    if (!init_data.hasOwnProperty('function_index_type')) {
+        throw new Error("There is no field 'function_index_type' in functionData");
+    }
+    let function_index_type = init_data['function_index_type'];
+    let parameters_num,encode_arr,amount,unity,account_arr,amount_arr;
+    switch (function_index_type) {
+        case Constants.ISSUE_FUNCIDX_TYPE: case Constants.DESTROY_FUNCIDX_TYPE:
             if(!init_data.hasOwnProperty('amount')) {
                 throw new Error("There is no field 'amount' in functionData");
             }
@@ -146,21 +145,30 @@ function processFunctionData(init_data, type) {
                 throw new Error("There is no field 'unity' in functionData");
             }
             amount = init_data['amount'];
-            let unity = init_data['unity'];
-            amount_arr = transferAmount(BigNumber(amount).multipliedBy(unity));
+            unity = init_data['unity'];
+            amount_arr = data_bytes_gen(BigNumber(amount).multipliedBy(unity), Constants.AMOUNT_TYPE);
             parameters_num = Convert.shortToByteArray(1);
             encode_arr = parameters_num.concat(amount_arr);
             return Base58.encode(Uint8Array.from(encode_arr));
-        case 'SPLIT' :
+        case Constants.SUPERSEDE_FUNCIDX_TYPE:
+            if(!init_data.hasOwnProperty('new_issuer')) {
+                throw new Error("There is no field 'new_issuer' in functionData");
+            }
+            let new_issuer = init_data['new_issuer'];
+            account_arr = data_bytes_gen(new_issuer, Constants.ACCOUNT_ADDR_TYPE);
+            parameters_num = Convert.shortToByteArray(1);
+            encode_arr = parameters_num.concat(account_arr);
+            return Base58.encode(Uint8Array.from(encode_arr));
+        case Constants.SPLIT_FUNCIDX_TYPE:
             if(!init_data.hasOwnProperty('new_unity')) {
                 throw new Error("There is no field 'new_unity' in functionData");
             }
             let new_unity = BigNumber(init_data['new_unity']);
-            let unity_arr = transferAmount(new_unity);
+            let unity_arr = data_bytes_gen(new_unity, Constants.AMOUNT_TYPE)
             parameters_num = Convert.shortToByteArray(1);
             encode_arr = parameters_num.concat(unity_arr);
             return Base58.encode(Uint8Array.from(encode_arr));
-        case 'SEND' :
+        case Constants.SEND_FUNCIDX_TYPE:
             if(!init_data.hasOwnProperty('recipient')) {
                 throw new Error("There is no field 'recipient' in functionData");
             }
@@ -172,76 +180,141 @@ function processFunctionData(init_data, type) {
             }
             let recipient = init_data['recipient'];
             amount = BigNumber(init_data['amount']).multipliedBy(init_data['unity']);
-            account_arr = transferAccount(recipient);
-            amount_arr = transferAmount(amount);
+            account_arr = data_bytes_gen(recipient, Constants.ACCOUNT_ADDR_TYPE);
+            amount_arr = data_bytes_gen(amount, Constants.AMOUNT_TYPE);
             parameters_num = Convert.shortToByteArray(2);
             encode_arr = parameters_num.concat(account_arr.concat(amount_arr));
             return Base58.encode(Uint8Array.from(encode_arr));
-        default :
-            throw new Error('Wrong function index!');
+        case Constants.TRANSFER_FUNCIDX_TYPE:
+            if(!init_data.hasOwnProperty('recipient')) {
+                throw new Error("There is no field 'recipient' in functionData");
+            }
+            if(!init_data.hasOwnProperty('amount')) {
+                throw new Error("There is no field 'amount' in functionData");
+            }
+            if(!init_data.hasOwnProperty('unity')) {
+                throw new Error("There is no field 'unity' in functionData");
+            }
+            if(!init_data.hasOwnProperty('sender')) {
+                throw new Error("There is no field 'sender' in functionData");
+            }
+            let sender = init_data['sender']
+            let sender_arr = data_bytes_gen(sender, Constants.ACCOUNT_ADDR_TYPE);
+            recipient = init_data['recipient'];
+            let recipient_arr = data_bytes_gen(recipient, Constants.ACCOUNT_ADDR_TYPE);
+            amount = BigNumber(init_data['amount']).multipliedBy(init_data['unity']);
+            amount_arr = data_bytes_gen(amount, Constants.AMOUNT_TYPE);
+            parameters_num = Convert.shortToByteArray(3);
+            encode_arr = parameters_num.concat(sender_arr.concat(recipient_arr.concat(amount_arr)));
+            return Base58.encode(Uint8Array.from(encode_arr));
+        case Constants.DEPOSIT_FUNCIDX_TYPE:
+            if(!init_data.hasOwnProperty('smart_contract')) {
+                throw new Error("There is no field 'smart_contract' in functionData");
+            }
+            if(!init_data.hasOwnProperty('amount')) {
+                throw new Error("There is no field 'amount' in functionData");
+            }
+            if(!init_data.hasOwnProperty('unity')) {
+                throw new Error("There is no field 'unity' in functionData");
+            }
+            if(!init_data.hasOwnProperty('sender')) {
+                throw new Error("There is no field 'sender' in functionData");
+            }
+            sender = init_data['sender'];
+            sender_arr = data_bytes_gen(sender, Constants.ACCOUNT_ADDR_TYPE);
+            let smart_contract = init_data['smart_contract'];
+            let smart_contract_arr = data_bytes_gen(smart_contract, Constants.CONTRACT_ACCOUNT_TYPE);
+            amount = BigNumber(init_data['amount']).multipliedBy(init_data['unity']);
+            amount_arr = data_bytes_gen(amount, Constants.AMOUNT_TYPE);
+            parameters_num = Convert.shortToByteArray(3);
+            encode_arr = parameters_num.concat(sender_arr.concat(smart_contract_arr.concat(amount_arr)));
+            return Base58.encode(Uint8Array.from(encode_arr));
+        case Constants.WITHDRAW_FUNCIDX_TYPE:
+            if(!init_data.hasOwnProperty('smart_contract')) {
+                throw new Error("There is no field 'smart_contract' in functionData");
+            }
+            if(!init_data.hasOwnProperty('amount')) {
+                throw new Error("There is no field 'amount' in functionData");
+            }
+            if(!init_data.hasOwnProperty('unity')) {
+                throw new Error("There is no field 'unity' in functionData");
+            }
+            if(!init_data.hasOwnProperty('recipient')) {
+                throw new Error("There is no field 'recipient' in functionData");
+            }
+            recipient = init_data['recipient'];
+            recipient_arr = data_bytes_gen(recipient, Constants.ACCOUNT_ADDR_TYPE);
+            smart_contract = init_data['smart_contract'];
+            smart_contract_arr = data_bytes_gen(smart_contract, Constants.CONTRACT_ACCOUNT_TYPE);
+            amount = BigNumber(init_data['amount']).multipliedBy(init_data['unity']);
+            amount_arr = data_bytes_gen(amount, Constants.AMOUNT_TYPE);
+            parameters_num = Convert.shortToByteArray(3);
+            encode_arr = parameters_num.concat(smart_contract_arr.concat(recipient_arr.concat(amount_arr)));
+            return Base58.encode(Uint8Array.from(encode_arr));
     }
 }
 
-
 // Fields-process functions for cold signature
 function getContractColdFields(cold_tx, network_byte, acc) {
-    // Another Solution: throw Error.
-    // if(cold_tx['contract'] !== Contract.TOKEN_CONTRACT && cold_tx['contract'] !== Contract.TOKEN_CONTRACT_WITH_SPLIT) {
-    //     throw new Error("This contract is not supported in the current SDK version");
-    // }
     let init_data = cold_tx['initData'];
     let public_key_bytes = Base58.decode(cold_tx['senderPublicKey']);
     cold_tx['address'] = acc.convertPublicKeyToAddress(public_key_bytes, network_byte);
-    if(cold_tx['contract'] === Contract.TOKEN_CONTRACT || cold_tx['contract'] === Contract.TOKEN_CONTRACT_WITH_SPLIT) {
-        if(!init_data.hasOwnProperty('amount')) {
-            throw new Error("There is no field 'amount' in initData");
-        }
-        if(!init_data.hasOwnProperty('unity')) {
-            throw new Error("There is no field 'unity' in initData");
-        }
-        if(!init_data.hasOwnProperty('token_description')) {
-            throw new Error("There is no field 'token_description' in initData");
-        }
-        let amount = init_data['amount'];
-        let unity = init_data['unity'];
-        let token_description = init_data['token_description'];
-        cold_tx['contractInitExplain'] = 'Create token' + (cold_tx['contract'] === Contract.TOKEN_CONTRACT ? ' ' : ' (support split) ') + 'with max supply ' + BigNumber(amount);
-        cold_tx['contractInitTextual'] = "init(max=" + BigNumber(amount) + ",unity= "+ BigNumber(unity) + ",tokenDescription='" + token_description + "')";
-        cold_tx['contractInit'] = processContractData(init_data);
-    } else {
-        cold_tx['contractInitExplain'] = ''
-        cold_tx['contractInitTextual'] = ''
-        cold_tx['contractInit'] = processContractData(init_data)
+    let contract_type = getContractType(cold_tx['contract']);
+    switch (contract_type) {
+        case 'TOKEN_CONTRACT': case 'TOKEN_CONTRACT_WITH_SPLIT':
+            if(!init_data.hasOwnProperty('amount')) {
+                throw new Error("There is no field 'amount' in initData");
+            }
+            if(!init_data.hasOwnProperty('unity')) {
+                throw new Error("There is no field 'unity' in initData");
+            }
+            if(!init_data.hasOwnProperty('token_description')) {
+                throw new Error("There is no field 'token_description' in initData");
+            }
+            cold_tx['contractInitExplain'] = 'Create token' + (contract_type === 'TOKEN_CONTRACT' ? ' ' : ' (support split) ') + 'with max supply ' + BigNumber(init_data['amount']);
+            cold_tx['contractInitTextual'] = "init(max=" + BigNumber(init_data['amount']) + ",unity= "+ BigNumber(init_data['unity']) + ",tokenDescription='" + init_data['token_description'] + "')";
+            break;
+        case 'PAYMENT_CONTRACT': case 'LOCK_CONTRACT':
+            cold_tx['contractInitExplain'] = ''
+            cold_tx['contractInitTextual'] = ''
     }
+    cold_tx['contractInit'] = processContractData(init_data, contract_type);
     delete cold_tx['senderPublicKey'];
     delete cold_tx['initData'];
 }
 
-function getFunctionColdFields(cold_tx, stored_tx, function_type, network_byte, acc) {
+function getFunctionColdFields(cold_tx, network_byte, acc) {
     let init_data = cold_tx['functionData'];
-    switch (function_type) {
-        case Constants.SUPERSEDE_FUNCIDX:
+    cold_tx['function'] = processFunctionData(init_data)
+    let function_index_type = init_data['function_index_type'];
+    switch (function_index_type) {
+        case Constants.SUPERSEDE_FUNCIDX_TYPE:
             cold_tx['functionExplain'] = 'Set issuer to ' + init_data['new_issuer'];
             break;
-        case Constants.ISSUE_FUNCIDX:
+        case Constants.ISSUE_FUNCIDX_TYPE:
             cold_tx['functionExplain'] = 'Issue ' + init_data['amount'] + ' Token';
             break;
-        case Constants.DESTROY_FUNCIDX:
+        case Constants.DESTROY_FUNCIDX_TYPE:
             cold_tx['functionExplain'] = 'Destroy ' + init_data['amount'] + ' Token';
             break;
-    }
-    if ((function_type === Constants.SEND_FUNCIDX && stored_tx['attachment'] !== undefined) || function_type === Constants.SEND_FUNCIDX_SPLIT  ) {
-        cold_tx['attachment'] = processAttachment(cold_tx['attachment']);
-        cold_tx['function'] = processFunctionData(init_data, 'SEND');
-        cold_tx['functionExplain'] = 'send ' + init_data['amount'] + ' token to ' + init_data['recipient'];
-    } else {
-        if (function_type === Constants.SPLIT_FUNCIDX && stored_tx['attachment'] === undefined) {
+        case Constants.SPLIT_FUNCIDX_TYPE:
             cold_tx['functionExplain'] = 'Set token unity to ' + init_data['new_unity'];
-        }
-        cold_tx['attachment'] = '';
-        cold_tx['function'] = processFunctionData(init_data, function_string_type[function_type]);
+            break;
+        case Constants.SEND_FUNCIDX_TYPE:
+            cold_tx['functionExplain'] = 'Send ' + init_data['amount'] + ' token to ' + init_data['recipient'];
+            break;
+        case Constants.TRANSFER_FUNCIDX_TYPE:
+            cold_tx['functionExplain'] = 'Transfer ' + init_data['amount'] + ' token from ' + init_data['sender'] + ' to ' + init_data['recipient'];
+            break;
+        case Constants.DEPOSIT_FUNCIDX_TYPE:
+            cold_tx['functionExplain'] = 'Deposit Token';
+            break;
+        case Constants.WITHDRAW_FUNCIDX_TYPE:
+            cold_tx['functionExplain'] = 'Withdraw Token';
+            break;
     }
     let public_key_bytes = Base58.decode(cold_tx['senderPublicKey']);
+    cold_tx['attachment'] = processAttachment(cold_tx['attachment']);
     cold_tx['address'] = acc.convertPublicKeyToAddress(public_key_bytes, network_byte);
     cold_tx['functionId'] = cold_tx['functionIndex'];
     delete cold_tx['functionIndex'];
@@ -265,23 +338,9 @@ function getTransactionFields(sending_tx,type) {
     }
     return sending_tx;
 }
-function getContractFields(sending_tx) {
-    sending_tx['initData'] = processContractData(sending_tx['initData'])
-}
-function getFunctionFields(sending_tx, stored_tx, function_type) {
-    let init_data = sending_tx['functionData'];
-    if ((function_type === Constants.SEND_FUNCIDX && stored_tx['attachment'] !== undefined) || function_type === Constants.SEND_FUNCIDX_SPLIT  ) {
-        sending_tx['attachment'] = processAttachment(sending_tx['attachment']);
-        sending_tx['functionData'] = processFunctionData(init_data, 'SEND');
-    } else {
-        delete sending_tx['attachment'];
-        sending_tx['functionData'] = processFunctionData(init_data, function_string_type[function_type]);
-    }
-}
 
 
 export default class Transaction {
-
     constructor(network_byte) {
         this.stored_tx = {}; // Fields for original data
         this.cold_tx = {}; // Fields for ColdSignature
@@ -369,7 +428,8 @@ export default class Transaction {
     }
 
     buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment, fee) {
-        fee = typeof fee !== 'undefined' ? fee : Constants.CONTRACT_EXEC_FEE
+        fee = typeof fee !== 'undefined' ? fee : Constants.CONTRACT_EXEC_FEE;
+        attachment = typeof attachment === 'undefined' ? '' : attachment;
         if (!timestamp) {
             timestamp = Date.now() * 1e6;
         }
@@ -396,7 +456,8 @@ export default class Transaction {
             attachment = '';
         }
         let function_index = is_split_supported? Constants.SEND_FUNCIDX_SPLIT : Constants.SEND_FUNCIDX;
-        let function_data = { recipient, amount, unity};
+        let function_index_type = Constants.SEND_FUNCIDX_TYPE;
+        let function_data = {recipient, amount, unity, function_index_type};
         let contract_id = Common.tokenIDToContractID(token_id);
         let tx = {
             contractId: contract_id,
@@ -431,7 +492,7 @@ export default class Transaction {
                 break;
             case Constants.OPC_FUNCTION:
                 this.cold_tx['api'] = Constants.API_VERSION;
-                getFunctionColdFields(this.cold_tx, this.stored_tx, this.stored_tx['functionIndex'], this.network_byte, this.acc);
+                getFunctionColdFields(this.cold_tx, this.network_byte, this.acc);
                 break;
         }
         this.cold_tx['opc'] = tx_type;
@@ -446,10 +507,12 @@ export default class Transaction {
             throw new Error(err);
         }
     }
+
     async getQrBase64ForColdSignature() {
         const result = this.toJsonForColdSignature();
         return await this.getQrBase64(result);
     }
+
     toJsonForSendingTx(signature) {
         let tx_type = getTxType(this.stored_tx);
         checkStoredTx(this.stored_tx);
@@ -459,10 +522,12 @@ export default class Transaction {
                 this.sending_tx = getTransactionFields(this.sending_tx, this.sending_tx['transactionType']);
                 break;
             case Constants.OPC_CONTRACT:
-                getContractFields(this.sending_tx);
+                let contract_type = getContractType(this.sending_tx['contract']);
+                this.sending_tx['initData'] = processContractData(this.sending_tx['initData'], contract_type)
                 break;
             case Constants.OPC_FUNCTION:
-                getFunctionFields(this.sending_tx, this.stored_tx, this.stored_tx['functionIndex']);
+                this.sending_tx['functionData'] = processFunctionData(this.sending_tx['functionData'])
+                this.sending_tx['attachment'] = processAttachment(this.sending_tx['attachment']);
                 break;
         }
         this.sending_tx['signature'] = signature;
@@ -471,7 +536,7 @@ export default class Transaction {
 
     toBytes() {
         let tx_type = getTxType(this.stored_tx);
-        let field_type, function_type;
+        let field_type;
         checkStoredTx(this.stored_tx);
         this.cold_tx = JSON.parse(JSON.stringify(this.stored_tx));// deep copy
         switch (tx_type) {
@@ -479,17 +544,12 @@ export default class Transaction {
                 field_type = this.stored_tx['transactionType'];
                 return (TxUtil.toBytes((this.cold_tx),field_type));
             case Constants.OPC_CONTRACT:
-                this.cold_tx['initData'] = processContractData(this.cold_tx['initData']);
+                let contract_type = getContractType(this.cold_tx['contract']);
+                this.cold_tx['initData'] = processContractData(this.cold_tx['initData'], contract_type);
                 field_type = 8 & (255);
                 return TxUtil.toBytes((this.cold_tx),field_type);
             case Constants.OPC_FUNCTION:
-                function_type = this.stored_tx['functionIndex'];
-                if ((function_type === Constants.SEND_FUNCIDX && this.stored_tx['attachment'] !== undefined) || function_type === Constants.SEND_FUNCIDX_SPLIT  ) {
-                this.cold_tx['functionData'] = processFunctionData(this.cold_tx['functionData'], 'SEND');
-                } else {
-                this.cold_tx['attachment'] = '';
-                this.cold_tx['functionData'] = processFunctionData(this.cold_tx['functionData'], function_string_type[function_type]);
-                }
+                this.cold_tx['functionData'] = processFunctionData(this.cold_tx['functionData'])
                 field_type = 9 & (255);
                 return TxUtil.toBytes((this.cold_tx),field_type);
         }

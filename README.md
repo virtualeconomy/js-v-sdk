@@ -447,7 +447,7 @@ Here we introduce how to use this package installed from npm in detail.
     console.log(cold_tx);
     ```
     
-    (2)Payment Channel Contract
+    (2) Payment Channel Contract
     
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
@@ -461,7 +461,7 @@ Here we introduce how to use this package installed from npm in detail.
     }
 
     // Necessary data for payment channel contract, init_data should contain 'token_id' key.
-    let contract = contract_1.PAYMENT_CONTRACT; // contract_1.PAYMENT_CONTRACT
+    let contract = contract_1.PAYMENT_CONTRACT;
     let public_key = acc.getPublicKey();
     let token_id = "<token_id>";
     let contract_description = "<description for contract>";
@@ -489,7 +489,7 @@ Here we introduce how to use this package installed from npm in detail.
     console.log(cold_tx);
     ```
     
-    (3)Lock Contract
+    (3) Lock Contract
     
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
@@ -503,7 +503,7 @@ Here we introduce how to use this package installed from npm in detail.
     }
 
     // Necessary data for lock contract, init_data should contain 'token_id' key.
-    let contract = contract_1.LOCK_CONTRACT; // contract_1.LOCK_CONTRACT
+    let contract = contract_1.LOCK_CONTRACT;
     let public_key = acc.getPublicKey();
     let token_id = "<token_id>";
     let contract_description = "<description for contract>";
@@ -547,13 +547,14 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for issue token, function_data should contain 'amount', 'unity' two keys, and attachment should be undefined
+    // Necessary data for issue token, function_data should contain 'amount', 'unity', 'function_index_type' three keys.
     let public_key = acc.getPublicKey();
     let amount = "<amount>";
     let unity = "<unity of this token>";
     let timestamp = Date.now() * 1e6;
-    let function_data = {amount, unity};
-    let attachment = undefined;
+    let function_index_type = constants.ISSUE_FUNCIDX_TYPE;
+    let function_data = {amount, unity, function_index_type};
+    let attachment = 'issue token';
     let function_index = constants.ISSUE_FUNCIDX;
 
     // Build contract tx
@@ -591,12 +592,13 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for destroy token, function_data should contain 'amount', 'unity' two keys, and attachment should be undefined
+    // Necessary data for destroy token, function_data should contain 'amount', 'unity', 'function_index_type' three keys.
     let public_key = acc.getPublicKey();
     let amount = "<amount>";
     let unity = "<unity of this token>"; // 1e8
     let timestamp = Date.now() * 1e6;
-    let function_data = {amount, unity};
+    let function_index_type = constants.DESTROY_FUNCIDX_TYPE;
+    let function_data = {amount, unity, function_index_type};
     let attachment = undefined;
     let function_index = constants.DESTROY_FUNCIDX;
 
@@ -635,12 +637,13 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for split token, function_data should contain 'new_unity' key, and attachment should be undefined
+    // Necessary data for split token, function_data should contain 'new_unity', 'function_index_type' two keys.
     let public_key = acc.getPublicKey();
     let new_unity = "<new unity>";
     let timestamp = Date.now() * 1e6;
-    let function_data = { new_unity };
-    let attachment = undefined;
+    let function_index_type = constants.SPLIT_FUNCIDX_TYPE;
+    let function_data = {new_unity, function_index_type};
+    let attachment = 'split token';
     let function_index = constants.SPLIT_FUNCIDX;
 
     // Build contract tx
@@ -677,12 +680,13 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for supersede token, function_data should contain 'new_issuer' key, and attachment should be undefined
+    // Necessary data for supersede token, function_data should contain 'new_issuer', 'function_index_type' two keys.
     let public_key = acc.getPublicKey();
     let new_issuer = "<new issuer>";
     let timestamp = Date.now() * 1e6;
-    let function_data = { new_issuer };
-    let attachment = undefined;
+    let function_index_type = constants.SUPERSEDE_FUNCIDX_TYPE;
+    let function_data = {new_issuer, function_index_type};   
+    let attachment = 'supersede token';
     let function_index = constants.SUPERSEDE_FUNCIDX;
 
     // Build contract tx
@@ -765,13 +769,14 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for send token, function_data should contain 'recipient', 'amount', 'unity' three keys, and attachment should not be undefined
+    // Necessary data for send token, function_data should contain 'recipient', 'amount', 'unity', 'function_index_type' four keys.
     let public_key = acc.getPublicKey();
     let recipient = "<recipient address>";
     let timestamp = Date.now() * 1e6;
     let amount = "<amount>";
     let unity = "<unity of this token>"; //1e8
-    let function_data = {recipient, amount, unity}
+    let function_index_type = constants.SEND_FUNCIDX_TYPE;
+    let function_data = {recipient, amount, unity, function_index_type}
     let attachment = "<attachment>";
     let function_index = constants.SEND_FUNCIDX_SPLIT; // constants.SEND_FUNCIDX
 
@@ -795,7 +800,148 @@ Here we introduce how to use this package installed from npm in detail.
     console.log('Json for cold signature:');
     console.log(cold_tx);
     ```
+    
+    Transfer token
 
+    ```javascript
+    // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const contract_1 = vsys.contract;
+    const constants = vsys.constants;
+    const node_address = "http://test.v.systems:9922"; // change to your node address
+
+    async function sendExecuteContractTx(tx) {
+        const result = await chain.sendExecuteContractTx(tx);
+        console.log(result);
+    }
+
+    // Necessary data for transfer token, function_data should contain 'sender', 'amount', 'unity', 'recipient', 'function_index_type' five keys.
+    let public_key = acc.getPublicKey();
+    let sender = "<sender address>"; // acc.getAddress();
+    let recipient = "<recipient address>";
+    let timestamp = Date.now() * 1e6;
+    let amount = "<amount>";
+    let unity = "<unity of this token>"; //1e8
+    let function_index_type = constants.TRANSFER_FUNCIDX_TYPE;
+    let function_data = {sender, recipient, amount, unity, function_index_type};
+    let attachment = "<attachment>";
+    let function_index = constants.TRANSFER_FUNCIDX_SPLIT; // constants.TRANSFER_FUNCIDX
+
+    // Build contract tx
+    tra.buildExecuteContractTx(public_key, "<contract_id>", function_index, function_data, timestamp, attachment);
+
+    // Get bytes
+    let bytes = tra.toBytes();
+
+    // Get signature
+    let signature = acc.getSignature(bytes);
+
+    // Get json for sending tx
+    let send_tx = tra.toJsonForSendingTx(signature);
+
+    // Send transaction
+    sendExecuteContractTx(send_tx);
+
+    // You can also get json for cold signature
+    let cold_tx = tra.toJsonForColdSignature();
+    console.log('Json for cold signature:');
+    console.log(cold_tx);
+    ```
+    
+    Deposit token
+
+    ```javascript
+    // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const contract_1 = vsys.contract;
+    const constants = vsys.constants;
+    const node_address = "http://test.v.systems:9922"; // change to your node address
+
+    async function sendExecuteContractTx(tx) {
+        const result = await chain.sendExecuteContractTx(tx);
+        console.log(result);
+    }
+
+    // Necessary data for deposit token, function_data should contain 'sender', 'amount', 'unity', 'smart_contract', 'function_index_type' five keys.
+    let public_key = acc.getPublicKey();
+    let sender = "<sender address>"; // acc.getAddress();
+    let timestamp = Date.now() * 1e6;
+    let amount = "<amount>";
+    let unity = "<unity of this token>"; //1e8
+    let smart_contract = "<smart contract id>"; // This contract should be payment channel contract or lock contract
+    let function_index_type = constants.DEPOSIT_FUNCIDX_TYPE;
+    let function_data = {sender, smart_contract, amount, unity, function_index_type};
+    let attachment = "<attachment>";
+    let function_index = constants.DEPOSIT_FUNCIDX_SPLIT; // constants.DEPOSIT_FUNCIDX
+
+    // Build contract tx
+    tra.buildExecuteContractTx(public_key, "<contract_id>", function_index, function_data, timestamp, attachment);
+
+    // Get bytes
+    let bytes = tra.toBytes();
+
+    // Get signature
+    let signature = acc.getSignature(bytes);
+
+    // Get json for sending tx
+    let send_tx = tra.toJsonForSendingTx(signature);
+
+    // Send transaction
+    sendExecuteContractTx(send_tx);
+
+    // You can also get json for cold signature
+    let cold_tx = tra.toJsonForColdSignature();
+    console.log('Json for cold signature:');
+    console.log(cold_tx);
+    ```
+
+    Withdraw token
+
+    ```javascript
+    // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const contract_1 = vsys.contract;
+    const constants = vsys.constants;
+    const node_address = "http://test.v.systems:9922"; // change to your node address
+
+    async function sendExecuteContractTx(tx) {
+        const result = await chain.sendExecuteContractTx(tx);
+        console.log(result);
+    }
+
+    // Necessary data for withdraw token, function_data should contain 'recipient', 'amount', 'unity', 'smart_contract', 'function_index_type' five keys.
+    let public_key = acc.getPublicKey();
+    let recipient = "<recipient address>";
+    let timestamp = Date.now() * 1e6;
+    let amount = "<amount>";
+    let unity = "<unity of this token>"; //1e8
+    let smart_contract = "<smart contract id>"; // This contract should be payment channel contract or lock contract
+    let function_index_type = constants.WITHDRAW_FUNCIDX_TYPE;
+    let function_data = {smart_contract, recipient, amount, unity, function_index_type};
+    let attachment = "<attachment>";
+    let function_index = constants.WITHDRAW_FUNCIDX_SPLIT; // constants.WITHDRAW_FUNCIDX
+
+    // Build contract tx
+    tra.buildExecuteContractTx(public_key, "<contract_id>", function_index, function_data, timestamp, attachment);
+
+    // Get bytes
+    let bytes = tra.toBytes();
+
+    // Get signature
+    let signature = acc.getSignature(bytes);
+
+    // Get json for sending tx
+    let send_tx = tra.toJsonForSendingTx(signature);
+
+    // Send transaction
+    sendExecuteContractTx(send_tx);
+
+    // You can also get json for cold signature
+    let cold_tx = tra.toJsonForColdSignature();
+    console.log('Json for cold signature:');
+    console.log(cold_tx);
+    ```
+    
 ## Sample Code and Testing
 
 
