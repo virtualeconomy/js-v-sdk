@@ -416,7 +416,7 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for creating token, init_data should contain 'amount', 'unity', 'token_description' three keys.
+    // Necessary data for creating token, use tra.tokenContractDataGen(amount,unity,token_description) to generate init_data.
     let contract = contract_1.TOKEN_CONTRACT; // contract_1.TOKEN_CONTRACT_WITH_SPLIT
     let public_key = acc.getPublicKey();
     let amount = "<amount>";
@@ -424,7 +424,7 @@ Here we introduce how to use this package installed from npm in detail.
     let token_description = "<description for token>";
     let contract_description = "<description for contract>";
     let timestamp = Date.now() * 1e6;
-    let init_data = {amount, unity, token_description};
+    let init_data = tra.tokenContractDataGen(amount,unity,token_description);
 
     // Build contract tx
     tra.buildRegisterContractTx(public_key, contract, init_data, contract_description, timestamp);
@@ -460,13 +460,13 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for payment channel contract, init_data should contain 'token_id' key.
+    // Necessary data for payment channel contract, use tra.paymentContractDataGen(token_id) to generate init_data.
     let contract = contract_1.PAYMENT_CONTRACT;
     let public_key = acc.getPublicKey();
     let token_id = "<token_id>";
     let contract_description = "<description for contract>";
     let timestamp = Date.now() * 1e6;
-    let init_data = {token_id};
+    let init_data = tra.paymentContractDataGen(token_id);
 
     // Build contract tx
     tra.buildRegisterContractTx(public_key, contract, init_data, contract_description, timestamp);
@@ -502,13 +502,13 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for lock contract, init_data should contain 'token_id' key.
+    // Necessary data for lock contract, use tra.lockContractDataGen(token_id) to generate init_data.
     let contract = contract_1.LOCK_CONTRACT;
     let public_key = acc.getPublicKey();
     let token_id = "<token_id>";
     let contract_description = "<description for contract>";
     let timestamp = Date.now() * 1e6;
-    let init_data = {token_id};
+    let init_data = tra.lockContractDataGen(token_id);
 
     // Build contract tx
     tra.buildRegisterContractTx(public_key, contract, init_data, contract_description, timestamp);
@@ -547,13 +547,12 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for issue token, function_data should contain 'amount', 'unity', 'function_index_type' three keys.
+    // Necessary data for issue token, use tra.issueDataGen(amount, unity) to generate function_data.
     let public_key = acc.getPublicKey();
     let amount = "<amount>";
     let unity = "<unity of this token>";
     let timestamp = Date.now() * 1e6;
-    let function_index_type = constants.ISSUE_FUNCIDX_TYPE;
-    let function_data = {amount, unity, function_index_type};
+    let function_data = tra.issueDataGen(amount, unity);
     let attachment = 'issue token';
     let function_index = constants.ISSUE_FUNCIDX;
 
@@ -592,14 +591,13 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for destroy token, function_data should contain 'amount', 'unity', 'function_index_type' three keys.
+    // Necessary data for destroy token, use tra.destroyDataGen(amount, unity) to generate function_data.
     let public_key = acc.getPublicKey();
     let amount = "<amount>";
     let unity = "<unity of this token>"; // 1e8
     let timestamp = Date.now() * 1e6;
-    let function_index_type = constants.DESTROY_FUNCIDX_TYPE;
-    let function_data = {amount, unity, function_index_type};
-    let attachment = undefined;
+    let function_data = tra.destroyDataGen(amount, unity);
+    let attachment = 'destroy token';
     let function_index = constants.DESTROY_FUNCIDX;
 
     // Build contract tx
@@ -637,12 +635,11 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for split token, function_data should contain 'new_unity', 'function_index_type' two keys.
+    // Necessary data for split token, use tra.splitDataGen(new_unity) to generate function_data.
     let public_key = acc.getPublicKey();
     let new_unity = "<new unity>";
     let timestamp = Date.now() * 1e6;
-    let function_index_type = constants.SPLIT_FUNCIDX_TYPE;
-    let function_data = {new_unity, function_index_type};
+    let function_data = tra.splitDataGen(new_unity);
     let attachment = 'split token';
     let function_index = constants.SPLIT_FUNCIDX;
 
@@ -680,12 +677,11 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for supersede token, function_data should contain 'new_issuer', 'function_index_type' two keys.
+    // Necessary data for supersede token, use tra.supersedeDataGen(new_issuer) to generate function_data.
     let public_key = acc.getPublicKey();
     let new_issuer = "<new issuer>";
     let timestamp = Date.now() * 1e6;
-    let function_index_type = constants.SUPERSEDE_FUNCIDX_TYPE;
-    let function_data = {new_issuer, function_index_type};   
+    let function_data = tra.supersedeDataGen(new_issuer);
     let attachment = 'supersede token';
     let function_index = constants.SUPERSEDE_FUNCIDX;
 
@@ -769,14 +765,13 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for send token, function_data should contain 'recipient', 'amount', 'unity', 'function_index_type' four keys.
+    // Necessary data for send token, use tra.sendDataGen(recipient, amount, unity) to generate function_data.
     let public_key = acc.getPublicKey();
     let recipient = "<recipient address>";
     let timestamp = Date.now() * 1e6;
     let amount = "<amount>";
     let unity = "<unity of this token>"; //1e8
-    let function_index_type = constants.SEND_FUNCIDX_TYPE;
-    let function_data = {recipient, amount, unity, function_index_type}
+    let function_data = tra.sendDataGen(recipient, amount, unity);
     let attachment = "<attachment>";
     let function_index = constants.SEND_FUNCIDX_SPLIT; // constants.SEND_FUNCIDX
 
@@ -815,15 +810,14 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for transfer token, function_data should contain 'sender', 'amount', 'unity', 'recipient', 'function_index_type' five keys.
+    // Necessary data for transfer token, user tra.transferDataGen(sender, recipient, amount, unity) to generate function_data.
     let public_key = acc.getPublicKey();
     let sender = "<sender address>"; // acc.getAddress();
     let recipient = "<recipient address>";
     let timestamp = Date.now() * 1e6;
     let amount = "<amount>";
     let unity = "<unity of this token>"; //1e8
-    let function_index_type = constants.TRANSFER_FUNCIDX_TYPE;
-    let function_data = {sender, recipient, amount, unity, function_index_type};
+    let function_data = tra.transferDataGen(sender, recipient, amount, unity);
     let attachment = "<attachment>";
     let function_index = constants.TRANSFER_FUNCIDX_SPLIT; // constants.TRANSFER_FUNCIDX
 
@@ -862,15 +856,14 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for deposit token, function_data should contain 'sender', 'amount', 'unity', 'smart_contract', 'function_index_type' five keys.
+    // Necessary data for deposit token, use tra.depositDataGen(sender, smart_contract, amount, unity) to generate function_data.
     let public_key = acc.getPublicKey();
     let sender = "<sender address>"; // acc.getAddress();
     let timestamp = Date.now() * 1e6;
     let amount = "<amount>";
     let unity = "<unity of this token>"; //1e8
     let smart_contract = "<smart contract id>"; // This contract should be payment channel contract or lock contract
-    let function_index_type = constants.DEPOSIT_FUNCIDX_TYPE;
-    let function_data = {sender, smart_contract, amount, unity, function_index_type};
+    let function_data = tra.depositDataGen(sender, smart_contract, amount, unity);
     let attachment = "<attachment>";
     let function_index = constants.DEPOSIT_FUNCIDX_SPLIT; // constants.DEPOSIT_FUNCIDX
 
@@ -909,15 +902,14 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for withdraw token, function_data should contain 'recipient', 'amount', 'unity', 'smart_contract', 'function_index_type' five keys.
+    // Necessary data for withdraw token, use tra.withdrawDataGen(smart_contract, recipient, amount, unity) to generate function_data.
     let public_key = acc.getPublicKey();
     let recipient = "<recipient address>";
     let timestamp = Date.now() * 1e6;
     let amount = "<amount>";
     let unity = "<unity of this token>"; //1e8
     let smart_contract = "<smart contract id>"; // This contract should be payment channel contract or lock contract
-    let function_index_type = constants.WITHDRAW_FUNCIDX_TYPE;
-    let function_data = {smart_contract, recipient, amount, unity, function_index_type};
+    let function_data = tra.withdrawDataGen(smart_contract, recipient, amount, unity);
     let attachment = "<attachment>";
     let function_index = constants.WITHDRAW_FUNCIDX_SPLIT; // constants.WITHDRAW_FUNCIDX
 

@@ -59,12 +59,11 @@ describe('test create token', function () {
     let token_description = 'token';
     let contract_description = 'contract';
     let timestamp = Date.now() * 1e6;
-    let init_data = {amount, unity, token_description};
+    let init_data = tra.tokenContractDataGen(amount,unity,token_description);
 
     // Result
     let contractTx = tra.buildRegisterContractTx(public_key, contract, init_data, contract_description, timestamp);
     it('get register contractTx', function () {
-        console.log(contractTx, 'tx')
         expect(contractTx).to.not.be.empty;
         expect(contractTx['contract']).to.be.a('string');
         expect(contractTx['senderPublicKey']).to.be.equal(public_key);
@@ -106,6 +105,7 @@ describe('test create token', function () {
     let cold_tx = tra.toJsonForColdSignature();
     it('get json for cold signature', function () {
         expect(cold_tx).to.not.be.empty;
+        expect(cold_tx['contractInit']).to.be.equal(send_tx['initData']);
         expect(cold_tx['contract']).to.be.a('string');
         expect(cold_tx['address']).to.be.equal(address);
         expect(cold_tx['opc']).to.be.equal(constants.OPC_CONTRACT);
@@ -129,7 +129,7 @@ describe('test register payment contract', function () {
     let token_id = test_token_id;
     let contract_description = 'payment contract';
     let timestamp = Date.now() * 1e6;
-    let init_data = { token_id };
+    let init_data = tra.paymentContractDataGen(token_id)
 
     // Result
     let contractTx = tra.buildRegisterContractTx(public_key, contract, init_data, contract_description, timestamp);
@@ -173,6 +173,7 @@ describe('test register payment contract', function () {
     let cold_tx = tra.toJsonForColdSignature();
     it('get json for cold signature', function () {
         expect(cold_tx).to.not.be.empty;
+        expect(cold_tx['contractInit']).to.be.equal(send_tx['initData']);
         expect(cold_tx['contract']).to.be.a('string');
         expect(cold_tx['address']).to.be.equal(address);
         expect(cold_tx['opc']).to.be.equal(constants.OPC_CONTRACT);
@@ -196,7 +197,7 @@ describe('test register lock contract', function () {
     let token_id = test_token_id;
     let contract_description = 'lock contract';
     let timestamp = Date.now() * 1e6;
-    let init_data = { token_id };
+    let init_data = tra.lockContractDataGen(token_id);
 
     // Result
     let contractTx = tra.buildRegisterContractTx(public_key, contract, init_data, contract_description, timestamp);
@@ -240,6 +241,7 @@ describe('test register lock contract', function () {
     let cold_tx = tra.toJsonForColdSignature();
     it('get json for cold signature', function () {
         expect(cold_tx).to.not.be.empty;
+        expect(cold_tx['contractInit']).to.be.equal(send_tx['initData']);
         expect(cold_tx['contract']).to.be.a('string');
         expect(cold_tx['address']).to.be.equal(address);
         expect(cold_tx['opc']).to.be.equal(constants.OPC_CONTRACT);
@@ -263,8 +265,7 @@ describe('test issue and destroy token', function () {
     let amount = test_issue_destroy_amount;
     let unity = 100000000; // 1e8
     let timestamp = Date.now() * 1e6;
-    let function_index_type = constants.ISSUE_FUNCIDX_TYPE
-    let function_data = {amount, unity, function_index_type};
+    let function_data = tra.issueDataGen(amount, unity);
     let attachment = 'issue';
 
     // Result of issue token
@@ -317,7 +318,7 @@ describe('test issue and destroy token', function () {
         expect(cold_tx['address']).to.be.equal(address);
         expect(cold_tx['opc']).to.be.equal(constants.OPC_FUNCTION);
         expect(cold_tx['functionId']).to.be.equal(constants.ISSUE_FUNCIDX);
-        expect(cold_tx['function']).to.not.be.empty;
+        expect(cold_tx['function']).to.be.equal(issue_send_tx['functionData']);
         expect(cold_tx['api']).to.be.equal(constants.API_VERSION);
         expect(cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
 
@@ -326,9 +327,8 @@ describe('test issue and destroy token', function () {
 
 
     // Result of destroy token
-    function_index_type = constants.DESTROY_FUNCIDX_TYPE
     function_index = constants.DESTROY_FUNCIDX;
-    function_data = { amount, unity, function_index_type};
+    function_data = tra.destroyDataGen(amount, unity);
     let destroy_contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
     it('get destroy token Tx', function () {
         expect(destroy_contract_tx).to.not.be.empty;
@@ -342,9 +342,8 @@ describe('test issue and destroy token', function () {
     let destroy_signature = acc.getSignature(bytes);
     let destroy_send_tx = tra.toJsonForSendingTx(destroy_signature);
     let destroy_parse_function_data = convert.parseFunctionData(destroy_send_tx['functionData']);
-    let destroy_original_data = BigNumber(issue_contract_tx['functionData']['amount']).multipliedBy(issue_contract_tx['functionData']['unity']);
     it('unit test for parseFunctionData when destroy token', function() {
-        expect(destroy_original_data.toString()).to.be.equal(destroy_parse_function_data[0].toString());
+        expect(BigNumber(amount).multipliedBy(unity).toString()).to.be.equal(destroy_parse_function_data[0].toString());
     });
     it('get json for sending tx (destroy token)', function () {
         expect(destroy_send_tx).to.not.be.empty;
@@ -377,7 +376,7 @@ describe('test issue and destroy token', function () {
         expect(destroy_cold_tx['address']).to.be.equal(address);
         expect(destroy_cold_tx['opc']).to.be.equal(constants.OPC_FUNCTION);
         expect(destroy_cold_tx['functionId']).to.be.equal(constants.DESTROY_FUNCIDX);
-        expect(destroy_cold_tx['function']).to.not.be.empty;
+        expect(destroy_cold_tx['function']).to.be.equal(destroy_send_tx['functionData']);
         expect(destroy_cold_tx['api']).to.be.equal(constants.API_VERSION);
         expect(destroy_cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
     });
@@ -397,8 +396,7 @@ describe('test split token', function () {
     let contract_id = test_contract_id;
     let new_unity = test_new_unity;
     let timestamp = Date.now() * 1e6;
-    let function_index_type = constants.SPLIT_FUNCIDX_TYPE
-    let function_data = { new_unity, function_index_type };
+    let function_data = tra.splitDataGen(new_unity);
     let attachment = 'split token';
 
     // Result of split token
@@ -416,9 +414,8 @@ describe('test split token', function () {
     let signature = acc.getSignature(bytes);
     let send_tx = tra.toJsonForSendingTx(signature);
     let parse_function_data = convert.parseFunctionData(send_tx['functionData']);
-    let original_data = BigNumber(contract_tx['functionData']['new_unity']);
     it('unit test for parseFunctionData', function() {
-        expect(original_data.toString()).to.be.equal(parse_function_data[0].toString());
+        expect(new_unity.toString()).to.be.equal(parse_function_data[0].toString());
     });
     it('get json for sending tx (split token)', function () {
         expect(send_tx).to.not.be.empty;
@@ -452,7 +449,7 @@ describe('test split token', function () {
         expect(cold_tx['address']).to.be.equal(address);
         expect(cold_tx['opc']).to.be.equal(constants.OPC_FUNCTION);
         expect(cold_tx['functionId']).to.be.equal(constants.SPLIT_FUNCIDX);
-        expect(cold_tx['function']).to.not.be.empty;
+        expect(cold_tx['function']).to.be.equal(send_tx['functionData']);
         expect(cold_tx['api']).to.be.equal(constants.API_VERSION);
         expect(cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
     });
@@ -471,9 +468,8 @@ describe('test supersede token', function () {
     let public_key = acc.getPublicKey();
     let contract_id = test_contract_id;
     let new_issuer = test_new_issuer;
-    let function_index_type = constants.SUPERSEDE_FUNCIDX_TYPE
     let timestamp = Date.now() * 1e6;
-    let function_data = { new_issuer, function_index_type };
+    let function_data = tra.supersedeDataGen(new_issuer);
     let attachment = 'supersede token';
     let function_index = constants.SUPERSEDE_FUNCIDX;
 
@@ -492,7 +488,7 @@ describe('test supersede token', function () {
     let send_tx = tra.toJsonForSendingTx(signature);
     let parse_function_data = convert.parseFunctionData(send_tx['functionData']);
     it('unit test for parseFunctionData', function() {
-        expect(contract_tx['functionData']['new_issuer']).to.be.equal(parse_function_data[0]);
+        expect(new_issuer).to.be.equal(parse_function_data[0]);
     });
     it('get json for sending tx (supersede token)', function () {
         expect(send_tx).to.not.be.empty;
@@ -526,7 +522,7 @@ describe('test supersede token', function () {
         expect(cold_tx['address']).to.be.equal(address);
         expect(cold_tx['opc']).to.be.equal(constants.OPC_FUNCTION);
         expect(cold_tx['functionId']).to.be.equal(constants.SUPERSEDE_FUNCIDX);
-        expect(cold_tx['function']).to.not.be.empty;
+        expect(cold_tx['function']).to.be.equal(send_tx['functionData']);
         expect(cold_tx['api']).to.be.equal(constants.API_VERSION);
         expect(cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
     });
@@ -564,10 +560,9 @@ describe('test send token', function () {
     let signature = acc.getSignature(bytes);
     let send_tx = tra.toJsonForSendingTx(signature);
     let parse_function_data = convert.parseFunctionData(send_tx['functionData']);
-    let original_data = BigNumber(contract_tx['functionData']['amount']).multipliedBy(contract_tx['functionData']['unity']);
     it('unit test for parseFunctionData', function() {
-        expect(contract_tx['functionData']['recipient']).to.be.equal(parse_function_data[0]);
-        expect(original_data.toString()).to.be.equal(parse_function_data[1].toString());
+        expect(recipient).to.be.equal(parse_function_data[0]);
+        expect(BigNumber(amount).multipliedBy(unity).toString()).to.be.equal(parse_function_data[1].toString());
     });
     it('get json for sending tx (send token)', function () {
         expect(send_tx).to.not.be.empty;
@@ -603,7 +598,7 @@ describe('test send token', function () {
         expect(cold_tx['address']).to.be.equal(address);
         expect(cold_tx['opc']).to.be.equal(constants.OPC_FUNCTION);
         expect(cold_tx['functionId']).to.be.equal(constants.SEND_FUNCIDX_SPLIT);
-        expect(cold_tx['function']).to.not.be.empty;
+        expect(cold_tx['function']).to.be.equal(send_tx['functionData']);
         expect(cold_tx['api']).to.be.equal(constants.API_VERSION);
         expect(cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
     });
@@ -625,8 +620,7 @@ describe('test send token', function () {
     let timestamp = Date.now() * 1e6;
     let amount = 1;
     let unity = 100000000; //1e8
-    let function_index_type = constants.SEND_FUNCIDX_TYPE
-    let function_data = {recipient, amount, unity, function_index_type}
+    let function_data = tra.sendDataGen(recipient, amount, unity);
     let attachment = 'send token';
     let function_index = constants.SEND_FUNCIDX_SPLIT; //constants.SEND_FUNCIDX
 
@@ -644,10 +638,9 @@ describe('test send token', function () {
     let signature = acc.getSignature(bytes);
     let send_tx = tra.toJsonForSendingTx(signature);
     let parse_function_data = convert.parseFunctionData(send_tx['functionData']);
-    let original_data = BigNumber(contract_tx['functionData']['amount']).multipliedBy(contract_tx['functionData']['unity']);
     it('unit test for parseFunctionData', function() {
-        expect(contract_tx['functionData']['recipient']).to.be.equal(parse_function_data[0]);
-        expect(original_data.toString()).to.be.equal(parse_function_data[1].toString());
+        expect(recipient).to.be.equal(parse_function_data[0]);
+        expect(BigNumber(amount).multipliedBy(unity).toString()).to.be.equal(parse_function_data[1].toString());
     });
     it('get json for sending tx (send token)', function () {
         expect(send_tx).to.not.be.empty;
@@ -683,7 +676,7 @@ describe('test send token', function () {
         expect(cold_tx['address']).to.be.equal(address);
         expect(cold_tx['opc']).to.be.equal(constants.OPC_FUNCTION);
         expect(cold_tx['functionId']).to.be.equal(constants.SEND_FUNCIDX_SPLIT);
-        expect(cold_tx['function']).to.not.be.empty;
+        expect(cold_tx['function']).to.be.equal(send_tx['functionData']);
         expect(cold_tx['api']).to.be.equal(constants.API_VERSION);
         expect(cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
     });
@@ -706,8 +699,7 @@ describe('test transfer token', function () {
     let timestamp = Date.now() * 1e6;
     let amount = 1;
     let unity = 100000000; //1e8
-    let function_index_type = constants.TRANSFER_FUNCIDX_TYPE
-    let function_data = {sender, recipient, amount, unity, function_index_type}
+    let function_data = tra.transferDataGen(sender, recipient, amount, unity);
     let attachment = 'transfer token';
     let function_index = constants.TRANSFER_FUNCIDX_SPLIT; //constants.TRANSFER_FUNCIDX
 
@@ -725,10 +717,9 @@ describe('test transfer token', function () {
     let signature = acc.getSignature(bytes);
     let send_tx = tra.toJsonForSendingTx(signature);
     let parse_function_data = convert.parseFunctionData(send_tx['functionData']);
-    let original_data = BigNumber(contract_tx['functionData']['amount']).multipliedBy(contract_tx['functionData']['unity']);
     it('unit test for parseFunctionData', function() {
-        expect(contract_tx['functionData']['recipient']).to.be.equal(parse_function_data[1]);
-        expect(original_data.toString()).to.be.equal(parse_function_data[2].toString());
+        expect(recipient).to.be.equal(parse_function_data[1]);
+        expect(BigNumber(amount).multipliedBy(unity).toString()).to.be.equal(parse_function_data[2].toString());
     });
     it('get json for sending tx (transfer token)', function () {
         expect(send_tx).to.not.be.empty;
@@ -765,7 +756,7 @@ describe('test transfer token', function () {
         expect(cold_tx['address']).to.be.equal(address);
         expect(cold_tx['opc']).to.be.equal(constants.OPC_FUNCTION);
         expect(cold_tx['functionId']).to.be.equal(constants.TRANSFER_FUNCIDX_SPLIT);
-        expect(cold_tx['function']).to.not.be.empty;
+        expect(cold_tx['function']).to.to.be.equal(send_tx['functionData']);
         expect(cold_tx['api']).to.be.equal(constants.API_VERSION);
         expect(cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
     });
@@ -788,8 +779,7 @@ describe('test deposit token', function () {
     let smart_contract = test_payment_contract_id;
     let amount = 1;
     let unity = 100000000; //1e8
-    let function_index_type = constants.DEPOSIT_FUNCIDX_TYPE;
-    let function_data = {sender, smart_contract, amount, unity, function_index_type}
+    let function_data = tra.depositDataGen(sender, smart_contract, amount, unity);
     let attachment = 'deposit token';
     let timestamp = Date.now() * 1e6;
     let function_index = constants.DEPOSIT_FUNCIDX_SPLIT; //constants.DEPOSIT_FUNCIDX
@@ -809,7 +799,7 @@ describe('test deposit token', function () {
     let send_tx = tra.toJsonForSendingTx(signature);
     let parse_function_data = convert.parseFunctionData(send_tx['functionData']);
     it('unit test for parseFunctionData', function() {
-        expect(contract_tx['functionData']['smart_contract']).to.be.equal(parse_function_data[1]);
+        expect(smart_contract).to.be.equal(parse_function_data[1]);
     });
     it('get json for sending tx (deposit token)', function () {
         expect(send_tx).to.not.be.empty;
@@ -843,7 +833,7 @@ describe('test deposit token', function () {
         expect(cold_tx['address']).to.be.equal(address);
         expect(cold_tx['opc']).to.be.equal(constants.OPC_FUNCTION);
         expect(cold_tx['functionId']).to.be.equal(constants.DEPOSIT_FUNCIDX_SPLIT);
-        expect(cold_tx['function']).to.not.be.empty;
+        expect(cold_tx['function']).to.be.equal(send_tx['functionData']);
         expect(cold_tx['api']).to.be.equal(constants.API_VERSION);
         expect(cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
     });
@@ -865,8 +855,7 @@ describe('test withdraw token', function () {
     let smart_contract = test_payment_contract_id;
     let amount = 1;
     let unity = 100000000; //1e8
-    let function_index_type = constants.WITHDRAW_FUNCIDX_TYPE;
-    let function_data = {recipient, smart_contract, amount, unity, function_index_type}
+    let function_data = tra.withdrawDataGen(smart_contract, recipient, amount, unity);
     let attachment = 'withdraw token';
     let timestamp = Date.now() * 1e6;
     let function_index = constants.WITHDRAW_FUNCIDX_SPLIT; //constants.WITHDRAW_FUNCIDX
@@ -887,7 +876,7 @@ describe('test withdraw token', function () {
     let send_tx = tra.toJsonForSendingTx(signature);
     let parse_function_data = convert.parseFunctionData(send_tx['functionData']);
     it('unit test for parseFunctionData', function() {
-        expect(contract_tx['functionData']['smart_contract']).to.be.equal(parse_function_data[0]);
+        expect(smart_contract).to.be.equal(parse_function_data[0]);
     });
     it('get json for sending tx (withdraw token)', function () {
         expect(send_tx).to.not.be.empty;
@@ -921,7 +910,7 @@ describe('test withdraw token', function () {
         expect(cold_tx['address']).to.be.equal(address);
         expect(cold_tx['opc']).to.be.equal(constants.OPC_FUNCTION);
         expect(cold_tx['functionId']).to.be.equal(constants.WITHDRAW_FUNCIDX_SPLIT);
-        expect(cold_tx['function']).to.not.be.empty;
+        expect(cold_tx['function']).to.be.equal(send_tx['functionData']);
         expect(cold_tx['api']).to.be.equal(constants.API_VERSION);
         expect(cold_tx['protocol']).to.be.equal(constants.PROTOCOL);
     });
