@@ -157,8 +157,8 @@ function getContractColdFields(cold_tx, network_byte, acc) {
     let contract_type = getContractType(cold_tx['contract']);
     switch (contract_type) {
         case 'TOKEN_CONTRACT': case 'TOKEN_CONTRACT_WITH_SPLIT':
-            cold_tx['contractInitExplain'] = 'Create token' + (contract_type === 'TOKEN_CONTRACT' ? ' ' : ' (support split) ') + 'with max supply ' + BigNumber(init_data[0]['value']);
-            cold_tx['contractInitTextual'] = "init(max=" + BigNumber(init_data[0]['value']) + ",unity= "+ BigNumber(init_data[1]['value']) + ",tokenDescription='" + init_data[2]['value'] + "')";
+            cold_tx['contractInitExplain'] = 'Create token' + (contract_type === 'TOKEN_CONTRACT' ? ' ' : ' (support split) ') + 'with max supply ' + BigNumber(init_data[0]['value']).dividedBy(init_data[1]['value']);
+            cold_tx['contractInitTextual'] = "init(max=" + BigNumber(init_data[0]['value']).dividedBy(init_data[1]['value'])+ ",unity= "+ BigNumber(init_data[1]['value']) + ",tokenDescription='" + init_data[2]['value'] + "')";
             break;
         case 'PAYMENT_CONTRACT': case 'LOCK_CONTRACT':
             cold_tx['contractInitExplain'] = ''
