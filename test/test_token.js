@@ -1,6 +1,7 @@
 const Transaction = require('../libs/transaction').default;
 const Account = require('../libs/account').default;
 const Blockchain = require('../libs/blockchain').default;
+const DataEntry = require('../libs/data').default;
 const constants = require("../libs/constants");
 const contract_1 = require("../libs/contract");
 const test_config = require('../libs/test_config');
@@ -42,6 +43,7 @@ async function sendExecuteContractTxByAccount(tx) {
 }
 
 const chain = new Blockchain(host_ip, network_byte);
+const data_entry = new DataEntry();
 // test CreateToken
 describe('test create token', function () {
     this.timeout(5000);
@@ -59,7 +61,7 @@ describe('test create token', function () {
     let token_description = 'token';
     let contract_description = 'contract';
     let timestamp = Date.now() * 1e6;
-    let init_data = tra.tokenContractDataGen(amount,unity,token_description);
+    let init_data = data_entry.tokenContractDataGen(amount,unity,token_description);
 
     // Result
     let contractTx = tra.buildRegisterContractTx(public_key, contract, init_data, contract_description, timestamp);
@@ -129,7 +131,7 @@ describe('test register payment contract', function () {
     let token_id = test_token_id;
     let contract_description = 'payment contract';
     let timestamp = Date.now() * 1e6;
-    let init_data = tra.paymentContractDataGen(token_id)
+    let init_data = data_entry.paymentContractDataGen(token_id)
 
     // Result
     let contractTx = tra.buildRegisterContractTx(public_key, contract, init_data, contract_description, timestamp);
@@ -197,7 +199,7 @@ describe('test register lock contract', function () {
     let token_id = test_token_id;
     let contract_description = 'lock contract';
     let timestamp = Date.now() * 1e6;
-    let init_data = tra.lockContractDataGen(token_id);
+    let init_data = data_entry.lockContractDataGen(token_id);
 
     // Result
     let contractTx = tra.buildRegisterContractTx(public_key, contract, init_data, contract_description, timestamp);
@@ -265,7 +267,7 @@ describe('test issue and destroy token', function () {
     let amount = test_issue_destroy_amount;
     let unity = 100000000; // 1e8
     let timestamp = Date.now() * 1e6;
-    let function_data = tra.issueDataGen(amount, unity);
+    let function_data = data_entry.issueDataGen(amount, unity);
     let attachment = 'issue';
 
     // Result of issue token
@@ -328,7 +330,7 @@ describe('test issue and destroy token', function () {
 
     // Result of destroy token
     function_index = constants.DESTROY_FUNCIDX;
-    function_data = tra.destroyDataGen(amount, unity);
+    function_data = data_entry.destroyDataGen(amount, unity);
     let destroy_contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
     it('get destroy token Tx', function () {
         expect(destroy_contract_tx).to.not.be.empty;
@@ -396,7 +398,7 @@ describe('test split token', function () {
     let contract_id = test_contract_id;
     let new_unity = test_new_unity;
     let timestamp = Date.now() * 1e6;
-    let function_data = tra.splitDataGen(new_unity);
+    let function_data = data_entry.splitDataGen(new_unity);
     let attachment = 'split token';
 
     // Result of split token
@@ -469,7 +471,7 @@ describe('test supersede token', function () {
     let contract_id = test_contract_id;
     let new_issuer = test_new_issuer;
     let timestamp = Date.now() * 1e6;
-    let function_data = tra.supersedeDataGen(new_issuer);
+    let function_data = data_entry.supersedeDataGen(new_issuer);
     let attachment = 'supersede token';
     let function_index = constants.SUPERSEDE_FUNCIDX;
 
@@ -620,7 +622,7 @@ describe('test send token', function () {
     let timestamp = Date.now() * 1e6;
     let amount = 1;
     let unity = 100000000; //1e8
-    let function_data = tra.sendDataGen(recipient, amount, unity);
+    let function_data = data_entry.sendDataGen(recipient, amount, unity);
     let attachment = 'send token';
     let function_index = constants.SEND_FUNCIDX_SPLIT; //constants.SEND_FUNCIDX
 
@@ -699,7 +701,7 @@ describe('test transfer token', function () {
     let timestamp = Date.now() * 1e6;
     let amount = 1;
     let unity = 100000000; //1e8
-    let function_data = tra.transferDataGen(sender, recipient, amount, unity);
+    let function_data = data_entry.transferDataGen(sender, recipient, amount, unity);
     let attachment = 'transfer token';
     let function_index = constants.TRANSFER_FUNCIDX_SPLIT; //constants.TRANSFER_FUNCIDX
 
@@ -779,7 +781,7 @@ describe('test deposit token', function () {
     let smart_contract = test_payment_contract_id;
     let amount = 1;
     let unity = 100000000; //1e8
-    let function_data = tra.depositDataGen(sender, smart_contract, amount, unity);
+    let function_data = data_entry.depositDataGen(sender, smart_contract, amount, unity);
     let attachment = 'deposit token';
     let timestamp = Date.now() * 1e6;
     let function_index = constants.DEPOSIT_FUNCIDX_SPLIT; //constants.DEPOSIT_FUNCIDX
@@ -855,7 +857,7 @@ describe('test withdraw token', function () {
     let smart_contract = test_payment_contract_id;
     let amount = 1;
     let unity = 100000000; //1e8
-    let function_data = tra.withdrawDataGen(smart_contract, recipient, amount, unity);
+    let function_data = data_entry.withdrawDataGen(smart_contract, recipient, amount, unity);
     let attachment = 'withdraw token';
     let timestamp = Date.now() * 1e6;
     let function_index = constants.WITHDRAW_FUNCIDX_SPLIT; //constants.WITHDRAW_FUNCIDX

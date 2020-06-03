@@ -8,6 +8,7 @@ import BigNumber from 'bignumber.js';
 import Account from './account';
 import Convert from './utils/convert';
 import Base58 from 'base-58';
+import DataEntry from './data';
 import Blake2b from 'blake2b';
 import Common from './utils/common'
 import TxUtil from './utils/txUtil';
@@ -107,48 +108,6 @@ function data_bytes_gen(data, data_type) {
     return [data_type].concat(data_bytes);
 }
 
-function processFunctionData(init_data, function_index) {
-    let data, num, amount;
-    switch (function_index) {
-        case Constants.ISSUE_FUNCIDX: case Constants.DESTROY_FUNCIDX:
-            data = [{ type: Constants.AMOUNT_TYPE, value: BigNumber(init_data[0]['value']).multipliedBy(init_data[1]['value']).toString()}]
-            return processData(data)
-        case Constants.SUPERSEDE_FUNCIDX:
-            return processData(init_data)
-        case Constants.SPLIT_FUNCIDX:
-            num = init_data.length
-            if (num === 3) { // Send Token
-                let amount = { type: Constants.AMOUNT_TYPE, value: BigNumber(init_data[1]['value']).multipliedBy(init_data[2]['value']).toString()}
-                data = [init_data[0], amount]
-            } else if (num === 1) { // Split Token
-                data = init_data
-            }
-            return processData(data)
-        case Constants.SEND_FUNCIDX_SPLIT:
-            num = init_data.length
-            if (num === 3) { // Send Split Token
-                let amount = { type: Constants.AMOUNT_TYPE, value: BigNumber(init_data[1]['value']).multipliedBy(init_data[2]['value']).toString()}
-                data = [init_data[0], amount]
-            } else if (num === 4) { // Transfer Token
-                let amount = { type: Constants.AMOUNT_TYPE, value: BigNumber(init_data[2]['value']).multipliedBy(init_data[3]['value']).toString() }
-                data = [init_data[0], init_data[1], amount]
-            }
-            return processData(data)
-        case Constants.TRANSFER_FUNCIDX_SPLIT: // && Deposit Token
-            amount = { type: Constants.AMOUNT_TYPE, value: BigNumber(init_data[2]['value']).multipliedBy(init_data[3]['value']).toString()}
-            data = [init_data[0], init_data[1], amount]
-            return processData(data)
-        case Constants.DEPOSIT_FUNCIDX_SPLIT: // && Withdraw Token
-            amount = { type: Constants.AMOUNT_TYPE, value: BigNumber(init_data[2]['value']).multipliedBy(init_data[3]['value']).toString()}
-            data = [init_data[0], init_data[1], amount]
-            return processData(data)
-        case Constants.WITHDRAW_FUNCIDX_SPLIT:
-            amount = { type: Constants.AMOUNT_TYPE, value: BigNumber(init_data[2]['value']).multipliedBy(init_data[3]['value']).toString()}
-            data = [init_data[0], init_data[1], amount]
-            return processData(data)
-    }
-}
-
 // Fields-process functions for cold signature
 function getContractColdFields(cold_tx, network_byte, acc) {
     let init_data = cold_tx['initData'];
@@ -171,71 +130,7 @@ function getContractColdFields(cold_tx, network_byte, acc) {
 
 function getFunctionColdFields(cold_tx, network_byte, acc) {
     let init_data = cold_tx['functionData'];
-    let function_index = cold_tx['functionIndex'];
-    let num, data;
-    switch (function_index) {
-        case Constants.SUPERSEDE_FUNCIDX:
-            cold_tx['functionExplain'] = 'Set issuer to ' + init_data[0]['value'];
-            data = init_data
-            break;
-        case Constants.ISSUE_FUNCIDX:
-            data = [{ type: Constants.AMOUNT_TYPE, value: BigNumber(init_data[0]['value']).multipliedBy(init_data[1]['value']).toString()}]
-            cold_tx['functionExplain'] = 'Issue ' + init_data[0]['value'] + ' Token';
-            break;
-        case Constants.DESTROY_FUNCIDX:
-            data = [{ type: Constants.AMOUNT_TYPE, value: BigNumber(init_data[0]['value']).multipliedBy(init_data[1]['value']).toString()}]
-            cold_tx['functionExplain'] = 'Destroy ' + init_data[0]['value'] + ' Token';
-            break;
-        case Constants.SPLIT_FUNCIDX:
-            num = init_data.length
-            if (num === 1) { // Split Token
-                data = init_data
-                cold_tx['functionExplain'] = 'Set token unity to ' + init_data[0]['value'];
-            } else if (num === 3) { //Send Token
-                let amount = { type: Constants.AMOUNT_TYPE, value: BigNumber(init_data[1]['value']).multipliedBy(init_data[2]['value']).toString()}
-                data = [init_data[0], amount]
-                cold_tx['functionExplain'] = 'Send ' + init_data[1]['value'] + ' token to ' + init_data[0]['value'];
-            }
-            break;
-        case Constants.SEND_FUNCIDX_SPLIT:
-            num = init_data.length
-            if (num === 3) { // Send Split Token
-                let amount = { type: Constants.AMOUNT_TYPE, value: BigNumber(init_data[1]['value']).multipliedBy(init_data[2]['value']).toString()}
-                data = [init_data[0], amount]
-                cold_tx['functionExplain'] = 'Send ' + init_data[1]['value'] + ' token to ' + init_data[0]['value'];
-            } else if (num === 4) { // Transfer Token
-                let amount = { type: Constants.AMOUNT_TYPE, value: BigNumber(init_data[2]['value']).multipliedBy(init_data[3]['value']).toString() }
-                data = [init_data[0], init_data[1], amount]
-                cold_tx['functionExplain'] = 'Transfer ' + init_data[2]['value'] + ' token from ' + init_data[0]['value'] + ' to ' + init_data[1]['value'];
-            }
-            break;
-        case Constants.TRANSFER_FUNCIDX_SPLIT: //&& Deposit token
-            let amount = { type: Constants.AMOUNT_TYPE, value: BigNumber(init_data[2]['value']).multipliedBy(init_data[3]['value']).toString()}
-            data = [init_data[0], init_data[1], amount]
-            if (init_data[1]['type'] === Constants.CONTRACT_ACCOUNT_TYPE) {// Deposit token
-                cold_tx['functionExplain'] = 'Deposit Token';
-            } else if (init_data[1]['type'] === Constants.ACCOUNT_ADDR_TYPE) {// Transfer Split Token
-                cold_tx['functionExplain'] = 'Transfer ' + init_data[2]['value'] + ' token from ' + init_data[0]['value'] + ' to ' + init_data[1]['value'];
-            }
-            break;
-        case Constants.DEPOSIT_FUNCIDX_SPLIT:
-            amount = { type: Constants.AMOUNT_TYPE, value: BigNumber(init_data[2]['value']).multipliedBy(init_data[3]['value']).toString()}
-            data = [init_data[0], init_data[1], amount]
-            if (init_data[0]['type'] === Constants.ACCOUNT_ADDR_TYPE) { // Deposit Split Token
-                cold_tx['functionExplain'] = 'Deposit Token';
-            } else if (init_data[0]['type'] === Constants.CONTRACT_ACCOUNT_TYPE) { // Withdraw Token
-                cold_tx['functionExplain'] = 'Withdraw Token';
-            }
-            break;
-        case Constants.WITHDRAW_FUNCIDX_SPLIT:
-            amount = { type: Constants.AMOUNT_TYPE, value: BigNumber(init_data[2]['value']).multipliedBy(init_data[3]['value']).toString()}
-            data = [init_data[0], init_data[1], amount]
-            if (init_data[0]['type'] === Constants.CONTRACT_ACCOUNT_TYPE) { // Withdraw Split Token
-                cold_tx['functionExplain'] = 'Withdraw Token';
-            }
-            break;
-    }
-    cold_tx['function'] = processData(data);
+    cold_tx['function'] = processData(init_data);
     let public_key_bytes = Base58.decode(cold_tx['senderPublicKey']);
     cold_tx['attachment'] = processAttachment(cold_tx['attachment']);
     cold_tx['address'] = acc.convertPublicKeyToAddress(public_key_bytes, network_byte);
@@ -270,91 +165,6 @@ export default class Transaction {
         this.sending_tx = {}; //Fields for sending to API
         this.network_byte = network_byte;
         this.acc = new Account(network_byte);
-    }
-
-    tokenContractDataGen(amount, unity, des) {
-        let max = BigNumber(amount).multipliedBy(BigNumber(unity)).toString()
-        let data = [
-            { type: Constants.AMOUNT_TYPE, value: max },
-            { type: Constants.AMOUNT_TYPE, value: BigNumber(unity).toString() },
-            { type: Constants.SHORTTEXT_TYPE, value: des}
-            ]
-        return data
-    }
-
-    paymentContractDataGen(token_id) {
-        return [{ type: Constants.TOKEN_ID_TYPE, value: token_id}]
-    }
-
-    lockContractDataGen(token_id) {
-        return [{ type: Constants.TOKEN_ID_TYPE, value: token_id}]
-    }
-
-    issueDataGen(amount, unity) {
-        unity = BigNumber(unity).toString()
-        amount = BigNumber(amount).toString()
-        let data = [
-            { type: Constants.AMOUNT_TYPE, value: amount},
-            { type: Constants.AMOUNT_TYPE, value: unity},
-        ]
-        return data
-    }
-
-    destroyDataGen(amount, unity) {
-        unity = BigNumber(unity).toString()
-        amount = BigNumber(amount).toString()
-        let data = [
-            { type: Constants.AMOUNT_TYPE, value: amount},
-            { type: Constants.AMOUNT_TYPE, value: unity},
-        ]
-        return data
-    }
-
-    splitDataGen(unity) {
-        return [{ type: Constants.AMOUNT_TYPE, value: BigNumber(unity).toString()}]
-    }
-
-    supersedeDataGen(issuer) {
-        return [{ type: Constants.ACCOUNT_ADDR_TYPE, value: issuer}]
-    }
-
-    sendDataGen(recipient, amount, unity) {
-        let data = [
-            { type: Constants.ACCOUNT_ADDR_TYPE, value: recipient},
-            { type: Constants.AMOUNT_TYPE, value: BigNumber(amount).toString()},
-            { type: Constants.AMOUNT_TYPE, value: BigNumber(unity).toString()}
-        ]
-        return data
-    }
-
-    transferDataGen(sender, recipient, amount, unity) {
-        let data = [
-            { type: Constants.ACCOUNT_ADDR_TYPE, value: sender},
-            { type: Constants.ACCOUNT_ADDR_TYPE, value: recipient},
-            { type: Constants.AMOUNT_TYPE, value: BigNumber(amount).toString()},
-            { type: Constants.AMOUNT_TYPE, value: BigNumber(unity).toString()}
-        ]
-        return data
-    }
-
-    depositDataGen(sender, contract, amount, unity) {
-        let data = [
-            { type: Constants.ACCOUNT_ADDR_TYPE, value: sender},
-            { type: Constants.CONTRACT_ACCOUNT_TYPE, value: contract},
-            { type: Constants.AMOUNT_TYPE, value: BigNumber(amount).toString()},
-            { type: Constants.AMOUNT_TYPE, value: BigNumber(unity).toString()}
-        ]
-        return data
-    }
-
-    withdrawDataGen(contract, recipient, amount, unity) {
-        let data = [
-            { type: Constants.CONTRACT_ACCOUNT_TYPE, value: contract},
-            { type: Constants.ACCOUNT_ADDR_TYPE, value: recipient},
-            { type: Constants.AMOUNT_TYPE, value: BigNumber(amount).toString()},
-            { type: Constants.AMOUNT_TYPE, value: BigNumber(unity).toString()}
-        ]
-        return data
     }
 
     buildPaymentTx(public_key, recipient, amount, attachment, timestamp, fee) {
@@ -464,7 +274,8 @@ export default class Transaction {
             attachment = '';
         }
         let function_index = is_split_supported? Constants.SEND_FUNCIDX_SPLIT : Constants.SEND_FUNCIDX;
-        let function_data = this.sendDataGen(recipient, amount, unity)
+        let data_generator = new DataEntry()
+        let function_data = data_generator.sendDataGen(recipient, amount, unity)
         let contract_id = Common.tokenIDToContractID(token_id);
         let tx = {
             contractId: contract_id,
@@ -532,7 +343,7 @@ export default class Transaction {
                 this.sending_tx['initData'] = processData(this.sending_tx['initData'])
                 break;
             case Constants.OPC_FUNCTION:
-                this.sending_tx['functionData'] = processFunctionData(this.sending_tx['functionData'], this.sending_tx['functionIndex'])
+                this.sending_tx['functionData'] = processData(this.sending_tx['functionData'])
                 this.sending_tx['attachment'] = processAttachment(this.sending_tx['attachment']);
                 break;
         }
@@ -554,7 +365,7 @@ export default class Transaction {
                 field_type = 8 & (255);
                 return TxUtil.toBytes((this.cold_tx),field_type);
             case Constants.OPC_FUNCTION:
-                this.cold_tx['functionData'] = processFunctionData(this.cold_tx['functionData'], this.cold_tx['functionIndex'])
+                this.cold_tx['functionData'] = processData(this.cold_tx['functionData'])
                 field_type = 9 & (255);
                 return TxUtil.toBytes((this.cold_tx),field_type);
         }

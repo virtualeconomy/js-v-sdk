@@ -46,13 +46,3 @@ export const WITHDRAW_FUNCIDX = 6;
 export const WITHDRAW_FUNCIDX_SPLIT = 7;
 export const DEPOSIT_FUNCIDX = 5;
 export const DEPOSIT_FUNCIDX_SPLIT = 6;
-
-// function index type
-export const ISSUE_FUNCIDX_TYPE = 'issue';
-export const DESTROY_FUNCIDX_TYPE = 'destroy';
-export const SUPERSEDE_FUNCIDX_TYPE = 'supersede';
-export const SPLIT_FUNCIDX_TYPE = 'split';
-export const SEND_FUNCIDX_TYPE = 'send';
-export const TRANSFER_FUNCIDX_TYPE = 'transfer';
-export const DEPOSIT_FUNCIDX_TYPE = 'deposit';
-export const WITHDRAW_FUNCIDX_TYPE = 'withdraw';
