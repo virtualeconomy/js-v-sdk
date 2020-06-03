@@ -8,7 +8,7 @@ import BigNumber from 'bignumber.js';
 import Account from './account';
 import Convert from './utils/convert';
 import Base58 from 'base-58';
-import DataEntry from './data';
+import { TokenContractDataGenerator } from './data';
 import Blake2b from 'blake2b';
 import Common from './utils/common'
 import TxUtil from './utils/txUtil';
@@ -274,8 +274,8 @@ export default class Transaction {
             attachment = '';
         }
         let function_index = is_split_supported? Constants.SEND_FUNCIDX_SPLIT : Constants.SEND_FUNCIDX;
-        let data_generator = new DataEntry()
-        let function_data = data_generator.sendDataGen(recipient, amount, unity)
+        let data_generator = new TokenContractDataGenerator()
+        let function_data = data_generator.createSendData(recipient, amount, unity)
         let contract_id = Common.tokenIDToContractID(token_id);
         let tx = {
             contractId: contract_id,

@@ -410,7 +410,7 @@ Here we introduce how to use this package installed from npm in detail.
     const vsys = require("@virtualeconomy/js-v-sdk");
     const contract_1 = vsys.contract;
     const node_address = "http://test.v.systems:9922"; // change to your node address
-    let data_entry = new vsys.DataEntry();
+    let data_generator = new vsys.TokenContractDataGenerator();
 
     async function sendRegisterContractTx(tx) {
         const result = await chain.sendRegisterContractTx(tx);
@@ -425,7 +425,7 @@ Here we introduce how to use this package installed from npm in detail.
     let token_description = "<description for token>";
     let contract_description = "<description for contract>";
     let timestamp = Date.now() * 1e6;
-    let init_data = data_entry.tokenContractDataGen(amount,unity,token_description);
+    let init_data = data_generator.createInitData(amount,unity,token_description);
 
     // Build contract tx
     tra.buildRegisterContractTx(public_key, contract, init_data, contract_description, timestamp);
@@ -455,7 +455,7 @@ Here we introduce how to use this package installed from npm in detail.
     const vsys = require("@virtualeconomy/js-v-sdk");
     const contract_1 = vsys.contract;
     const node_address = "http://test.v.systems:9922"; // change to your node address
-    let data_entry = new vsys.DataEntry();
+    let data_generator = new vsys.PaymentChannelContractDataGenerator();
  
     async function sendRegisterContractTx(tx) {
         const result = await chain.sendRegisterContractTx(tx);
@@ -468,7 +468,7 @@ Here we introduce how to use this package installed from npm in detail.
     let token_id = "<token_id>";
     let contract_description = "<description for contract>";
     let timestamp = Date.now() * 1e6;
-    let init_data = data_entry.paymentContractDataGen(token_id);
+    let init_data = data_generator.createInitData(token_id);
 
     // Build contract tx
     tra.buildRegisterContractTx(public_key, contract, init_data, contract_description, timestamp);
@@ -498,7 +498,7 @@ Here we introduce how to use this package installed from npm in detail.
     const vsys = require("@virtualeconomy/js-v-sdk");
     const contract_1 = vsys.contract;
     const node_address = "http://test.v.systems:9922"; // change to your node address
-    let data_entry = new vsys.DataEntry();
+    let data_generator = new vsys.PaymentChannelContractDataGenerator();
 
     async function sendRegisterContractTx(tx) {
         const result = await chain.sendRegisterContractTx(tx);
@@ -511,7 +511,7 @@ Here we introduce how to use this package installed from npm in detail.
     let token_id = "<token_id>";
     let contract_description = "<description for contract>";
     let timestamp = Date.now() * 1e6;
-    let init_data = data_entry.lockContractDataGen(token_id);
+    let init_data = data_generator.createInitData(token_id);
 
     // Build contract tx
     tra.buildRegisterContractTx(public_key, contract, init_data, contract_description, timestamp);
@@ -544,7 +544,7 @@ Here we introduce how to use this package installed from npm in detail.
     const contract_1 = vsys.contract;
     const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
-    let data_entry = new vsys.DataEntry();
+    let data_generator = new vsys.TokenContractDataGenerator();
  
     async function sendExecuteContractTx(tx) {
         const result = await chain.sendExecuteContractTx(tx);
@@ -556,7 +556,7 @@ Here we introduce how to use this package installed from npm in detail.
     let amount = "<amount>";
     let unity = "<unity of this token>";
     let timestamp = Date.now() * 1e6;
-    let function_data = data_entry.issueDataGen(amount, unity);
+    let function_data = data_generator.createIssueData(amount, unity);
     let attachment = 'issue token';
     let function_index = constants.ISSUE_FUNCIDX;
 
@@ -589,7 +589,7 @@ Here we introduce how to use this package installed from npm in detail.
     const contract_1 = vsys.contract;
     const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
-    let data_entry = new vsys.DataEntry();
+    let data_generator = new vsys.TokenContractDataGenerator();
  
     async function sendExecuteContractTx(tx) {
         const result = await chain.sendExecuteContractTx(tx);
@@ -601,7 +601,7 @@ Here we introduce how to use this package installed from npm in detail.
     let amount = "<amount>";
     let unity = "<unity of this token>"; // 1e8
     let timestamp = Date.now() * 1e6;
-    let function_data = data_entry.destroyDataGen(amount, unity);
+    let function_data = data_generator.createDestroyData(amount, unity);
     let attachment = 'destroy token';
     let function_index = constants.DESTROY_FUNCIDX;
 
@@ -634,7 +634,7 @@ Here we introduce how to use this package installed from npm in detail.
     const contract_1 = vsys.contract;
     const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
-    let data_entry = new vsys.DataEntry();
+    let data_generator = new vsys.TokenContractDataGenerator();
  
     async function sendExecuteContractTx(tx) {
         const result = await chain.sendExecuteContractTx(tx);
@@ -645,7 +645,7 @@ Here we introduce how to use this package installed from npm in detail.
     let public_key = acc.getPublicKey();
     let new_unity = "<new unity>";
     let timestamp = Date.now() * 1e6;
-    let function_data = data_entry.splitDataGen(new_unity);
+    let function_data = data_generator.createSplitData(new_unity);
     let attachment = 'split token';
     let function_index = constants.SPLIT_FUNCIDX;
 
@@ -677,7 +677,7 @@ Here we introduce how to use this package installed from npm in detail.
     const contract_1 = vsys.contract;
     const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
-    let data_entry = new vsys.DataEntry();
+    let data_generator = new vsys.TokenContractDataGenerator();
  
     async function sendExecuteContractTx(tx) {
         const result = await chain.sendExecuteContractTx(tx);
@@ -688,7 +688,7 @@ Here we introduce how to use this package installed from npm in detail.
     let public_key = acc.getPublicKey();
     let new_issuer = "<new issuer>";
     let timestamp = Date.now() * 1e6;
-    let function_data = data_entry.supersedeDataGen(new_issuer);
+    let function_data = data_generator.createSupersedeData(new_issuer);
     let attachment = 'supersede token';
     let function_index = constants.SUPERSEDE_FUNCIDX;
 
@@ -766,7 +766,7 @@ Here we introduce how to use this package installed from npm in detail.
     const contract_1 = vsys.contract;
     const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
-    let data_entry = new vsys.DataEntry();
+    let data_generator = new vsys.TokenContractDataGenerator();
  
     async function sendExecuteContractTx(tx) {
         const result = await chain.sendExecuteContractTx(tx);
@@ -779,7 +779,7 @@ Here we introduce how to use this package installed from npm in detail.
     let timestamp = Date.now() * 1e6;
     let amount = "<amount>";
     let unity = "<unity of this token>"; //1e8
-    let function_data = data_entry.sendDataGen(recipient, amount, unity);
+    let function_data = data_generator.createSendData(recipient, amount, unity);
     let attachment = "<attachment>";
     let function_index = constants.SEND_FUNCIDX_SPLIT; // constants.SEND_FUNCIDX
 
@@ -812,7 +812,7 @@ Here we introduce how to use this package installed from npm in detail.
     const contract_1 = vsys.contract;
     const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
-    let data_entry = new vsys.DataEntry();
+    let data_generator = new vsys.TokenContractDataGenerator();
  
     async function sendExecuteContractTx(tx) {
         const result = await chain.sendExecuteContractTx(tx);
@@ -826,7 +826,7 @@ Here we introduce how to use this package installed from npm in detail.
     let timestamp = Date.now() * 1e6;
     let amount = "<amount>";
     let unity = "<unity of this token>"; //1e8
-    let function_data = data_entry.transferDataGen(sender, recipient, amount, unity);
+    let function_data = data_generator.createTransferData(sender, recipient, amount, unity);
     let attachment = "<attachment>";
     let function_index = constants.TRANSFER_FUNCIDX_SPLIT; // constants.TRANSFER_FUNCIDX
 
@@ -859,7 +859,7 @@ Here we introduce how to use this package installed from npm in detail.
     const contract_1 = vsys.contract;
     const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
-    let data_entry = new vsys.DataEntry();
+    let data_generator = new vsys.TokenContractDataGenerator();
  
     async function sendExecuteContractTx(tx) {
         const result = await chain.sendExecuteContractTx(tx);
@@ -873,7 +873,7 @@ Here we introduce how to use this package installed from npm in detail.
     let amount = "<amount>";
     let unity = "<unity of this token>"; //1e8
     let smart_contract = "<smart contract id>"; // This contract should be payment channel contract or lock contract
-    let function_data = data_entry.depositDataGen(sender, smart_contract, amount, unity);
+    let function_data = data_generator.createDepositData(sender, smart_contract, amount, unity);
     let attachment = "<attachment>";
     let function_index = constants.DEPOSIT_FUNCIDX_SPLIT; // constants.DEPOSIT_FUNCIDX
 
@@ -906,7 +906,7 @@ Here we introduce how to use this package installed from npm in detail.
     const contract_1 = vsys.contract;
     const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
-    let data_entry = new vsys.DataEntry();
+    let data_generator = new vsys.TokenContractDataGenerator();
  
     async function sendExecuteContractTx(tx) {
         const result = await chain.sendExecuteContractTx(tx);
@@ -920,7 +920,7 @@ Here we introduce how to use this package installed from npm in detail.
     let amount = "<amount>";
     let unity = "<unity of this token>"; //1e8
     let smart_contract = "<smart contract id>"; // This contract should be payment channel contract or lock contract
-    let function_data = data_entry.withdrawDataGen(smart_contract, recipient, amount, unity);
+    let function_data = data_generator.createWithdrawData(smart_contract, recipient, amount, unity);
     let attachment = "<attachment>";
     let function_index = constants.WITHDRAW_FUNCIDX_SPLIT; // constants.WITHDRAW_FUNCIDX
 
