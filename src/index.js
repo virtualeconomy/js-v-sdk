@@ -6,8 +6,9 @@ import Transaction from './transaction';
 import Crypto from './utils/crypto';
 import Convert from './utils/convert';
 import ByteProcessor from './utils/byteProcessor';
-import Converters from './utils/converters'
-import TxUtil from './utils/txUtil'
+import Converters from './utils/converters';
+import TxUtil from './utils/txUtil';
+import { TokenContractDataGenerator, LockContractDataGenerator, PaymentChannelContractDataGenerator} from './data';
 
 export {
     Account,
@@ -20,6 +21,9 @@ export {
     ByteProcessor,
     Converters,
     TxUtil,
+    TokenContractDataGenerator,
+    LockContractDataGenerator,
+    PaymentChannelContractDataGenerator,
 };
 export default {
     Account,
@@ -32,4 +36,7 @@ export default {
     ByteProcessor,
     Converters,
     TxUtil,
+    TokenContractDataGenerator,
+    LockContractDataGenerator,
+    PaymentChannelContractDataGenerator,
 };

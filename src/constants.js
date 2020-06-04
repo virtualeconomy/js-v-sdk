@@ -30,16 +30,19 @@ export const AMOUNT_TYPE = 3;
 export const CONTRACT_TYPE = 6;
 export const SHORTTEXT_TYPE = 5;
 export const ACCOUNT_ADDR_TYPE = 2;
-
+export const TOKEN_ID_TYPE = 8;
+export const CONTRACT_ACCOUNT_TYPE = 6;
 
 // function index
-export const SUPERSEDE_FUNCIDX = 0
-export const ISSUE_FUNCIDX = 1
-export const DESTROY_FUNCIDX = 2
-export const SPLIT_FUNCIDX = 3
-export const SEND_FUNCIDX = 3
-export const SEND_FUNCIDX_SPLIT = 4
-export const WITHDRAW_FUNCIDX = 6
-export const WITHDRAW_FUNCIDX_SPLIT = 7
-export const DEPOSIT_FUNCIDX = 5
-export const DEPOSIT_FUNCIDX_SPLIT = 6
+export const SUPERSEDE_FUNCIDX = 0;
+export const ISSUE_FUNCIDX = 1;
+export const DESTROY_FUNCIDX = 2;
+export const SPLIT_FUNCIDX = 3;
+export const SEND_FUNCIDX = 3;
+export const SEND_FUNCIDX_SPLIT = 4;
+export const TRANSFER_FUNCIDX = 4;
+export const TRANSFER_FUNCIDX_SPLIT = 5;
+export const WITHDRAW_FUNCIDX = 6;
+export const WITHDRAW_FUNCIDX_SPLIT = 7;
+export const DEPOSIT_FUNCIDX = 5;
+export const DEPOSIT_FUNCIDX_SPLIT = 6;
