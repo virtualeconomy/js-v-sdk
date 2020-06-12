@@ -17,17 +17,6 @@ const system_token_id = contract_1.SYSTEM_CONTRACT_TOKEN_ID_TEST;
 const vsys_payment_contract_id = 'CEv9x9T7iAk6Jo4sowdtyjf3aetTFpmzLth';
 /*================ Change end ==================*/
 
-async function sendRegisterContractTxByChain(tx) {
-    const result = await chain.sendRegisterContractTx(tx);
-    return result;
-}
-
-async function sendRegisterContractTxByAccount(tx) {
-    let acc = new Account(network_byte);
-    const result = await acc.sendTransaction(chain, tx);
-    return result;
-}
-
 async function sendExecuteContractTxByChain(tx) {
     const result = await chain.sendExecuteContractTx(tx);
     return result;
@@ -217,7 +206,7 @@ describe('test transfer vsys token', function () {
     let amount = 1;
     let function_data = data_generator.createTransferData(sender, recipient, amount);
     let attachment = 'transfer vsys';
-    let function_index = constants.SYSTEM_CONTRACT_TRANSFER_FUNCIDX; //constants.TRANSFER_FUNCIDX
+    let function_index = constants.SYSTEM_CONTRACT_TRANSFER_FUNCIDX;
 
     // Result of transfer vsys token
     let contract_tx = tra.buildExecuteContractTx(public_key, system_contract, function_index, function_data, timestamp, attachment);
@@ -293,7 +282,7 @@ describe('test send vsys token', function () {
     let system_contract = common.tokenIDToContractID(system_token_id);
     let recipient = 'AUEMZKy23xvWixKySNDg448dXxwc4GEZCC3';
     let timestamp = Date.now() * 1e6;
-    let amount = 2000;
+    let amount = 1;
     let function_data = data_generator.createSendData(recipient, amount);
     let attachment = 'send vsys';
     let function_index = constants.SYSTEM_CONTRACT_SEND_FUNCIDX;
