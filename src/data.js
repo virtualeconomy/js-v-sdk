@@ -88,3 +88,44 @@ export class LockContractDataGenerator {
         return [{ type: Constants.TOKEN_ID_TYPE, value: token_id }]
     }
 }
+
+export class SystemContractDataGenerator {
+    createSendData(recipient, amount) {
+        amount = BigNumber(amount).multipliedBy(1e8).toString()
+        let data = [
+            { type: Constants.ACCOUNT_ADDR_TYPE, value: recipient },
+            { type: Constants.AMOUNT_TYPE, value: amount }
+        ]
+        return data
+    }
+
+    createTransferData(sender, recipient, amount) {
+        amount = BigNumber(amount).multipliedBy(1e8).toString()
+        let data = [
+            { type: Constants.ACCOUNT_ADDR_TYPE, value: sender },
+            { type: Constants.ACCOUNT_ADDR_TYPE, value: recipient },
+            { type: Constants.AMOUNT_TYPE, value: amount }
+        ]
+        return data
+    }
+
+    createDepositData(sender, contract, amount) {
+        amount = BigNumber(amount).multipliedBy(1e8).toString()
+        let data = [
+            { type: Constants.ACCOUNT_ADDR_TYPE, value: sender },
+            { type: Constants.CONTRACT_ACCOUNT_TYPE, value: contract },
+            { type: Constants.AMOUNT_TYPE, value: amount }
+        ]
+        return data
+    }
+
+    createWithdrawData(contract, recipient, amount) {
+        amount = BigNumber(amount).multipliedBy(1e8).toString()
+        let data = [
+            { type: Constants.CONTRACT_ACCOUNT_TYPE, value: contract },
+            { type: Constants.ACCOUNT_ADDR_TYPE, value: recipient },
+            { type: Constants.AMOUNT_TYPE, value: amount }
+        ]
+        return data
+    }
+}

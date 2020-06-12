@@ -980,6 +980,9 @@ $ npm run test_token
 # Test tx
 $ npm run test_tx
 
+# Test system contract
+$ npm run test_system_contract
+
 # Test all
 $ npm run test_all
 ```
