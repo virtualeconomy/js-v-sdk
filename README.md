@@ -408,7 +408,7 @@ Here we introduce how to use this package installed from npm in detail.
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     const vsys = require("@virtualeconomy/js-v-sdk");
-    const contract_1 = vsys.contract;
+    const contract_1 = vsys.Contract;
     const node_address = "http://test.v.systems:9922"; // change to your node address
     let data_generator = new vsys.TokenContractDataGenerator();
 
@@ -453,7 +453,7 @@ Here we introduce how to use this package installed from npm in detail.
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     const vsys = require("@virtualeconomy/js-v-sdk");
-    const contract_1 = vsys.contract;
+    const contract_1 = vsys.Contract;
     const node_address = "http://test.v.systems:9922"; // change to your node address
     let data_generator = new vsys.PaymentChannelContractDataGenerator();
  
@@ -496,7 +496,7 @@ Here we introduce how to use this package installed from npm in detail.
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     const vsys = require("@virtualeconomy/js-v-sdk");
-    const contract_1 = vsys.contract;
+    const contract_1 = vsys.Contract;
     const node_address = "http://test.v.systems:9922"; // change to your node address
     let data_generator = new vsys.PaymentChannelContractDataGenerator();
 
@@ -541,7 +541,7 @@ Here we introduce how to use this package installed from npm in detail.
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     const vsys = require("@virtualeconomy/js-v-sdk");
-    const contract_1 = vsys.contract;
+    const contract_1 = vsys.Contract;
     const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
     let data_generator = new vsys.TokenContractDataGenerator();
@@ -586,7 +586,7 @@ Here we introduce how to use this package installed from npm in detail.
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     const vsys = require("@virtualeconomy/js-v-sdk");
-    const contract_1 = vsys.contract;
+    const contract_1 = vsys.Contract;
     const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
     let data_generator = new vsys.TokenContractDataGenerator();
@@ -631,7 +631,7 @@ Here we introduce how to use this package installed from npm in detail.
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     const vsys = require("@virtualeconomy/js-v-sdk");
-    const contract_1 = vsys.contract;
+    const contract_1 = vsys.Contract;
     const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
     let data_generator = new vsys.TokenContractDataGenerator();
@@ -674,7 +674,7 @@ Here we introduce how to use this package installed from npm in detail.
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     const vsys = require("@virtualeconomy/js-v-sdk");
-    const contract_1 = vsys.contract;
+    const contract_1 = vsys.Contract;
     const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
     let data_generator = new vsys.TokenContractDataGenerator();
@@ -718,7 +718,7 @@ Here we introduce how to use this package installed from npm in detail.
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     const vsys = require("@virtualeconomy/js-v-sdk");
-    const contract_1 = vsys.contract;
+    const contract_1 = vsys.Contract;
     const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
 
@@ -763,7 +763,7 @@ Here we introduce how to use this package installed from npm in detail.
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     const vsys = require("@virtualeconomy/js-v-sdk");
-    const contract_1 = vsys.contract;
+    const contract_1 = vsys.Contract;
     const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
     let data_generator = new vsys.TokenContractDataGenerator();
@@ -809,7 +809,7 @@ Here we introduce how to use this package installed from npm in detail.
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     const vsys = require("@virtualeconomy/js-v-sdk");
-    const contract_1 = vsys.contract;
+    const contract_1 = vsys.Contract;
     const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
     let data_generator = new vsys.TokenContractDataGenerator();
@@ -856,7 +856,7 @@ Here we introduce how to use this package installed from npm in detail.
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     const vsys = require("@virtualeconomy/js-v-sdk");
-    const contract_1 = vsys.contract;
+    const contract_1 = vsys.Contract;
     const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
     let data_generator = new vsys.TokenContractDataGenerator();
@@ -903,7 +903,7 @@ Here we introduce how to use this package installed from npm in detail.
     ```javascript
     // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
     const vsys = require("@virtualeconomy/js-v-sdk");
-    const contract_1 = vsys.contract;
+    const contract_1 = vsys.Contract;
     const constants = vsys.constants;
     const node_address = "http://test.v.systems:9922"; // change to your node address
     let data_generator = new vsys.TokenContractDataGenerator();
