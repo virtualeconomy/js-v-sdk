@@ -46,3 +46,9 @@ export const WITHDRAW_FUNCIDX = 6;
 export const WITHDRAW_FUNCIDX_SPLIT = 7;
 export const DEPOSIT_FUNCIDX = 5;
 export const DEPOSIT_FUNCIDX_SPLIT = 6;
+
+// system contract function index
+export const SYSTEM_CONTRACT_SEND_FUNCIDX = 0;
+export const SYSTEM_CONTRACT_DEPOSIT_FUNCIDX = 1;
+export const SYSTEM_CONTRACT_WITHDRAW_FUNCIDX = 2;
+export const SYSTEM_CONTRACT_TRANSFER_FUNCIDX = 3;
