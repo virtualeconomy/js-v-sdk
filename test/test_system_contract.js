@@ -55,7 +55,6 @@ describe('test deposit vsys token', function () {
     // Result of deposit vsys token
     let contract_tx = tra.buildExecuteContractTx(public_key, system_contract, function_index, function_data, timestamp, attachment);
     it('get deposit vsys token Tx', function () {
-        console.log(contract_tx)
         expect(contract_tx).to.not.be.empty;
         expect(contract_tx['contractId']).to.be.a('string');
         expect(contract_tx['functionIndex']).to.be.equal(constants.SYSTEM_CONTRACT_DEPOSIT_FUNCIDX);
@@ -68,10 +67,9 @@ describe('test deposit vsys token', function () {
     let send_tx = tra.toJsonForSendingTx(signature);
     let parse_function_data = convert.parseFunctionData(send_tx['functionData']);
     it('unit test for parseFunctionData', function() {
-        expect(smart_contract).to.be.equal(parse_function_data[1]);
+        expect(smart_contract).to.be.equal(parse_function_data[1]['data']);
     });
     it('get json for sending tx (deposit vsys token)', function () {
-        console.log('send', send_tx)
         expect(send_tx).to.not.be.empty;
         expect(send_tx['functionData']).to.not.be.empty;
         expect(send_tx['contractId']).to.be.equal(system_contract);
@@ -82,7 +80,6 @@ describe('test deposit vsys token', function () {
 
     it('get send execute contractTx result (deposit vsys token) by Chain', async() =>{
         let result = await sendExecuteContractTxByChain(send_tx);
-        console.log(result)
         expect(result).to.not.be.empty;
         expect(result['contractId']).to.be.equal(system_contract);
         expect(result['functionIndex']).to.be.equal(constants.SYSTEM_CONTRACT_DEPOSIT_FUNCIDX);
@@ -147,7 +144,7 @@ describe('test withdraw vsys token', function () {
     let send_tx = tra.toJsonForSendingTx(signature);
     let parse_function_data = convert.parseFunctionData(send_tx['functionData']);
     it('unit test for parseFunctionData', function() {
-        expect(smart_contract).to.be.equal(parse_function_data[0]);
+        expect(smart_contract).to.be.equal(parse_function_data[0]['data']);
     });
     it('get json for sending tx (withdraw vsys token)', function () {
         expect(send_tx).to.not.be.empty;
@@ -223,8 +220,8 @@ describe('test transfer vsys token', function () {
     let send_tx = tra.toJsonForSendingTx(signature);
     let parse_function_data = convert.parseFunctionData(send_tx['functionData']);
     it('unit test for parseFunctionData', function() {
-        expect(recipient).to.be.equal(parse_function_data[1]);
-        expect(BigNumber(amount).multipliedBy(1e8).toString()).to.be.equal(parse_function_data[2].toString());
+        expect(recipient).to.be.equal(parse_function_data[1]['data']);
+        expect(BigNumber(amount).multipliedBy(1e8).toString()).to.be.equal(parse_function_data[2]['data'].toString());
     });
     it('get json for sending tx (transfer vsys token)', function () {
         expect(send_tx).to.not.be.empty;
@@ -302,8 +299,8 @@ describe('test send vsys token', function () {
     let send_tx = tra.toJsonForSendingTx(signature);
     let parse_function_data = convert.parseFunctionData(send_tx['functionData']);
     it('unit test for parseFunctionData', function() {
-        expect(recipient).to.be.equal(parse_function_data[0]);
-        expect(BigNumber(amount).multipliedBy(1e8).toString()).to.be.equal(parse_function_data[1].toString());
+        expect(recipient).to.be.equal(parse_function_data[0]['data']);
+        expect(BigNumber(amount).multipliedBy(1e8).toString()).to.be.equal(parse_function_data[1]['data'].toString());
     });
     it('get json for sending tx (send vsys token)', function () {
         expect(send_tx).to.not.be.empty;
