@@ -8,7 +8,7 @@ import Convert from './utils/convert';
 import ByteProcessor from './utils/byteProcessor';
 import Converters from './utils/converters';
 import TxUtil from './utils/txUtil';
-import { TokenContractDataGenerator, LockContractDataGenerator, PaymentChannelContractDataGenerator} from './data';
+import { TokenContractDataGenerator, LockContractDataGenerator, PaymentChannelContractDataGenerator, SystemContractDataGenerator } from './data';
 
 export {
     Account,
@@ -24,6 +24,7 @@ export {
     TokenContractDataGenerator,
     LockContractDataGenerator,
     PaymentChannelContractDataGenerator,
+    SystemContractDataGenerator,
 };
 export default {
     Account,
@@ -39,4 +40,5 @@ export default {
     TokenContractDataGenerator,
     LockContractDataGenerator,
     PaymentChannelContractDataGenerator,
+    SystemContractDataGenerator,
 };

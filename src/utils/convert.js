@@ -85,23 +85,23 @@ const Convert = {
         for (let i = 0; i < parameters_num; i++) {
             let type = bytes[0]
             if (type === 1) {
-                function_data.push(Base58.encode(bytes.slice(1, 33)))
+                function_data.push({'data': Base58.encode(bytes.slice(1, 33)), 'type': type})
                 bytes = bytes.slice(33)
             } else if (type === 2 || type === 6 || type === 7) {
-                function_data.push(Base58.encode(bytes.slice(1, 27)))
+                function_data.push({'data': Base58.encode(bytes.slice(1, 27)), 'type': type})
                 bytes = bytes.slice(27)
             } else if (type === 3) {
-                function_data.push(parseAmountData(bytes.slice(1, 9), 8))
+                function_data.push({'data': parseAmountData(bytes.slice(1, 9), 8), 'type': type})
                 bytes = bytes.slice(9)
             } else if (type === 4) {
-                function_data.push(parseAmountData(bytes.slice(1, 5), 4))
+                function_data.push({'data': parseAmountData(bytes.slice(1, 5), 4), 'type': type})
                 bytes = bytes.slice(5)
             } else if (type === 5) {
                 let short_text_length = bytes[2]
-                function_data.push(converters_1.byteArrayToString(bytes.slice(3, short_text_length + 3)))
+                function_data.push({'data': converters_1.byteArrayToString(bytes.slice(3, short_text_length + 3)), 'type': type})
                 bytes = bytes.slice(short_text_length + 3)
             } else if (type === 8) {
-                function_data.push(Base58.encode(bytes.slice(1)))
+                function_data.push({'data':Base58.encode(bytes.slice(1)), 'type': type})
             } else {
                 throw new Error('Wrong parameter type')
             }
