@@ -87,7 +87,7 @@ function data_bytes_gen(data, data_type) {
             data = BigNumber(data)
             data_bytes = Convert.bigNumberToByteArray(data);
             break;
-        case Constants.SHORTTEXT_TYPE:
+        case Constants.SHORTTEXT_TYPE: case Constants.SHORT_BYTES_TYPE:
             let byte_arr = Convert.stringToByteArray(data);
             let length = byte_arr.length;
             let length_arr = Convert.shortToByteArray(length);
@@ -101,9 +101,13 @@ function data_bytes_gen(data, data_type) {
             let account_arr = Base58.decode(data);
             data_bytes = Array.from(account_arr);
             break;
+        case Constants.TIME_STAMP_TYPE:
+            data_bytes = Convert.longToByteArray(data)
+            break;
         case Constants.CONTRACT_ACCOUNT_TYPE:
             let contract_account_arr = Base58.decode(data);
             data_bytes = Array.from(contract_account_arr);
+            break;
     }
     return [data_type].concat(data_bytes);
 }

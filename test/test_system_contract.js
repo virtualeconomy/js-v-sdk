@@ -45,7 +45,7 @@ describe('test deposit vsys token', function () {
     let system_contract = common.tokenIDToContractID(system_token_id)
     let public_key = acc.getPublicKey();
     let sender = address
-    let amount = 999;
+    let amount = 1;
     let smart_contract = vsys_payment_contract_id;
     let function_data = data_generator.createDepositData(sender, smart_contract, amount);
     let attachment = 'deposit VSYS';

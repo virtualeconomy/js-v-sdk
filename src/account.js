@@ -41,6 +41,7 @@ export default class Account {
         this.public_key = Base58.encode(public_key_bytes);
         this.address = this.convertPublicKeyToAddress(this.public_key, this.network_byte);
     }
+
     buildColdWallet(public_key, address) {
         if (public_key) {
             this.public_key = public_key;
@@ -66,7 +67,6 @@ export default class Account {
                 } else if (tx['transactionType'] === Constants.CANCEL_LEASE_TX) {
                     return await node.sendCancelLeasingTx(tx);
                 }
-
             }
             case Constants.OPC_CONTRACT:
                 return await node.sendRegisterContractTx(tx);

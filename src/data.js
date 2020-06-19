@@ -81,11 +81,56 @@ export class PaymentChannelContractDataGenerator {
     createInitData(token_id) {
         return [{ type: Constants.TOKEN_ID_TYPE, value: token_id }]
     }
+
+    createCreateAndLoadData(recipient, amount, unity, expiration_time) {
+        amount = BigNumber(amount).multipliedBy(BigNumber(unity)).toString()
+        return [
+            { type: Constants.ACCOUNT_ADDR_TYPE, value: recipient },
+            { type: Constants.AMOUNT_TYPE, value: amount },
+            { type: Constants.TIME_STAMP_TYPE, value: expiration_time }
+        ]
+    }
+
+    createExtendExpirationTimeData(channel_id, expiration_time) {
+        return [
+            { type: Constants.SHORT_BYTES_TYPE, value: channel_id },
+            { type: Constants.TIME_STAMP_TYPE, value: expiration_time }
+        ]
+    }
+
+    createLoadData(channel_id, amount, unity) {
+        amount = BigNumber(amount).multipliedBy(BigNumber(unity)).toString()
+        return [
+            { type: Constants.SHORT_BYTES_TYPE, value: channel_id },
+            { type: Constants.AMOUNT_TYPE, value: amount }
+        ]
+    }
+
+    createAbortData(channel_id) {
+        return [{ type: Constants.SHORT_BYTES_TYPE, value: channel_id }]
+    }
+
+    createUnloadData(channel_id) {
+        return [{ type: Constants.SHORT_BYTES_TYPE, value: channel_id }]
+    }
+
+    createCollectPaymentData(channel_id, amount, unity, signature) {
+        amount = BigNumber(amount).multipliedBy(BigNumber(unity)).toString()
+        return [
+            { type: Constants.SHORT_BYTES_TYPE, value: channel_id },
+            { type: Constants.AMOUNT_TYPE, value: amount},
+            { type: Constants.SHORT_BYTES_TYPE, value: signature }
+        ]
+    }
 }
 
 export class LockContractDataGenerator {
     createInitData(token_id) {
         return [{ type: Constants.TOKEN_ID_TYPE, value: token_id }]
+    }
+
+    createLockData(timestamp) {
+        return [{ type: Constants.TIME_STAMP_TYPE, value: timestamp }]
     }
 }
 
