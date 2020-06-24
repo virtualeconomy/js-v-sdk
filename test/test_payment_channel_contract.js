@@ -14,7 +14,7 @@ const BigNumber = require('bignumber.js').default;
 const test_recipient = "AUEMZKy23xvWixKySNDg448dXxwc4GEZCC3";
 const system_token_id = contract_1.SYSTEM_CONTRACT_TOKEN_ID_TEST;
 const related_token_unity = 1e8;
-const test_channel_id = 'test channel';
+const test_channel_id = 'F1sVCsT2KdCYF7jj3pboFkLsdaEuoP1wPWDqSAM39bYy';
 const test_transaction_signature = '';
 const test_payment_contract_id = 'CFCLjuoCqS5uh4PeNntA8sZYipRgrvwZrhm';
 const expiration_day = '2020-12-31'
@@ -368,7 +368,6 @@ describe('test unload', function () {
     let signature = acc.getSignature(bytes);
     let send_tx = tra.toJsonForSendingTx(signature);
     let parse_function_data = convert.parseFunctionData(send_tx['functionData']);
-    console.log(parse_function_data)
     it('unit test for parseFunctionData', function() {
         expect(channel_id).to.be.equal(parse_function_data[0]['data']);
     });
@@ -411,7 +410,7 @@ describe('test unload', function () {
 });
 
 // test collect payment
-describe('test unload', function () {
+describe('test collect payment', function () {
     // Build account and transaction
     this.timeout(5000);
     let acc =  new Account(network_byte);
@@ -449,7 +448,6 @@ describe('test unload', function () {
         expect(channel_id).to.be.equal(parse_function_data[0]['data']);
     });
     it('get json for sending tx (collect payment)', function () {
-        console.log(send_tx)
         expect(send_tx).to.not.be.empty;
         expect(send_tx['functionData']).to.not.be.empty;
         expect(send_tx['contractId']).to.be.equal(contract_id);

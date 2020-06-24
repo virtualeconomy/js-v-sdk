@@ -87,11 +87,17 @@ function data_bytes_gen(data, data_type) {
             data = BigNumber(data)
             data_bytes = Convert.bigNumberToByteArray(data);
             break;
-        case Constants.SHORTTEXT_TYPE: case Constants.SHORT_BYTES_TYPE:
+        case Constants.SHORTTEXT_TYPE:
             let byte_arr = Convert.stringToByteArray(data);
             let length = byte_arr.length;
             let length_arr = Convert.shortToByteArray(length);
             data_bytes = length_arr.concat(byte_arr)
+            break;
+        case Constants.SHORT_BYTES_TYPE:
+            byte_arr = Base58.decode(data)
+            length = byte_arr.length;
+            length_arr = Convert.shortToByteArray(length);
+            data_bytes = length_arr.concat(Array.from(byte_arr))
             break;
         case Constants.TOKEN_ID_TYPE:
             let token_id_arr = Base58.decode(data);
