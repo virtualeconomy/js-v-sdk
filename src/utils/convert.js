@@ -96,12 +96,20 @@ const Convert = {
             } else if (type === 4) {
                 function_data.push({'data': parseAmountData(bytes.slice(1, 5), 4), 'type': type})
                 bytes = bytes.slice(5)
-            } else if (type === 5) {
+            }
+            else if (type === 5) {
                 let short_text_length = bytes[2]
                 function_data.push({'data': converters_1.byteArrayToString(bytes.slice(3, short_text_length + 3)), 'type': type})
                 bytes = bytes.slice(short_text_length + 3)
             } else if (type === 8) {
                 function_data.push({'data':Base58.encode(bytes.slice(1)), 'type': type})
+            } else if (type === 9) {
+                function_data.push({'data': parseAmountData(bytes.slice(1, 9), 8).toNumber(), 'type': type})
+                bytes = bytes.slice(9)
+            } else if (type === 11) {
+                let short_bytes_length = bytes[2]
+                function_data.push({'data': Base58.encode(bytes.slice(3, short_bytes_length + 3)), 'type': type})
+                bytes = bytes.slice(short_bytes_length + 3)
             } else {
                 throw new Error('Wrong parameter type')
             }

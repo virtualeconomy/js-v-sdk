@@ -983,6 +983,12 @@ $ npm run test_tx
 # Test system contract
 $ npm run test_system_contract
 
+# Test payment channel contract
+$ npm run test_payment_channel_contract
+
+# Test lock contract
+$ npm run test_lock_contract
+
 # Test all
 $ npm run test_all
 ```

@@ -32,6 +32,8 @@ export const SHORTTEXT_TYPE = 5;
 export const ACCOUNT_ADDR_TYPE = 2;
 export const TOKEN_ID_TYPE = 8;
 export const CONTRACT_ACCOUNT_TYPE = 6;
+export const TIME_STAMP_TYPE = 9;
+export const SHORT_BYTES_TYPE = 11;
 
 // function index
 export const SUPERSEDE_FUNCIDX = 0;
@@ -52,3 +54,14 @@ export const SYSTEM_CONTRACT_SEND_FUNCIDX = 0;
 export const SYSTEM_CONTRACT_DEPOSIT_FUNCIDX = 1;
 export const SYSTEM_CONTRACT_WITHDRAW_FUNCIDX = 2;
 export const SYSTEM_CONTRACT_TRANSFER_FUNCIDX = 3;
+
+// payment channel contract function index
+export const PAYMENTCHANNEL_CONTRACT_CREATEANDLOAD_FUNCIDX = 0;
+export const PAYMENTCHANNEL_CONTRACT_EXTENDEXPIRATIONTIME_FUNCIDX = 1;
+export const PAYMENTCHANNEL_CONTRACT_LOAD_FUNCIDX = 2;
+export const PAYMENTCHANNEL_CONTRACT_ABORT_FUNCIDX = 3;
+export const PAYMENTCHANNEL_CONTRACT_UNLOAD_FUNCIDX = 4;
+export const PAYMENTCHANNEL_CONTRACT_COLLECTPAYMENT_FUNCIDX = 5;
+
+// lock contract function index
+export const LOCK_CONTRACT_LOCK_FUNCIDX = 0;
