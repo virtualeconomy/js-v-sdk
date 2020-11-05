@@ -43,7 +43,7 @@ Here we introduce how to use this package installed from npm in detail.
     const vsys = require("@virtualeconomy/js-v-sdk");
     const constants = vsys.constants;
     const node_address = "https://wallet.v.systems/api"; // change to your node address
-    const network_byte = constants.TESTNET_BYTE;
+    const network_byte = constants.MAINNET_BYTE;
     var chain = new vsys.Blockchain(node_address, network_byte);
     ```
 3. Methods in chain object:
