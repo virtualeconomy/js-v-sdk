@@ -462,7 +462,7 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for payment channel contract, use tra.paymentContractDataGen(token_id) to generate init_data.
+    // Necessary data for payment channel contract, use vsys.PaymentChannelContractDataGenerator.createInitData(token_id) to generate init_data.
     let contract = contract_1.PAYMENT_CONTRACT;
     let public_key = acc.getPublicKey();
     let token_id = "<token_id>";
@@ -591,7 +591,7 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for issue token, use tra.issueDataGen(amount, unity) to generate function_data.
+    // Necessary data for issue token, use vsys.TokenContractDataGenerator.createIssueData(amount, unity) to generate function_data.
     let public_key = acc.getPublicKey();
     let amount = "<amount>";
     let unity = "<unity of this token>";
@@ -636,7 +636,7 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for destroy token, use tra.destroyDataGen(amount, unity) to generate function_data.
+    // Necessary data for destroy token, use vsys.TokenContractDataGenerator.createDestroyData(amount, unity) to generate function_data.
     let public_key = acc.getPublicKey();
     let amount = "<amount>";
     let unity = "<unity of this token>"; // 1e8
@@ -681,7 +681,7 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for split token, use tra.splitDataGen(new_unity) to generate function_data.
+    // Necessary data for split token, use vsys.TokenContractDataGenerator.createSplitData(new_unity) to generate function_data.
     let public_key = acc.getPublicKey();
     let new_unity = "<new unity>";
     let timestamp = Date.now() * 1e6;
@@ -724,7 +724,7 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for supersede token, use tra.supersedeDataGen(new_issuer) to generate function_data.
+    // Necessary data for supersede token, use vsys.TokenContractDataGenerator.createSupersedeData(new_issuer) to generate function_data.
     let public_key = acc.getPublicKey();
     let new_issuer = "<new issuer>";
     let timestamp = Date.now() * 1e6;
@@ -813,7 +813,7 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for send token, use tra.sendDataGen(recipient, amount, unity) to generate function_data.
+    // Necessary data for send token, use vsys.TokenContractDataGenerator.createSendData(recipient, amount, unity) to generate function_data.
     let public_key = acc.getPublicKey();
     let recipient = "<recipient address>";
     let timestamp = Date.now() * 1e6;
@@ -859,7 +859,7 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for transfer token, user tra.transferDataGen(sender, recipient, amount, unity) to generate function_data.
+    // Necessary data for transfer token, user vsys.TokenContractDataGenerator.createTransferData(sender, recipient, amount, unity) to generate function_data.
     let public_key = acc.getPublicKey();
     let sender = "<sender address>"; // acc.getAddress();
     let recipient = "<recipient address>";
@@ -906,7 +906,7 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for deposit token, use tra.depositDataGen(sender, smart_contract, amount, unity) to generate function_data.
+    // Necessary data for deposit token, use vsys.TokenContractDataGenerator.createDepositData(sender, smart_contract, amount, unity) to generate function_data.
     let public_key = acc.getPublicKey();
     let sender = "<sender address>"; // acc.getAddress();
     let timestamp = Date.now() * 1e6;
@@ -953,7 +953,7 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for withdraw token, use tra.withdrawDataGen(smart_contract, recipient, amount, unity) to generate function_data.
+    // Necessary data for withdraw token, use vsys.TokenContractDataGenerator.createWithdrawData(smart_contract, recipient, amount, unity) to generate function_data.
     let public_key = acc.getPublicKey();
     let recipient = "<recipient address>";
     let timestamp = Date.now() * 1e6;
