@@ -268,8 +268,8 @@ describe('test withdraw', function () {
     let timestamp = Date.now() * 1e6;
     let recipient = address;
     let smart_contract = test_lock_contract_id_for_nft;
-    let amount = 1;
-    let function_data = data_generator.createWithdrawData(smart_contract, recipient, amount);
+    let tokenIndex = 1;
+    let function_data = data_generator.createWithdrawData(smart_contract, recipient, tokenIndex);
 
     let function_index = constants.NFT_CONTRACT_WITHDRAW_FUNCIDX;
 
@@ -289,6 +289,8 @@ describe('test withdraw', function () {
     let parse_function_data = convert.parseFunctionData(send_tx['functionData']);
     it('unit test for parseFunctionData', function() {
         expect(smart_contract).to.be.equal(parse_function_data[0]['data']);
+        expect(recipient).to.be.equal(parse_function_data[1]['data']);
+        expect(tokenIndex).to.be.equal(parse_function_data[2]['data']);
     });
     it('get json for sending tx (withdraw)', function () {
         expect(send_tx).to.not.be.empty;
@@ -341,9 +343,9 @@ describe('test deposit', function () {
     let contract_id = test_nft_contract_id
     let public_key = acc.getPublicKey();
     let sender = address
-    let amount = 1;
+    let tokenIndex = 1;
     let smart_contract = test_lock_contract_id_for_nft;
-    let function_data = data_generator.createDepositData(sender, smart_contract, amount);
+    let function_data = data_generator.createDepositData(sender, smart_contract, tokenIndex);
     let attachment = 'deposit nft';
     let timestamp = Date.now() * 1e6;
     let function_index = constants.NFT_CONTRACT_DEPOSIT_FUNCIDX;
@@ -363,7 +365,9 @@ describe('test deposit', function () {
     let send_tx = tra.toJsonForSendingTx(signature);
     let parse_function_data = convert.parseFunctionData(send_tx['functionData']);
     it('unit test for parseFunctionData', function() {
+        expect(sender).to.be.equal(parse_function_data[0]['data']);
         expect(smart_contract).to.be.equal(parse_function_data[1]['data']);
+        expect(tokenIndex).to.be.equal(parse_function_data[2]['data']);
     });
     it('get json for sending tx (deposit)', function () {
         expect(send_tx).to.not.be.empty;
@@ -418,8 +422,8 @@ describe('test transfer', function () {
     let sender = address;
     let recipient = 'AUEMZKy23xvWixKySNDg448dXxwc4GEZCC3';
     let timestamp = Date.now() * 1e6;
-    let amount = 1;
-    let function_data = data_generator.createTransferData(sender, recipient, amount);
+    let tokenIndex = 1;
+    let function_data = data_generator.createTransferData(sender, recipient, tokenIndex);
     let attachment = 'transfer nft';
     let function_index = constants.NFT_CONTRACT_TRANSFER_FUNCIDX;
 
@@ -438,8 +442,9 @@ describe('test transfer', function () {
     let send_tx = tra.toJsonForSendingTx(signature);
     let parse_function_data = convert.parseFunctionData(send_tx['functionData']);
     it('unit test for parseFunctionData', function() {
+        expect(sender).to.be.equal(parse_function_data[0]['data']);
         expect(recipient).to.be.equal(parse_function_data[1]['data']);
-        expect(amount).to.be.equal(parse_function_data[2]['data']);
+        expect(tokenIndex).to.be.equal(parse_function_data[2]['data']);
     });
     it('get json for sending tx (transfer)', function () {
         expect(send_tx).to.not.be.empty;
