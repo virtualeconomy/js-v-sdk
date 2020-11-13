@@ -1029,6 +1029,9 @@ $ npm run test_payment_channel_contract
 # Test lock contract
 $ npm run test_lock_contract
 
+# Test non fungible contract
+$ npm run test_nft_contract
+
 # Test all
 $ npm run test_all
 ```
