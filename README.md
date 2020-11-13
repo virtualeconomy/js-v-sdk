@@ -172,14 +172,14 @@ Here we introduce how to use this package installed from npm in detail.
     sendCancelLeasingTx(chain, tx);
 
     // Send register contract tx to node
-    async function sendRegisterContractTxx(chain, tx) {
+    async function sendRegisterContractTx(chain, tx) {
         const result = await chain.sendRegisterContractTx(tx);
         console.log(result);
     }
     sendRegisterContractTx(chain, tx);
 
     // Send execute contract tx to node
-    async function sendExecuteContractTxx(chain, tx) {
+    async function sendExecuteContractTx(chain, tx) {
         const result = await chain.sendExecuteContractTx(tx);
         console.log(result);
     }
@@ -417,7 +417,7 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for creating token, use tra.tokenContractDataGen(amount,unity,token_description) to generate init_data.
+    // Necessary data for creating token, use vsys.TokenContractDataGenerator.createInitData(amount,unity,token_description) to generate init_data.
     let contract = contract_1.TOKEN_CONTRACT; // contract_1.TOKEN_CONTRACT_WITH_SPLIT
     let public_key = acc.getPublicKey();
     let amount = "<amount>";
@@ -498,14 +498,14 @@ Here we introduce how to use this package installed from npm in detail.
     const vsys = require("@virtualeconomy/js-v-sdk");
     const contract_1 = vsys.Contract;
     const node_address = "http://test.v.systems:9922"; // change to your node address
-    let data_generator = new vsys.PaymentChannelContractDataGenerator();
+    let data_generator = new vsys.LockContractDataGenerator();
 
     async function sendRegisterContractTx(tx) {
         const result = await chain.sendRegisterContractTx(tx);
         console.log(result);
     }
 
-    // Necessary data for lock contract, use tra.lockContractDataGen(token_id) to generate init_data.
+    // Necessary data for lock contract, use vsys.LockContractDataGenerator.createInitData(token_id) to generate init_data.
     let contract = contract_1.LOCK_CONTRACT;
     let public_key = acc.getPublicKey();
     let token_id = "<token_id>";
@@ -534,6 +534,46 @@ Here we introduce how to use this package installed from npm in detail.
     console.log(cold_tx);
     ```
     
+    (4) Non Fungible Contract
+    ```javascript
+    // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const contract_1 = vsys.Contract;
+    const node_address = "http://test.v.systems:9922"; // change to your node address
+    let data_generator = new vsys.NonFungibleTokenContractDataGenerator();
+    
+    async function sendRegisterContractTx(tx) {
+        const result = await chain.sendRegisterContractTx(tx);
+        console.log(result);
+    }
+ 
+    // Necessary data for non fungible contract, use vsys.NonFungibleTokenContractDataGenerator.createInitData(token_id) to generate init_data.
+    let contract = contract_1.NON_FUNGIBLE_TOKEN_CONTRACT;
+    let public_key = acc.getPublicKey();
+    let contract_description = "<description for contract>";
+    let timestamp = Date.now() * 1e6;
+    let init_data = data_generator.createInitData();
+
+    // Build contract tx
+    tra.buildRegisterContractTx(public_key, contract, init_data, contract_description, timestamp);
+
+    // Get bytes
+    let bytes = tra.toBytes();
+
+    // Get signature
+    let signature = acc.getSignature(bytes);
+
+    // Get json for sending tx
+    let send_tx = tra.toJsonForSendingTx(signature);
+
+    // Send transaction
+    sendRegisterContractTx(send_tx);
+
+    // You can also get json for cold signature
+    let cold_tx = tra.toJsonForColdSignature();
+    console.log('Json for cold signature:');
+    console.log(cold_tx);
+    ```
 2. Execute contract
 
     Issue token
