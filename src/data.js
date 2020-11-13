@@ -125,6 +125,7 @@ export class PaymentChannelContractDataGenerator {
 }
 
 export class LockContractDataGenerator {
+
     createInitData(token_id) {
         return [{ type: Constants.TOKEN_ID_TYPE, value: token_id }]
     }
@@ -135,6 +136,7 @@ export class LockContractDataGenerator {
 }
 
 export class SystemContractDataGenerator {
+
     createSendData(recipient, amount) {
         amount = BigNumber(amount).multipliedBy(1e8).toString()
         let data = [
@@ -172,5 +174,12 @@ export class SystemContractDataGenerator {
             { type: Constants.AMOUNT_TYPE, value: amount }
         ]
         return data
+    }
+}
+
+export class NonFungibleTokenContractDataGenerator {
+
+    createInitData() {
+        return []
     }
 }

@@ -5,6 +5,7 @@
 import bignumber_1 from 'bignumber.js';
 import converters_1 from './converters';
 import Base58 from 'base-58';
+import Crypto from './crypto';
 function performBitwiseAnd(a, b) {
     let sa = a.toString(2).split('.')[0];
     let sb = b.toString(2).split('.')[0];
@@ -129,6 +130,29 @@ const Convert = {
         let stringBytes = converters_1.stringToByteArray(input);
         let lengthBytes = converters_1.int16ToBytes(stringBytes.length, true);
         return lengthBytes.concat(stringBytes);
+    },
+    contractIDToTokenID(contraId) {
+        let conId = Base58.decode(contraId)
+        let firstArr = [132]
+        let secondArr = Array.from(conId.slice(1,conId.length-4))
+        let thirdArr = Convert.idxToByteArray(0)
+        let encodeArr = firstArr.concat(secondArr.concat(thirdArr))
+        let hashArr = Crypto.hash(Uint8Array.from(encodeArr))
+        let checkArr = hashArr.slice(0, 4)
+        let tokenArr = encodeArr.concat(checkArr)
+        let tokenString = Base58.encode(tokenArr)
+        return tokenString
+    },
+    tokenIDToContractID(tokenId) {
+        let tokenArr = Base58.decode(tokenId)
+        let firstArr = [6]
+        let secondArr = Array.from(tokenArr.slice(1,tokenArr.length-8))
+        let encodeArr = firstArr.concat(secondArr)
+        let hashArr = Crypto.hash(Uint8Array.from(encodeArr))
+        let checkArr = hashArr.slice(0, 4)
+        let contractArr = encodeArr.concat(checkArr)
+        let contractString = Base58.encode(contractArr)
+        return contractString
     }
 };
 
