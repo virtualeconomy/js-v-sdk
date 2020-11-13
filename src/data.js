@@ -182,4 +182,8 @@ export class NonFungibleTokenContractDataGenerator {
     createInitData() {
         return []
     }
+
+    createSupersedeData(issuer) {
+        return [{ type: Constants.ACCOUNT_ADDR_TYPE, value: issuer }]
+    }
 }

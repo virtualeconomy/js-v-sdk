@@ -50,6 +50,7 @@
         "test_system_contract": "npm run build && mocha ./test/test_system_contract.js",
         "test_payment_channel_contract": "npm run build && mocha ./test/test_payment_channel_contract.js",
         "test_lock_contract": "npm run build && mocha ./test/test_lock_contract.js",
+        "test_nft_contract": "npm run build && mocha ./test/test_nft_contract.js",
         "clean": "rm -rf dist libs",
         "pre-build": "babel --source-maps -d libs src test",
         "build": "npm run pre-build && cross-env BABEL_ENV=production babel-node build/bundle.js esm,cjs"
