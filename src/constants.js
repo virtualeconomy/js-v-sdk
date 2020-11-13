@@ -29,6 +29,7 @@ export const OPC_ACCOUNT = 'account'
 export const AMOUNT_TYPE = 3;
 export const CONTRACT_TYPE = 6;
 export const SHORTTEXT_TYPE = 5;
+export const INT32_TYPE = 4;
 export const ACCOUNT_ADDR_TYPE = 2;
 export const TOKEN_ID_TYPE = 8;
 export const CONTRACT_ACCOUNT_TYPE = 6;
@@ -65,3 +66,12 @@ export const PAYMENTCHANNEL_CONTRACT_COLLECTPAYMENT_FUNCIDX = 5;
 
 // lock contract function index
 export const LOCK_CONTRACT_LOCK_FUNCIDX = 0;
+
+// nft contract function index
+export const NFT_CONTRACT_SUPERSEDE_FUNCIDX = 0;
+export const NFT_CONTRACT_ISSUE_FUNCIDX = 1;
+export const NFT_CONTRACT_SEND_FUNCIDX = 2;
+export const NFT_CONTRACT_TRANSFER_FUNCIDX = 3;
+export const NFT_CONTRACT_DEPOSIT_FUNCIDX = 4;
+export const NFT_CONTRACT_WITHDRAW_FUNCIDX = 5;
+
