@@ -125,6 +125,7 @@ export class PaymentChannelContractDataGenerator {
 }
 
 export class LockContractDataGenerator {
+
     createInitData(token_id) {
         return [{ type: Constants.TOKEN_ID_TYPE, value: token_id }]
     }
@@ -135,6 +136,7 @@ export class LockContractDataGenerator {
 }
 
 export class SystemContractDataGenerator {
+
     createSendData(recipient, amount) {
         amount = BigNumber(amount).multipliedBy(1e8).toString()
         let data = [
@@ -170,6 +172,59 @@ export class SystemContractDataGenerator {
             { type: Constants.CONTRACT_ACCOUNT_TYPE, value: contract },
             { type: Constants.ACCOUNT_ADDR_TYPE, value: recipient },
             { type: Constants.AMOUNT_TYPE, value: amount }
+        ]
+        return data
+    }
+}
+
+export class NonFungibleTokenContractDataGenerator {
+
+    createInitData() {
+        return []
+    }
+
+    createSupersedeData(issuer) {
+        return [{ type: Constants.ACCOUNT_ADDR_TYPE, value: issuer }]
+    }
+
+    createIssueData(tokenDescription) {
+        let data = [
+            { type: Constants.SHORTTEXT_TYPE, value: tokenDescription }
+        ]
+        return data
+    }
+
+    createSendData(recipient, tokenIndex) {
+        let data = [
+            { type: Constants.ACCOUNT_ADDR_TYPE, value: recipient },
+            { type: Constants.INT32_TYPE, value: tokenIndex }
+        ]
+        return data
+    }
+
+    createTransferData(sender, recipient, tokenIndex) {
+        let data = [
+            { type: Constants.ACCOUNT_ADDR_TYPE, value: sender },
+            { type: Constants.ACCOUNT_ADDR_TYPE, value: recipient },
+            { type: Constants.INT32_TYPE, value: tokenIndex }
+        ]
+        return data
+    }
+
+    createDepositData(sender, contract, tokenIndex) {
+        let data = [
+            { type: Constants.ACCOUNT_ADDR_TYPE, value: sender },
+            { type: Constants.CONTRACT_ACCOUNT_TYPE, value: contract },
+            { type: Constants.INT32_TYPE, value: tokenIndex }
+        ]
+        return data
+    }
+
+    createWithdrawData(contract, recipient, tokenIndex) {
+        let data = [
+            { type: Constants.CONTRACT_ACCOUNT_TYPE, value: contract },
+            { type: Constants.ACCOUNT_ADDR_TYPE, value: recipient },
+            { type: Constants.INT32_TYPE, value: tokenIndex }
         ]
         return data
     }

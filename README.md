@@ -172,14 +172,14 @@ Here we introduce how to use this package installed from npm in detail.
     sendCancelLeasingTx(chain, tx);
 
     // Send register contract tx to node
-    async function sendRegisterContractTxx(chain, tx) {
+    async function sendRegisterContractTx(chain, tx) {
         const result = await chain.sendRegisterContractTx(tx);
         console.log(result);
     }
     sendRegisterContractTx(chain, tx);
 
     // Send execute contract tx to node
-    async function sendExecuteContractTxx(chain, tx) {
+    async function sendExecuteContractTx(chain, tx) {
         const result = await chain.sendExecuteContractTx(tx);
         console.log(result);
     }
@@ -417,7 +417,7 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for creating token, use tra.tokenContractDataGen(amount,unity,token_description) to generate init_data.
+    // Necessary data for creating token, use vsys.TokenContractDataGenerator.createInitData(amount,unity,token_description) to generate init_data.
     let contract = contract_1.TOKEN_CONTRACT; // contract_1.TOKEN_CONTRACT_WITH_SPLIT
     let public_key = acc.getPublicKey();
     let amount = "<amount>";
@@ -462,7 +462,7 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for payment channel contract, use tra.paymentContractDataGen(token_id) to generate init_data.
+    // Necessary data for payment channel contract, use vsys.PaymentChannelContractDataGenerator.createInitData(token_id) to generate init_data.
     let contract = contract_1.PAYMENT_CONTRACT;
     let public_key = acc.getPublicKey();
     let token_id = "<token_id>";
@@ -498,14 +498,14 @@ Here we introduce how to use this package installed from npm in detail.
     const vsys = require("@virtualeconomy/js-v-sdk");
     const contract_1 = vsys.Contract;
     const node_address = "http://test.v.systems:9922"; // change to your node address
-    let data_generator = new vsys.PaymentChannelContractDataGenerator();
+    let data_generator = new vsys.LockContractDataGenerator();
 
     async function sendRegisterContractTx(tx) {
         const result = await chain.sendRegisterContractTx(tx);
         console.log(result);
     }
 
-    // Necessary data for lock contract, use tra.lockContractDataGen(token_id) to generate init_data.
+    // Necessary data for lock contract, use vsys.LockContractDataGenerator.createInitData(token_id) to generate init_data.
     let contract = contract_1.LOCK_CONTRACT;
     let public_key = acc.getPublicKey();
     let token_id = "<token_id>";
@@ -534,6 +534,46 @@ Here we introduce how to use this package installed from npm in detail.
     console.log(cold_tx);
     ```
     
+    (4) Non Fungible Contract
+    ```javascript
+    // tra: your transaction object, acc: your account object, chain: your blockchain object, build them first!
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    const contract_1 = vsys.Contract;
+    const node_address = "http://test.v.systems:9922"; // change to your node address
+    let data_generator = new vsys.NonFungibleTokenContractDataGenerator();
+    
+    async function sendRegisterContractTx(tx) {
+        const result = await chain.sendRegisterContractTx(tx);
+        console.log(result);
+    }
+ 
+    // Necessary data for non fungible contract, use vsys.NonFungibleTokenContractDataGenerator.createInitData(token_id) to generate init_data.
+    let contract = contract_1.NON_FUNGIBLE_TOKEN_CONTRACT;
+    let public_key = acc.getPublicKey();
+    let contract_description = "<description for contract>";
+    let timestamp = Date.now() * 1e6;
+    let init_data = data_generator.createInitData();
+
+    // Build contract tx
+    tra.buildRegisterContractTx(public_key, contract, init_data, contract_description, timestamp);
+
+    // Get bytes
+    let bytes = tra.toBytes();
+
+    // Get signature
+    let signature = acc.getSignature(bytes);
+
+    // Get json for sending tx
+    let send_tx = tra.toJsonForSendingTx(signature);
+
+    // Send transaction
+    sendRegisterContractTx(send_tx);
+
+    // You can also get json for cold signature
+    let cold_tx = tra.toJsonForColdSignature();
+    console.log('Json for cold signature:');
+    console.log(cold_tx);
+    ```
 2. Execute contract
 
     Issue token
@@ -551,7 +591,7 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for issue token, use tra.issueDataGen(amount, unity) to generate function_data.
+    // Necessary data for issue token, use vsys.TokenContractDataGenerator.createIssueData(amount, unity) to generate function_data.
     let public_key = acc.getPublicKey();
     let amount = "<amount>";
     let unity = "<unity of this token>";
@@ -596,7 +636,7 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for destroy token, use tra.destroyDataGen(amount, unity) to generate function_data.
+    // Necessary data for destroy token, use vsys.TokenContractDataGenerator.createDestroyData(amount, unity) to generate function_data.
     let public_key = acc.getPublicKey();
     let amount = "<amount>";
     let unity = "<unity of this token>"; // 1e8
@@ -641,7 +681,7 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for split token, use tra.splitDataGen(new_unity) to generate function_data.
+    // Necessary data for split token, use vsys.TokenContractDataGenerator.createSplitData(new_unity) to generate function_data.
     let public_key = acc.getPublicKey();
     let new_unity = "<new unity>";
     let timestamp = Date.now() * 1e6;
@@ -684,7 +724,7 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for supersede token, use tra.supersedeDataGen(new_issuer) to generate function_data.
+    // Necessary data for supersede token, use vsys.TokenContractDataGenerator.createSupersedeData(new_issuer) to generate function_data.
     let public_key = acc.getPublicKey();
     let new_issuer = "<new issuer>";
     let timestamp = Date.now() * 1e6;
@@ -773,7 +813,7 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for send token, use tra.sendDataGen(recipient, amount, unity) to generate function_data.
+    // Necessary data for send token, use vsys.TokenContractDataGenerator.createSendData(recipient, amount, unity) to generate function_data.
     let public_key = acc.getPublicKey();
     let recipient = "<recipient address>";
     let timestamp = Date.now() * 1e6;
@@ -819,7 +859,7 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for transfer token, user tra.transferDataGen(sender, recipient, amount, unity) to generate function_data.
+    // Necessary data for transfer token, user vsys.TokenContractDataGenerator.createTransferData(sender, recipient, amount, unity) to generate function_data.
     let public_key = acc.getPublicKey();
     let sender = "<sender address>"; // acc.getAddress();
     let recipient = "<recipient address>";
@@ -866,7 +906,7 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for deposit token, use tra.depositDataGen(sender, smart_contract, amount, unity) to generate function_data.
+    // Necessary data for deposit token, use vsys.TokenContractDataGenerator.createDepositData(sender, smart_contract, amount, unity) to generate function_data.
     let public_key = acc.getPublicKey();
     let sender = "<sender address>"; // acc.getAddress();
     let timestamp = Date.now() * 1e6;
@@ -913,7 +953,7 @@ Here we introduce how to use this package installed from npm in detail.
         console.log(result);
     }
 
-    // Necessary data for withdraw token, use tra.withdrawDataGen(smart_contract, recipient, amount, unity) to generate function_data.
+    // Necessary data for withdraw token, use vsys.TokenContractDataGenerator.createWithdrawData(smart_contract, recipient, amount, unity) to generate function_data.
     let public_key = acc.getPublicKey();
     let recipient = "<recipient address>";
     let timestamp = Date.now() * 1e6;
@@ -988,6 +1028,9 @@ $ npm run test_payment_channel_contract
 
 # Test lock contract
 $ npm run test_lock_contract
+
+# Test non fungible contract
+$ npm run test_nft_contract
 
 # Test all
 $ npm run test_all

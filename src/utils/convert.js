@@ -5,6 +5,8 @@
 import bignumber_1 from 'bignumber.js';
 import converters_1 from './converters';
 import Base58 from 'base-58';
+import Crypto from './crypto';
+import Common from './common'
 function performBitwiseAnd(a, b) {
     let sa = a.toString(2).split('.')[0];
     let sb = b.toString(2).split('.')[0];
@@ -129,6 +131,12 @@ const Convert = {
         let stringBytes = converters_1.stringToByteArray(input);
         let lengthBytes = converters_1.int16ToBytes(stringBytes.length, true);
         return lengthBytes.concat(stringBytes);
+    },
+    contractIDToTokenID(contraId) {
+        return Common.contractIDToTokenID(contraId);
+    },
+    tokenIDToContractID(tokenId) {
+        return Common.tokenIDToContractID(tokenId);
     }
 };
 

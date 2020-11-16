@@ -37,6 +37,8 @@ function getContractType(contract) {
             return 'PAYMENT_CONTRACT';
         case Contract.LOCK_CONTRACT:
             return 'LOCK_CONTRACT';
+        case Contract.NON_FUNGIBLE_TOKEN_CONTRACT:
+            return 'NON_FUNGIBLE_TOKEN_CONTRACT';
         default:
             throw new Error('Invalid contract! ')
     }
@@ -84,20 +86,23 @@ function data_bytes_gen(data, data_type) {
     let data_bytes;
     switch (data_type) {
         case Constants.AMOUNT_TYPE:
-            data = BigNumber(data)
+            data = BigNumber(data);
             data_bytes = Convert.bigNumberToByteArray(data);
+            break;
+        case Constants.INT32_TYPE:
+            data_bytes = Convert.idxToByteArray(data)
             break;
         case Constants.SHORTTEXT_TYPE:
             let byte_arr = Convert.stringToByteArray(data);
             let length = byte_arr.length;
             let length_arr = Convert.shortToByteArray(length);
-            data_bytes = length_arr.concat(byte_arr)
+            data_bytes = length_arr.concat(byte_arr);
             break;
         case Constants.SHORT_BYTES_TYPE:
-            byte_arr = Base58.decode(data)
+            byte_arr = Base58.decode(data);
             length = byte_arr.length;
             length_arr = Convert.shortToByteArray(length);
-            data_bytes = length_arr.concat(Array.from(byte_arr))
+            data_bytes = length_arr.concat(Array.from(byte_arr));
             break;
         case Constants.TOKEN_ID_TYPE:
             let token_id_arr = Base58.decode(data);
@@ -108,7 +113,7 @@ function data_bytes_gen(data, data_type) {
             data_bytes = Array.from(account_arr);
             break;
         case Constants.TIME_STAMP_TYPE:
-            data_bytes = Convert.longToByteArray(data)
+            data_bytes = Convert.longToByteArray(data);
             break;
         case Constants.CONTRACT_ACCOUNT_TYPE:
             let contract_account_arr = Base58.decode(data);
@@ -129,7 +134,7 @@ function getContractColdFields(cold_tx, network_byte, acc) {
             cold_tx['contractInitExplain'] = 'Create token' + (contract_type === 'TOKEN_CONTRACT' ? ' ' : ' (support split) ') + 'with max supply ' + BigNumber(init_data[0]['value']).dividedBy(init_data[1]['value']);
             cold_tx['contractInitTextual'] = "init(max=" + BigNumber(init_data[0]['value']).dividedBy(init_data[1]['value'])+ ",unity= "+ BigNumber(init_data[1]['value']) + ",tokenDescription='" + init_data[2]['value'] + "')";
             break;
-        case 'PAYMENT_CONTRACT': case 'LOCK_CONTRACT':
+        case 'PAYMENT_CONTRACT': case 'LOCK_CONTRACT': case 'NON_FUNGIBLE_TOKEN_CONTRACT':
             cold_tx['contractInitExplain'] = ''
             cold_tx['contractInitTextual'] = ''
     }
