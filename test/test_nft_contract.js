@@ -1,7 +1,7 @@
 const Transaction = require('../libs/transaction').default;
 const Account = require('../libs/account').default;
 const Blockchain = require('../libs/blockchain').default;
-const { NonFungibleTokenContractDataGenerator } = require('../libs/data');
+const { NonFungibleTokenContractDataGenerator, getContractFunctionIndex } = require('../libs/data');
 const constants = require("../libs/constants");
 const test_config = require('../libs/test_config');
 const convert = require('../libs/utils/convert').default;
@@ -47,7 +47,7 @@ describe('test supersede', function () {
     let timestamp = Date.now() * 1e6;
     let function_data = data_generator.createSupersedeData(new_issuer);
     let attachment = 'supersede nft';
-    let function_index = constants.NFT_CONTRACT_SUPERSEDE_FUNCIDX;
+    let function_index = getContractFunctionIndex('NFT', 'SUPERSEDE');
 
     // Result of supersede
     let contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
@@ -120,7 +120,7 @@ describe('test issue', function () {
     let tokenDescription = "My nft token"
     let function_data = data_generator.createIssueData(tokenDescription)
     let attachment = 'issue nft';
-    let function_index = constants.NFT_CONTRACT_ISSUE_FUNCIDX
+    let function_index = getContractFunctionIndex('NFT', 'ISSUE');
 
     // Result of issue
     let contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
@@ -194,7 +194,7 @@ describe('test send', function () {
     let tokenIndex = 0
     let function_data = data_generator.createSendData(recipient, tokenIndex)
     let attachment = 'send nft';
-    let function_index = constants.NFT_CONTRACT_SEND_FUNCIDX;
+    let function_index = getContractFunctionIndex('NFT', 'SEND');
 
     // Result of send
     let contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
@@ -271,7 +271,7 @@ describe('test withdraw', function () {
     let tokenIndex = 1;
     let function_data = data_generator.createWithdrawData(smart_contract, recipient, tokenIndex);
 
-    let function_index = constants.NFT_CONTRACT_WITHDRAW_FUNCIDX;
+    let function_index = getContractFunctionIndex('NFT', 'WITHDRAW');
 
     // Result of withdraw
     let contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
@@ -348,7 +348,7 @@ describe('test deposit', function () {
     let function_data = data_generator.createDepositData(sender, smart_contract, tokenIndex);
     let attachment = 'deposit nft';
     let timestamp = Date.now() * 1e6;
-    let function_index = constants.NFT_CONTRACT_DEPOSIT_FUNCIDX;
+    let function_index = getContractFunctionIndex('NFT', 'DEPOSIT');
 
     // Result of deposit
     let contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
@@ -425,7 +425,7 @@ describe('test transfer', function () {
     let tokenIndex = 1;
     let function_data = data_generator.createTransferData(sender, recipient, tokenIndex);
     let attachment = 'transfer nft';
-    let function_index = constants.NFT_CONTRACT_TRANSFER_FUNCIDX;
+    let function_index = getContractFunctionIndex('NFT', 'TRANSFER');
 
     // Result of transfer
     let contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);

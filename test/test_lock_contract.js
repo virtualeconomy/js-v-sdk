@@ -1,7 +1,7 @@
 const Transaction = require('../libs/transaction').default;
 const Account = require('../libs/account').default;
 const Blockchain = require('../libs/blockchain').default;
-const { LockContractDataGenerator } = require('../libs/data');
+const { LockContractDataGenerator, getContractFunctionIndex } = require('../libs/data');
 const constants = require("../libs/constants");
 const test_config = require('../libs/test_config');
 const convert = require('../libs/utils/convert').default;
@@ -42,7 +42,7 @@ describe('test lock', function () {
     let function_data = data_generator.createLockData(lock_time);
     let attachment = 'lock';
     let timestamp = Date.now() * 1e6;
-    let function_index = constants.LOCK_CONTRACT_LOCK_FUNCIDX;
+    let function_index = getContractFunctionIndex('LOCK', 'LOCK');
 
     // Result of lock
     let contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);

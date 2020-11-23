@@ -1,7 +1,7 @@
 const Transaction = require('../libs/transaction').default;
 const Account = require('../libs/account').default;
 const Blockchain = require('../libs/blockchain').default;
-const { TokenContractDataGenerator, LockContractDataGenerator, PaymentChannelContractDataGenerator, NonFungibleTokenContractDataGenerator } = require('../libs/data');
+const { TokenContractDataGenerator, LockContractDataGenerator, PaymentChannelContractDataGenerator, NonFungibleTokenContractDataGenerator, getContractFunctionIndex } = require('../libs/data');
 const constants = require("../libs/constants");
 const contract_1 = require("../libs/contract");
 const test_config = require('../libs/test_config');
@@ -343,7 +343,7 @@ describe('test issue and destroy token', function () {
     let attachment = 'issue';
 
     // Result of issue token
-    let function_index = constants.ISSUE_FUNCIDX;
+    let function_index = getContractFunctionIndex('TOKEN', 'ISSUE');
     let issue_contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
     it('get issue token Tx', function () {
         expect(issue_contract_tx).to.not.be.empty;
@@ -401,7 +401,7 @@ describe('test issue and destroy token', function () {
 
 
     // Result of destroy token
-    function_index = constants.DESTROY_FUNCIDX;
+    function_index = getContractFunctionIndex('TOKEN', 'DESTROY');
     function_data = data_generator.createDestroyData(amount, unity);
     let destroy_contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
     it('get destroy token Tx', function () {
@@ -475,7 +475,7 @@ describe('test split token', function () {
     let attachment = 'split token';
 
     // Result of split token
-    let function_index = constants.SPLIT_FUNCIDX;
+    let function_index = getContractFunctionIndex('TOKEN', 'SPLIT');
     let contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
     it('get split token Tx', function () {
         expect(contract_tx).to.not.be.empty;
@@ -547,7 +547,7 @@ describe('test supersede token', function () {
     let timestamp = Date.now() * 1e6;
     let function_data = data_generator.createSupersedeData(new_issuer);
     let attachment = 'supersede token';
-    let function_index = constants.SUPERSEDE_FUNCIDX;
+    let function_index = getContractFunctionIndex('TOKEN', 'SUPERSEDE');
 
     // Result of supersede token
     let contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
@@ -699,7 +699,7 @@ describe('test send token', function () {
     let unity = 100000000; //1e8
     let function_data = data_generator.createSendData(recipient, amount, unity);
     let attachment = 'send token';
-    let function_index = constants.SEND_FUNCIDX_SPLIT; //constants.SEND_FUNCIDX
+    let function_index = getContractFunctionIndex('TOKEN', 'SEND_SPLIT'); //constants.SEND_FUNCIDX
 
     // Result of send token
     let contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
@@ -779,7 +779,7 @@ describe('test transfer token', function () {
     let unity = 100000000; //1e8
     let function_data = data_generator.createTransferData(sender, recipient, amount, unity);
     let attachment = 'transfer token';
-    let function_index = constants.TRANSFER_FUNCIDX_SPLIT; //constants.TRANSFER_FUNCIDX
+    let function_index = getContractFunctionIndex('TOKEN', 'TRANSFER_SPLIT'); //constants.TRANSFER_FUNCIDX
 
     // Result of transfer token
     let contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
@@ -861,7 +861,7 @@ describe('test deposit token', function () {
     let function_data = data_generator.createDepositData(sender, smart_contract, amount, unity);
     let attachment = 'deposit token';
     let timestamp = Date.now() * 1e6;
-    let function_index = constants.DEPOSIT_FUNCIDX_SPLIT; //constants.DEPOSIT_FUNCIDX
+    let function_index = getContractFunctionIndex('TOKEN', 'DEPOSIT_SPLIT'); //constants.DEPOSIT_FUNCIDX
 
     // Result of deposit token
     let contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
@@ -938,7 +938,7 @@ describe('test withdraw token', function () {
     let function_data = data_generator.createWithdrawData(smart_contract, recipient, amount, unity);
     let attachment = 'withdraw token';
     let timestamp = Date.now() * 1e6;
-    let function_index = constants.WITHDRAW_FUNCIDX_SPLIT; //constants.WITHDRAW_FUNCIDX
+    let function_index = getContractFunctionIndex('TOKEN', 'WITHDRAW_SPLIT'); //constants.WITHDRAW_FUNCIDX
 
     // Result of withdraw token
     // smart_contract must be PAYMENT_CONTRACT or LOCK_CONTRACT

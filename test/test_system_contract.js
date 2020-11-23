@@ -1,7 +1,7 @@
 const Transaction = require('../libs/transaction').default;
 const Account = require('../libs/account').default;
 const Blockchain = require('../libs/blockchain').default;
-const { SystemContractDataGenerator, PaymentChannelContractDataGenerator } = require('../libs/data');
+const { SystemContractDataGenerator, getContractFunctionIndex } = require('../libs/data');
 const constants = require("../libs/constants");
 const contract_1 = require("../libs/contract");
 const test_config = require('../libs/test_config');
@@ -50,7 +50,7 @@ describe('test deposit vsys token', function () {
     let function_data = data_generator.createDepositData(sender, smart_contract, amount);
     let attachment = 'deposit VSYS';
     let timestamp = Date.now() * 1e6;
-    let function_index = constants.SYSTEM_CONTRACT_DEPOSIT_FUNCIDX;
+    let function_index = getContractFunctionIndex('SYSTEM', 'DEPOSIT');
 
     // Result of deposit vsys token
     let contract_tx = tra.buildExecuteContractTx(public_key, system_contract, function_index, function_data, timestamp, attachment);
@@ -126,7 +126,7 @@ describe('test withdraw vsys token', function () {
     let function_data = data_generator.createWithdrawData(smart_contract, recipient, amount);
     let attachment = 'withdraw vsys';
     let timestamp = Date.now() * 1e6;
-    let function_index = constants.SYSTEM_CONTRACT_WITHDRAW_FUNCIDX;
+    let function_index = getContractFunctionIndex('SYSTEM', 'WITHDRAW');
 
     // Result of withdraw vsys token
     // smart_contract must be PAYMENT_CONTRACT or LOCK_CONTRACT
@@ -203,7 +203,7 @@ describe('test transfer vsys token', function () {
     let amount = 1;
     let function_data = data_generator.createTransferData(sender, recipient, amount);
     let attachment = 'transfer vsys';
-    let function_index = constants.SYSTEM_CONTRACT_TRANSFER_FUNCIDX;
+    let function_index = getContractFunctionIndex('SYSTEM', 'TRANSFER');
 
     // Result of transfer vsys token
     let contract_tx = tra.buildExecuteContractTx(public_key, system_contract, function_index, function_data, timestamp, attachment);
@@ -282,7 +282,7 @@ describe('test send vsys token', function () {
     let amount = 1;
     let function_data = data_generator.createSendData(recipient, amount);
     let attachment = 'send vsys';
-    let function_index = constants.SYSTEM_CONTRACT_SEND_FUNCIDX;
+    let function_index = getContractFunctionIndex('SYSTEM', 'SEND');
 
     // Result of send vsys token
     let contract_tx = tra.buildExecuteContractTx(public_key, system_contract, function_index, function_data, timestamp, attachment);

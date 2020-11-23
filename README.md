@@ -576,6 +576,21 @@ Here we introduce how to use this package installed from npm in detail.
     ```
 2. Execute contract
 
+    Get necessary `function_index` when preparing contract function data.
+    ```javascript
+    const vsys = require("@virtualeconomy/js-v-sdk");
+    let function_index = vsys.getContractFunctionIndex('<contract type>', '<function type>');
+    
+    /* The types of contracts and related functions currently supported are as follows
+    <'Contract Type'> : <'Function Type'>, <'Function Type'>, ...
+    Token : SUPERSEDE, ISSUE, DESTROY, SPLIT, SEND, SEND_SPLIT, TRANSFER, TRANSFER_SPLIT, WITHDRAW, WITHDRAW_SPLIT, DEPOSIT, DEPOSIT_SPLIT
+    SYSTEM : SEND, TRANSFER, WITHDRAW, DEPOSIT
+    LOCK : LOCK
+    PAYMENT_CHANNEL : CREATEANDLOAD, EXTENDEXPIRATIONTIME, LOAD, ABORT, UNLOAD, COLLECTPAYMENT
+    NFT : SUPERSEDE, ISSUE, SEND, TRANSFER, WITHDRAW, DEPOSIT
+    */
+    ```
+        
     Issue token
 
     ```javascript
@@ -598,7 +613,7 @@ Here we introduce how to use this package installed from npm in detail.
     let timestamp = Date.now() * 1e6;
     let function_data = data_generator.createIssueData(amount, unity);
     let attachment = 'issue token';
-    let function_index = constants.ISSUE_FUNCIDX;
+    let function_index = vsys.getContractFunctionIndex('TOKEN', 'ISSUE');
 
     // Build contract tx
     tra.buildExecuteContractTx(public_key, "<contract_id>", function_index, function_data, timestamp, attachment);
@@ -643,7 +658,7 @@ Here we introduce how to use this package installed from npm in detail.
     let timestamp = Date.now() * 1e6;
     let function_data = data_generator.createDestroyData(amount, unity);
     let attachment = 'destroy token';
-    let function_index = constants.DESTROY_FUNCIDX;
+    let function_index = vsys.getContractFunctionIndex('TOKEN', 'DESTROY');
 
     // Build contract tx
     tra.buildExecuteContractTx(public_key, "<contract_id>", function_index, function_data, timestamp, attachment);
@@ -687,7 +702,7 @@ Here we introduce how to use this package installed from npm in detail.
     let timestamp = Date.now() * 1e6;
     let function_data = data_generator.createSplitData(new_unity);
     let attachment = 'split token';
-    let function_index = constants.SPLIT_FUNCIDX;
+    let function_index = vsys.getContractFunctionIndex('TOKEN', 'SPLIT');
 
     // Build contract tx
     tra.buildExecuteContractTx(public_key, "<contract_id>", function_index, function_data, timestamp, attachment);
@@ -730,7 +745,7 @@ Here we introduce how to use this package installed from npm in detail.
     let timestamp = Date.now() * 1e6;
     let function_data = data_generator.createSupersedeData(new_issuer);
     let attachment = 'supersede token';
-    let function_index = constants.SUPERSEDE_FUNCIDX;
+    let function_index = vsys.getContractFunctionIndex('TOKEN', 'SUPERSEDE');
 
     // Build contract tx
     tra.buildExecuteContractTx(public_key, "<contract_id>", function_index, function_data, timestamp, attachment);
@@ -821,7 +836,7 @@ Here we introduce how to use this package installed from npm in detail.
     let unity = "<unity of this token>"; //1e8
     let function_data = data_generator.createSendData(recipient, amount, unity);
     let attachment = "<attachment>";
-    let function_index = constants.SEND_FUNCIDX_SPLIT; // constants.SEND_FUNCIDX
+    let function_index = vsys.getContractFunctionIndex('TOKEN', 'SEND_SPLIT'); // constants.SEND_FUNCIDX
 
     // Build contract tx
     tra.buildExecuteContractTx(public_key, "<contract_id>", function_index, function_data, timestamp, attachment);
@@ -868,7 +883,7 @@ Here we introduce how to use this package installed from npm in detail.
     let unity = "<unity of this token>"; //1e8
     let function_data = data_generator.createTransferData(sender, recipient, amount, unity);
     let attachment = "<attachment>";
-    let function_index = constants.TRANSFER_FUNCIDX_SPLIT; // constants.TRANSFER_FUNCIDX
+    let function_index = vsys.getContractFunctionIndex('TOKEN', 'TRANSFER_SPLIT'); // constants.TRANSFER_FUNCIDX
 
     // Build contract tx
     tra.buildExecuteContractTx(public_key, "<contract_id>", function_index, function_data, timestamp, attachment);
@@ -915,7 +930,7 @@ Here we introduce how to use this package installed from npm in detail.
     let smart_contract = "<smart contract id>"; // This contract should be payment channel contract or lock contract
     let function_data = data_generator.createDepositData(sender, smart_contract, amount, unity);
     let attachment = "<attachment>";
-    let function_index = constants.DEPOSIT_FUNCIDX_SPLIT; // constants.DEPOSIT_FUNCIDX
+    let function_index = vsys.getContractFunctionIndex('TOKEN', 'DEPOSIT_SPLIT'); // constants.DEPOSIT_FUNCIDX
 
     // Build contract tx
     tra.buildExecuteContractTx(public_key, "<contract_id>", function_index, function_data, timestamp, attachment);
@@ -962,7 +977,7 @@ Here we introduce how to use this package installed from npm in detail.
     let smart_contract = "<smart contract id>"; // This contract should be payment channel contract or lock contract
     let function_data = data_generator.createWithdrawData(smart_contract, recipient, amount, unity);
     let attachment = "<attachment>";
-    let function_index = constants.WITHDRAW_FUNCIDX_SPLIT; // constants.WITHDRAW_FUNCIDX
+    let function_index = vsys.getContractFunctionIndex('TOKEN', 'WITHDRAW_SPLIT'); // constants.WITHDRAW_FUNCIDX
 
     // Build contract tx
     tra.buildExecuteContractTx(public_key, "<contract_id>", function_index, function_data, timestamp, attachment);
