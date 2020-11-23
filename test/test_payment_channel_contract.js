@@ -4,6 +4,7 @@ const Blockchain = require('../libs/blockchain').default;
 const { PaymentChannelContractDataGenerator, getContractFunctionIndex } = require('../libs/data');
 const constants = require("../libs/constants");
 const contract_1 = require("../libs/contract");
+const contract_type = require("../libs/contract_type");
 const test_config = require('../libs/test_config');
 const convert = require('../libs/utils/convert').default;
 const expect = require("chai").expect;
@@ -53,7 +54,7 @@ describe('test createAndLoad', function () {
     let function_data = data_generator.createCreateAndLoadData(recipient, amount, unity, expiration_time);
     let attachment = 'create and load';
     let timestamp = Date.now() * 1e6;
-    let function_index = getContractFunctionIndex('PAYMENT_CHANNEL', 'CREATEANDLOAD');
+    let function_index = getContractFunctionIndex(contract_type.PAYMENT_CHANNEL, 'CREATEANDLOAD');
 
     // Result of createAndLoad
     let contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
@@ -129,7 +130,7 @@ describe('test extendExpirationTime', function () {
     let function_data = data_generator.createExtendExpirationTimeData(channel_id, expiration_time);
     let attachment = 'entend expiration time';
     let timestamp = Date.now() * 1e6;
-    let function_index = getContractFunctionIndex('PAYMENT_CHANNEL', 'EXTENDEXPIRATIONTIME');
+    let function_index = getContractFunctionIndex(contract_type.PAYMENT_CHANNEL, 'EXTENDEXPIRATIONTIME');
 
     // Result of extendExpirationTime
     let contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
@@ -205,7 +206,7 @@ describe('test load', function () {
     let function_data = data_generator.createLoadData(channel_id, amount, unity);
     let attachment = 'load';
     let timestamp = Date.now() * 1e6;
-    let function_index = getContractFunctionIndex('PAYMENT_CHANNEL', 'LOAD');
+    let function_index = getContractFunctionIndex(contract_type.PAYMENT_CHANNEL, 'LOAD');
 
     // Result of load
     let contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
@@ -279,7 +280,7 @@ describe('test abort', function () {
     let function_data = data_generator.createAbortData(channel_id);
     let attachment = 'abort';
     let timestamp = Date.now() * 1e6;
-    let function_index = getContractFunctionIndex('PAYMENT_CHANNEL', 'ABORT');
+    let function_index = getContractFunctionIndex(contract_type.PAYMENT_CHANNEL, 'ABORT');
 
     // Result of abort
     let contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
@@ -352,7 +353,7 @@ describe('test unload', function () {
     let function_data = data_generator.createUnloadData(channel_id);
     let attachment = 'unload';
     let timestamp = Date.now() * 1e6;
-    let function_index = getContractFunctionIndex('PAYMENT_CHANNEL', 'UNLOAD');
+    let function_index = getContractFunctionIndex(contract_type.PAYMENT_CHANNEL, 'UNLOAD');
 
     // Result of unload
     let contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
@@ -428,7 +429,7 @@ describe('test collect payment', function () {
     let function_data = data_generator.createCollectPaymentData(channel_id, amount, unity, transaction_signature);
     let attachment = 'collect payment';
     let timestamp = Date.now() * 1e6;
-    let function_index = getContractFunctionIndex('PAYMENT_CHANNEL', 'COLLECTPAYMENT');
+    let function_index = getContractFunctionIndex(contract_type.PAYMENT_CHANNEL, 'COLLECTPAYMENT');
 
     // Result of collect payment
     let contract_tx = tra.buildExecuteContractTx(public_key, contract_id, function_index, function_data, timestamp, attachment);
