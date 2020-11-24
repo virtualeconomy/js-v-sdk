@@ -1,5 +1,107 @@
 import BigNumber from "bignumber.js";
 import * as Constants from "./constants";
+import * as ContractType from "./contract_type";
+
+export function getContractFunctionIndex(contract_type, function_name) {
+    if (!function_name) throw new Error('Invalid function name!')
+    function_name = function_name.toUpperCase()
+    switch (contract_type) {
+        case ContractType.TOKEN:
+            switch (function_name) {
+                case 'SUPERSEDE':
+                    return Constants.SUPERSEDE_FUNCIDX
+                case 'ISSUE':
+                    return Constants.ISSUE_FUNCIDX
+                case 'DESTROY':
+                    return Constants.DESTROY_FUNCIDX
+                case 'SEND':
+                    return Constants.SEND_FUNCIDX
+                case 'TRANSFER':
+                    return Constants.TRANSFER_FUNCIDX
+                case 'WITHDRAW':
+                    return Constants.WITHDRAW_FUNCIDX
+                case 'DEPOSIT':
+                    return Constants.DEPOSIT_FUNCIDX
+                default:
+                    throw new Error('Invalid function name!')
+            }
+        case ContractType.SPLITTABLE_TOKEN:
+            switch (function_name) {
+                case 'SUPERSEDE':
+                    return Constants.SUPERSEDE_FUNCIDX
+                case 'ISSUE':
+                    return Constants.ISSUE_FUNCIDX
+                case 'DESTROY':
+                    return Constants.DESTROY_FUNCIDX
+                case 'SPLIT':
+                    return Constants.SPLIT_FUNCIDX
+                case 'SEND':
+                    return Constants.SEND_FUNCIDX_SPLIT
+                case 'TRANSFER':
+                    return Constants.TRANSFER_FUNCIDX_SPLIT
+                case 'WITHDRAW':
+                    return Constants.WITHDRAW_FUNCIDX_SPLIT
+                case 'DEPOSIT':
+                    return Constants.DEPOSIT_FUNCIDX_SPLIT
+                default:
+                    throw new Error('Invalid function name!')
+            }
+        case ContractType.SYSTEM:
+            switch (function_name) {
+                case 'SEND':
+                    return Constants.SYSTEM_CONTRACT_SEND_FUNCIDX
+                case 'TRANSFER':
+                    return Constants.SYSTEM_CONTRACT_TRANSFER_FUNCIDX
+                case 'WITHDRAW':
+                    return Constants.SYSTEM_CONTRACT_WITHDRAW_FUNCIDX
+                case 'DEPOSIT':
+                    return Constants.SYSTEM_CONTRACT_DEPOSIT_FUNCIDX
+                default:
+                    throw new Error('Invalid function name!')
+            }
+        case ContractType.LOCK:
+            if (function_name === 'LOCK') {
+                return Constants.LOCK_CONTRACT_LOCK_FUNCIDX
+            } else throw new Error('Invalid function name!')
+        case ContractType.PAYMENT_CHANNEL:
+            switch (function_name) {
+                case 'CREATEANDLOAD':
+                    return Constants.PAYMENTCHANNEL_CONTRACT_CREATEANDLOAD_FUNCIDX
+                case 'EXTENDEXPIRATIONTIME':
+                    return Constants.PAYMENTCHANNEL_CONTRACT_EXTENDEXPIRATIONTIME_FUNCIDX
+                case 'LOAD':
+                    return Constants.PAYMENTCHANNEL_CONTRACT_LOAD_FUNCIDX
+                case 'ABORT':
+                    return Constants.PAYMENTCHANNEL_CONTRACT_ABORT_FUNCIDX
+                case 'UNLOAD':
+                    return Constants.PAYMENTCHANNEL_CONTRACT_UNLOAD_FUNCIDX
+                case 'COLLECTPAYMENT':
+                    return Constants.PAYMENTCHANNEL_CONTRACT_COLLECTPAYMENT_FUNCIDX
+                default:
+                    throw new Error('Invalid function name!')
+            }
+        case ContractType.NFT:
+            switch (function_name) {
+                case 'SUPERSEDE':
+                    return Constants.NFT_CONTRACT_SUPERSEDE_FUNCIDX
+                case 'ISSUE':
+                    return Constants.NFT_CONTRACT_ISSUE_FUNCIDX
+                case 'SEND':
+                    return Constants.NFT_CONTRACT_SEND_FUNCIDX
+                case 'TRANSFER':
+                    return Constants.NFT_CONTRACT_TRANSFER_FUNCIDX
+                case 'WITHDRAW':
+                    return Constants.NFT_CONTRACT_WITHDRAW_FUNCIDX
+                case 'DEPOSIT':
+                    return Constants.NFT_CONTRACT_DEPOSIT_FUNCIDX
+                default:
+                    throw new Error('Invalid function name!')
+            }
+        default:
+            throw new Error('Invalid contract type!')
+    }
+}
+
 
 export class TokenContractDataGenerator {
 
