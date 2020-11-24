@@ -2,6 +2,7 @@
 import BigNumber from 'bignumber.js'
 import Base58 from 'base-58';
 import Convert from './convert';
+import Converters from './converters';
 import Crypto from './crypto'
 export default {
     getLength(str) {
@@ -42,8 +43,13 @@ export default {
         }
         return result;
     },
+    getTokenIndex(tokenId) {
+        let tokId = Base58.decode(tokenId)
+        let indexBytes = Array.from(tokId.slice(tokId.length-8, tokId.length-4)).reverse()
+        let index = Converters.byteArrayToSignedInt32(indexBytes)
+        return index
+    },
     contractIDToTokenID(contraId) {
-
         let conId = Base58.decode(contraId)
         let firstArr = [132]
         let secondArr = Array.from(conId.slice(1,conId.length-4))

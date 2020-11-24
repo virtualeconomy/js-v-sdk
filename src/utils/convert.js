@@ -132,6 +132,9 @@ const Convert = {
         let lengthBytes = converters_1.int16ToBytes(stringBytes.length, true);
         return lengthBytes.concat(stringBytes);
     },
+    getTokenIndex(tokenId) {
+        return Common.getTokenIndex(tokenId);
+    },
     contractIDToTokenID(contraId) {
         return Common.contractIDToTokenID(contraId);
     },
