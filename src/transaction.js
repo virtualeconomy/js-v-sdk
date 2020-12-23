@@ -134,9 +134,18 @@ function getContractColdFields(cold_tx, network_byte, acc) {
             cold_tx['contractInitExplain'] = 'Create token' + (contract_type === 'TOKEN_CONTRACT' ? ' ' : ' (support split) ') + 'with max supply ' + BigNumber(init_data[0]['value']).dividedBy(init_data[1]['value']);
             cold_tx['contractInitTextual'] = "init(max=" + BigNumber(init_data[0]['value']).dividedBy(init_data[1]['value'])+ ",unity= "+ BigNumber(init_data[1]['value']) + ",tokenDescription='" + init_data[2]['value'] + "')";
             break;
-        case 'PAYMENT_CONTRACT': case 'LOCK_CONTRACT': case 'NON_FUNGIBLE_TOKEN_CONTRACT':
-            cold_tx['contractInitExplain'] = ''
-            cold_tx['contractInitTextual'] = ''
+        case 'PAYMENT_CONTRACT':
+            cold_tx['contractInitExplain'] = 'Register Payment Channel Contract';
+            cold_tx['contractInitTextual'] = '';
+            break;
+        case 'LOCK_CONTRACT':
+            cold_tx['contractInitExplain'] = 'Register Lock Contract';
+            cold_tx['contractInitTextual'] = '';
+            break;
+        case 'NON_FUNGIBLE_TOKEN_CONTRACT':
+            cold_tx['contractInitExplain'] = 'Register Non-Fungible Token(NFT) Contract';
+            cold_tx['contractInitTextual'] = '';
+            break;
     }
     cold_tx['contractInit'] = processData(init_data);
     delete cold_tx['senderPublicKey'];
