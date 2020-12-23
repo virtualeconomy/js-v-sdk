@@ -128,25 +128,6 @@ function getContractColdFields(cold_tx, network_byte, acc) {
     let init_data = cold_tx['initData'];
     let public_key_bytes = Base58.decode(cold_tx['senderPublicKey']);
     cold_tx['address'] = acc.convertPublicKeyToAddress(public_key_bytes, network_byte);
-    let contract_type = getContractType(cold_tx['contract']);
-    switch (contract_type) {
-        case 'TOKEN_CONTRACT': case 'TOKEN_CONTRACT_WITH_SPLIT':
-            cold_tx['contractInitExplain'] = 'Create token' + (contract_type === 'TOKEN_CONTRACT' ? ' ' : ' (support split) ') + 'with max supply ' + BigNumber(init_data[0]['value']).dividedBy(init_data[1]['value']);
-            cold_tx['contractInitTextual'] = "init(max=" + BigNumber(init_data[0]['value']).dividedBy(init_data[1]['value'])+ ",unity= "+ BigNumber(init_data[1]['value']) + ",tokenDescription='" + init_data[2]['value'] + "')";
-            break;
-        case 'PAYMENT_CONTRACT':
-            cold_tx['contractInitExplain'] = 'Register Payment Channel Contract';
-            cold_tx['contractInitTextual'] = '';
-            break;
-        case 'LOCK_CONTRACT':
-            cold_tx['contractInitExplain'] = 'Register Lock Contract';
-            cold_tx['contractInitTextual'] = '';
-            break;
-        case 'NON_FUNGIBLE_TOKEN_CONTRACT':
-            cold_tx['contractInitExplain'] = 'Register Non-Fungible Token(NFT) Contract';
-            cold_tx['contractInitTextual'] = '';
-            break;
-    }
     cold_tx['contractInit'] = processData(init_data);
     delete cold_tx['senderPublicKey'];
     delete cold_tx['initData'];
