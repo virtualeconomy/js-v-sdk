@@ -49,11 +49,11 @@ export default {
         let index = Converters.byteArrayToSignedInt32(indexBytes)
         return index
     },
-    contractIDToTokenID(contraId) {
+    contractIDToTokenID(contraId, tokenIndex=0) {
         let conId = Base58.decode(contraId)
         let firstArr = [132]
         let secondArr = Array.from(conId.slice(1,conId.length-4))
-        let thirdArr = Convert.idxToByteArray(0)
+        let thirdArr = Convert.idxToByteArray(tokenIndex)
         let encodeArr = firstArr.concat(secondArr.concat(thirdArr))
         let hashArr = Crypto.hash(Uint8Array.from(encodeArr))
         let checkArr = hashArr.slice(0, 4)

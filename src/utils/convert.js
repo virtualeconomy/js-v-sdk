@@ -135,8 +135,8 @@ const Convert = {
     getTokenIndex(tokenId) {
         return Common.getTokenIndex(tokenId);
     },
-    contractIDToTokenID(contraId) {
-        return Common.contractIDToTokenID(contraId);
+    contractIDToTokenID(contraId, tokenIndex=0) {
+        return Common.contractIDToTokenID(contraId, tokenIndex);
     },
     tokenIDToContractID(tokenId) {
         return Common.tokenIDToContractID(tokenId);
