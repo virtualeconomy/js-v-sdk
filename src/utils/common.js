@@ -71,5 +71,17 @@ export default {
         let contractArr = encodeArr.concat(checkArr)
         let contractString = Base58.encode(contractArr)
         return contractString
+    },
+    getTokenIdByIndex(contraId, tokenIndex) {
+        let conId = Base58.decode(contraId)
+        let firstArr = [132]
+        let secondArr = Array.from(conId.slice(1,conId.length-4))
+        let thirdArr = Convert.idxToByteArray(tokenIndex)
+        let encodeArr = firstArr.concat(secondArr.concat(thirdArr))
+        let hashArr = Crypto.hash(Uint8Array.from(encodeArr))
+        let checkArr = hashArr.slice(0, 4)
+        let tokenArr = encodeArr.concat(checkArr)
+        let tokenString = Base58.encode(tokenArr)
+        return tokenString
     }
 }
