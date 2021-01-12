@@ -49,6 +49,14 @@ export default {
         let index = Converters.byteArrayToSignedInt32(indexBytes)
         return index
     },
+    getContractKeyString(index, key) {
+        let stateIndex = new Uint8Array([index, 2])
+        let addrBytes = Base58.decode(key)
+        let bytes = new Uint8Array(stateIndex.length + addrBytes.length )
+        bytes.set(stateIndex)
+        bytes.set(addrBytes, stateIndex.length)
+        return Base58.encode(bytes)
+    },
     contractIDToTokenID(contraId, tokenIndex=0) {
         let conId = Base58.decode(contraId)
         let firstArr = [132]

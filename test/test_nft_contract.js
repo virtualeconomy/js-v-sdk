@@ -9,7 +9,7 @@ const convert = require('../libs/utils/convert').default;
 const BigNumber = require('bignumber.js').default;
 const expect = require("chai").expect;
 const network_byte = constants.TESTNET_BYTE;
-const host_ip = 'http://test.v.systems:9922';
+const host_ip = test_config.host_ip;
 /*======= Change the below before run ==========*/
 const test_nft_contract_id = 'CEw29bfyUJgcRcPhuanFcxWqiWD19D99NYi';
 const test_new_issuer = 'AUAztxsft2v6rmjRRb72nLea6BNyRHHWpUR';

@@ -1,8 +1,8 @@
 const Blockchain = require('../libs/blockchain').default;
 const constants = require("../libs/constants");
 const expect = require("chai").expect;
-
-const host_ip = "http://test.v.systems:9922";
+const test_config = require('../libs/test_config');
+const host_ip = test_config.host_ip;
 const network_byte = constants.TESTNET_BYTE;
 
 /*======= Change the below before run ==========*/
@@ -24,6 +24,13 @@ const token_id = "TWtLLjtURLq5ybDHgNnFoQKvaBmUqbxMQgewzs8Ru";
 const contract_id = "CEzgXYsSJ8YerN31DqC42q4in44KgijgJFo";
 
 const transaction_id = '3pWxPKy3QkChWHd6qnkTbVH6NCEr3ezisE8WrYMfNW2i';
+
+const test_payment_contract_id = 'CFCLjuoCqS5uh4PeNntA8sZYipRgrvwZrhm'
+
+const state_index = 0
+
+const data_key = 'AUAztxsft2v6rmjRRb72nLea6BNyRHHWpUR'
+
 /*================ Change end ==================*/
 async function testBalance(chain, address) {
     let result = await chain.getBalance(address);
@@ -93,6 +100,11 @@ async function testContractInfo(chain, contract_id) {
 
 async function testContractContent(chain, contract_id) {
     const result = await chain.getContractContent(contract_id);
+    return result;
+}
+
+async function testContractData(chain, contract_id, index, key) {
+    const result = await chain.getContractData(contract_id, index, key);
     return result;
 }
 //Test Blockchain
@@ -262,6 +274,16 @@ describe('testContractContent', function () {
         expect(result['transactionId']).to.be.equal(transaction_id);
     });
 });
+
+//test ContractData
+describe('testContractData', function () {
+    this.timeout(5000);
+    it('get the ContractData', async () =>{
+        let result = await testContractData(chain, test_payment_contract_id, state_index, data_key);
+        expect(result).to.not.be.empty;
+    });
+});
+
 
 
 

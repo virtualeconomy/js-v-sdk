@@ -2,6 +2,7 @@
 
 // import "babel-polyfill";
 import Fetch from 'node-fetch';
+import Common from './utils/common';
 
 async function getRequest(host, path) {
     const url = host + path;
@@ -130,6 +131,12 @@ export default class Blockchain {
 
     async getContractContent(contract_id) {
         let response = await getRequest(this.host_ip, '/contract/content/' + contract_id);
+        return textToSafeJson(response);
+    }
+
+    async getContractData(contract_id, index, key) {
+        let key_string = Common.getContractKeyString(index, key)
+        let response = await getRequest(this.host_ip, '/contract/data/' + contract_id + '/' + key_string);
         return textToSafeJson(response);
     }
 
