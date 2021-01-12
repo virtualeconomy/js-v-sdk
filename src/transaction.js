@@ -378,7 +378,7 @@ export default class Transaction {
 
     buildTransactionId(data_bytes) {
         if (!data_bytes || !(data_bytes instanceof Uint8Array)) {
-            throw new Error('Missing or invalid data');
+            data_bytes = this.toBytes()
         }
         let output = new Uint8Array(32);
         Blake2b(output.length).update(data_bytes).digest(output);
