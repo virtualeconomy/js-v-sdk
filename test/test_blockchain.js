@@ -25,11 +25,16 @@ const contract_id = "CEzgXYsSJ8YerN31DqC42q4in44KgijgJFo";
 
 const transaction_id = '3pWxPKy3QkChWHd6qnkTbVH6NCEr3ezisE8WrYMfNW2i';
 
-const test_payment_contract_id = 'CFCLjuoCqS5uh4PeNntA8sZYipRgrvwZrhm'
+const test_payment_contract_id = 'CEvtYbdBMjTbnkQpJN6sdBnsQwTmn6JeLci';
 
-const state_index = 0
+const state_index = 1;
 
-const data_key = 'AUAztxsft2v6rmjRRb72nLea6BNyRHHWpUR'
+const data_type = constants.SHORT_BYTES_TYPE;
+
+const data = 'GLNj5dzVE44nHVoc8TxTtmcMNxQ1W8UvJgtaLF5zXxpi';
+
+const test_channel_creator = 'AUB7XrJ2zxqE7i93bMdXmKoCGkbJA7iUmBp';
+
 
 /*================ Change end ==================*/
 async function testBalance(chain, address) {
@@ -103,8 +108,8 @@ async function testContractContent(chain, contract_id) {
     return result;
 }
 
-async function testContractData(chain, contract_id, index, key) {
-    const result = await chain.getContractData(contract_id, index, key);
+async function testContractData(chain, contract_id, state_index, data_type, data) {
+    const result = await chain.getContractData(contract_id, state_index, data_type, data);
     return result;
 }
 //Test Blockchain
@@ -279,8 +284,11 @@ describe('testContractContent', function () {
 describe('testContractData', function () {
     this.timeout(5000);
     it('get the ContractData', async () =>{
-        let result = await testContractData(chain, test_payment_contract_id, state_index, data_key);
-        expect(result).to.not.be.empty;
+        let result = await testContractData(chain, test_payment_contract_id, state_index, data_type, data);
+        expect(result['contractId']).to.be.equal(test_payment_contract_id);
+        expect(result['dataType']).to.be.equal('Address')
+        expect(result['value']).to.be.equal(test_channel_creator);
+
     });
 });
 

@@ -4,6 +4,7 @@ import Base58 from 'base-58';
 import Convert from './convert';
 import Converters from './converters';
 import Crypto from './crypto'
+import * as Constants from "../constants";
 export default {
     getLength(str) {
         let len = encodeURIComponent(str).replace(/%[A-F\d]{2}/g, 'U').length;
@@ -43,18 +44,52 @@ export default {
         }
         return result;
     },
+    getDataBytes(data, data_type) {
+        let data_bytes;
+        switch (data_type) {
+            case Constants.AMOUNT_TYPE: case Constants.BIGINTEGER_TYPE:
+                data = BigNumber(data);
+                data_bytes = Convert.bigNumberToByteArray(data);
+                break;
+            case Constants.INT32_TYPE:
+                data_bytes = Convert.idxToByteArray(data)
+                break;
+            case Constants.SHORTTEXT_TYPE:
+                let byte_arr = Convert.stringToByteArray(data);
+                let length = byte_arr.length;
+                let length_arr = Convert.shortToByteArray(length);
+                data_bytes = length_arr.concat(byte_arr);
+                break;
+            case Constants.SHORT_BYTES_TYPE: case Constants.OPCBLOCK_TYPE:
+                byte_arr = Base58.decode(data);
+                length = byte_arr.length;
+                length_arr = Convert.shortToByteArray(length);
+                data_bytes = length_arr.concat(Array.from(byte_arr));
+                break;
+            case Constants.ACCOUNT_ADDR_TYPE: case Constants.PUBLICKEY_TYPE: case Constants.TOKEN_ID_TYPE: case Constants.CONTRACT_ACCOUNT_TYPE: case Constants.ACCOUNT_TYPE:
+                let account_arr = Base58.decode(data);
+                data_bytes = Array.from(account_arr);
+                break;
+            case Constants.TIME_STAMP_TYPE: case Constants.BALANCE_TYPE:
+                data_bytes = Convert.longToByteArray(data);
+                break;
+            case Constants.BOOLEAN_TYPE:
+                data_bytes = [data ? 1 : 0]
+        }
+        return [data_type].concat(data_bytes);
+    },
     getTokenIndex(tokenId) {
         let tokId = Base58.decode(tokenId)
         let indexBytes = Array.from(tokId.slice(tokId.length-8, tokId.length-4)).reverse()
         let index = Converters.byteArrayToSignedInt32(indexBytes)
         return index
     },
-    getContractKeyString(index, key) {
-        let stateIndex = new Uint8Array([index, 2])
-        let addrBytes = Base58.decode(key)
-        let bytes = new Uint8Array(stateIndex.length + addrBytes.length )
+    getContractKeyString(index, data_type, data) {
+        let stateIndex = new Uint8Array([index])
+        let dataBytes = this.getDataBytes(data, data_type)
+        let bytes = new Uint8Array(stateIndex.length + dataBytes.length )
         bytes.set(stateIndex)
-        bytes.set(addrBytes, stateIndex.length)
+        bytes.set(dataBytes, stateIndex.length)
         return Base58.encode(bytes)
     },
     contractIDToTokenID(contraId, tokenIndex=0) {

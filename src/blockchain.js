@@ -134,8 +134,8 @@ export default class Blockchain {
         return textToSafeJson(response);
     }
 
-    async getContractData(contract_id, index, key) {
-        let key_string = Common.getContractKeyString(index, key)
+    async getContractData(contract_id, state_index, data_type, data) {
+        let key_string = Common.getContractKeyString(state_index, data_type, data)
         let response = await getRequest(this.host_ip, '/contract/data/' + contract_id + '/' + key_string);
         return textToSafeJson(response);
     }
