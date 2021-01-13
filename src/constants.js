@@ -26,15 +26,21 @@ export const OPC_FUNCTION = 'function'
 export const OPC_SIGNATURE = 'signature'
 export const OPC_SEED = 'seed'
 export const OPC_ACCOUNT = 'account'
-export const AMOUNT_TYPE = 3;
-export const CONTRACT_TYPE = 6;
-export const SHORTTEXT_TYPE = 5;
-export const INT32_TYPE = 4;
+export const PUBLICKEY_TYPE = 1;
 export const ACCOUNT_ADDR_TYPE = 2;
-export const TOKEN_ID_TYPE = 8;
+export const AMOUNT_TYPE = 3;
+export const INT32_TYPE = 4;
+export const SHORTTEXT_TYPE = 5;
+export const CONTRACT_TYPE = 6;
+export const ACCOUNT_TYPE = 7;
 export const CONTRACT_ACCOUNT_TYPE = 6;
+export const TOKEN_ID_TYPE = 8;
 export const TIME_STAMP_TYPE = 9;
+export const BOOLEAN_TYPE = 10;
 export const SHORT_BYTES_TYPE = 11;
+export const BALANCE_TYPE = 12;
+export const OPCBLOCK_TYPE = 13;
+export const BIGINTEGER_TYPE = 14;
 
 // function index
 export const SUPERSEDE_FUNCIDX = 0;

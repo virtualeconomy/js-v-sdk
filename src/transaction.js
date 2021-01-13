@@ -77,50 +77,9 @@ function processData(data) {
     let num = data.length
     let encode_arr = Convert.shortToByteArray(num);
     for (let i=0; i<num; i++) {
-        encode_arr = encode_arr.concat(data_bytes_gen(data[i]['value'], data[i]['type']))
+        encode_arr = encode_arr.concat(Common.getDataBytes(data[i]['value'], data[i]['type']))
     }
     return Base58.encode(Uint8Array.from(encode_arr))
-}
-
-function data_bytes_gen(data, data_type) {
-    let data_bytes;
-    switch (data_type) {
-        case Constants.AMOUNT_TYPE:
-            data = BigNumber(data);
-            data_bytes = Convert.bigNumberToByteArray(data);
-            break;
-        case Constants.INT32_TYPE:
-            data_bytes = Convert.idxToByteArray(data)
-            break;
-        case Constants.SHORTTEXT_TYPE:
-            let byte_arr = Convert.stringToByteArray(data);
-            let length = byte_arr.length;
-            let length_arr = Convert.shortToByteArray(length);
-            data_bytes = length_arr.concat(byte_arr);
-            break;
-        case Constants.SHORT_BYTES_TYPE:
-            byte_arr = Base58.decode(data);
-            length = byte_arr.length;
-            length_arr = Convert.shortToByteArray(length);
-            data_bytes = length_arr.concat(Array.from(byte_arr));
-            break;
-        case Constants.TOKEN_ID_TYPE:
-            let token_id_arr = Base58.decode(data);
-            data_bytes = Array.from(token_id_arr);
-            break;
-        case Constants.ACCOUNT_ADDR_TYPE:
-            let account_arr = Base58.decode(data);
-            data_bytes = Array.from(account_arr);
-            break;
-        case Constants.TIME_STAMP_TYPE:
-            data_bytes = Convert.longToByteArray(data);
-            break;
-        case Constants.CONTRACT_ACCOUNT_TYPE:
-            let contract_account_arr = Base58.decode(data);
-            data_bytes = Array.from(contract_account_arr);
-            break;
-    }
-    return [data_type].concat(data_bytes);
 }
 
 // Fields-process functions for cold signature
@@ -378,7 +337,7 @@ export default class Transaction {
 
     buildTransactionId(data_bytes) {
         if (!data_bytes || !(data_bytes instanceof Uint8Array)) {
-            throw new Error('Missing or invalid data');
+            data_bytes = this.toBytes()
         }
         let output = new Uint8Array(32);
         Blake2b(output.length).update(data_bytes).digest(output);

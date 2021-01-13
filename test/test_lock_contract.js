@@ -8,7 +8,7 @@ const test_config = require('../libs/test_config');
 const convert = require('../libs/utils/convert').default;
 const expect = require("chai").expect;
 const network_byte = constants.TESTNET_BYTE;
-const host_ip = 'http://test.v.systems:9922';
+const host_ip = test_config.host_ip;
 /*======= Change the below before run ==========*/
 const test_lock_contract_id = 'CEtYyyXDHj8AnK3SBT2RPLVoMLpR8uXSCYU';
 /*================ Change end ==================*/

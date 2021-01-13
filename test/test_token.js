@@ -9,7 +9,7 @@ const test_config = require('../libs/test_config');
 const convert = require('../libs/utils/convert').default;
 const expect = require("chai").expect;
 const network_byte = constants.TESTNET_BYTE;
-const host_ip = 'http://test.v.systems:9922';
+const host_ip = test_config.host_ip;
 const BigNumber = require('bignumber.js').default;
 /*======= Change the below before run ==========*/
 const recipient = "AUEMZKy23xvWixKySNDg448dXxwc4GEZCC3";
