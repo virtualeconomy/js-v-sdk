@@ -66,7 +66,7 @@ export default {
                 length_arr = Convert.shortToByteArray(length);
                 data_bytes = length_arr.concat(Array.from(byte_arr));
                 break;
-            case Constants.ACCOUNT_ADDR_TYPE: case Constants.PUBLICKEY_TYPE: case Constants.TOKEN_ID_TYPE: case Constants.CONTRACT_ACCOUNT_TYPE: case Constants.ACCOUNT_TYPE:
+            case Constants.ACCOUNT_ADDR_TYPE: case Constants.PUBLICKEY_TYPE: case Constants.TOKEN_ID_TYPE: case Constants.CONTRACT_ACCOUNT_TYPE:
                 let account_arr = Base58.decode(data);
                 data_bytes = Array.from(account_arr);
                 break;
