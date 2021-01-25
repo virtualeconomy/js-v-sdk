@@ -35,6 +35,7 @@ const data = 'GLNj5dzVE44nHVoc8TxTtmcMNxQ1W8UvJgtaLF5zXxpi';
 
 const test_channel_creator = 'AUB7XrJ2zxqE7i93bMdXmKoCGkbJA7iUmBp';
 
+const test_nft_contract_id = 'CEw29bfyUJgcRcPhuanFcxWqiWD19D99NYi';
 
 /*================ Change end ==================*/
 async function testBalance(chain, address) {
@@ -110,6 +111,11 @@ async function testContractContent(chain, contract_id) {
 
 async function testContractData(chain, contract_id, state_index, data_type, data) {
     const result = await chain.getContractData(contract_id, state_index, data_type, data);
+    return result;
+}
+
+async function testLastTokenIndex(chain, contract_id) {
+    const result = await chain.getLastTokenIndex(contract_id);
     return result;
 }
 //Test Blockchain
@@ -286,8 +292,19 @@ describe('testContractData', function () {
     it('get the ContractData', async () =>{
         let result = await testContractData(chain, test_payment_contract_id, state_index, data_type, data);
         expect(result['contractId']).to.be.equal(test_payment_contract_id);
-        expect(result['dataType']).to.be.equal('Address')
+        expect(result['dataType']).to.be.equal('Address');
         expect(result['value']).to.be.equal(test_channel_creator);
+
+    });
+});
+
+//test LastTokenIndex
+describe('testLastTokenIndex', function () {
+    this.timeout(5000);
+    it('get the LastTokenIndex', async () =>{
+        let result = await testLastTokenIndex(chain, test_nft_contract_id);
+        expect(result['contractId']).to.be.equal(test_nft_contract_id);
+        expect(result['lastTokenIndex']).to.be.a('number');
 
     });
 });
