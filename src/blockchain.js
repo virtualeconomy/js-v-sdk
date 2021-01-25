@@ -140,6 +140,11 @@ export default class Blockchain {
         return textToSafeJson(response);
     }
 
+    async getLastTokenIndex(contract_id) {
+        let response = await getRequest(this.host_ip, '/contract/lastTokenIndex/' + contract_id);
+        return textToSafeJson(response);
+    }
+
     async sendPaymentTx(tx) {
         const url = this.host_ip + '/vsys/broadcast/payment';
         let response = await postRequest(url, tx);
