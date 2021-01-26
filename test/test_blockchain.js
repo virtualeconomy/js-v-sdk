@@ -16,6 +16,10 @@ const tx_id = "DfHnAowHFRNhYUGR3SbeATuBxYQCXCXihBDkcp6UPWeX";
 
 const height = 56;
 
+const tx_type = constants.PAYMENT_TX;
+
+const offset = 10;
+
 //slot_id:form 0 to 59
 const slot_id = 10;
 
@@ -59,8 +63,23 @@ async function testTxById(chain, tx_id) {
     return result;
 }
 
+async function testTxByType(chain, address, record_limit, type, offset) {
+    const result = await chain.getTxByType(address, record_limit, type, offset);
+    return result;
+}
+
 async function testUnconfirmedTxById(chain, tx_id) {
     const result = await chain.getUnconfirmedTxById(tx_id);
+    return result;
+}
+
+async function testTxCount(chain, address, type) {
+    const result = await chain.getTxCount(address, type);
+    return result;
+}
+
+async function testActiveLeaseList(chain, address, key) {
+    const result = await chain.getActiveLeaseList(address, key);
     return result;
 }
 
@@ -163,6 +182,34 @@ describe('testTxById', function () {
     it('status is success', async () =>{
         let result = await testTxById(chain, tx_id);
         expect(result['status']).to.be.equal('Success');
+    });
+});
+
+//test TxByType
+describe('testTxByType', function () {
+    this.timeout(5000);
+    it('get the TxByType', async () =>{
+        let result = await testTxByType(chain, address, num, tx_type, offset);
+        expect(result).to.not.be.empty;
+    });
+});
+
+//test TxCount
+describe('testTxCount', function () {
+    this.timeout(5000);
+    it('get count of transactions', async () =>{
+        let result = await testTxCount(chain, address, tx_type);
+        expect(result['count']).to.be.a('number');
+    });
+});
+
+// test ActiveLeaseList
+describe('testActiveLeaseList', function () {
+    this.timeout(5000);
+    it('get list of active lease transactions', async () =>{
+        let result = await testActiveLeaseList(chain, address, '');
+        expect(result['error']).to.be.a('number');
+        // expect(result['count']).to.be.a('number');
     });
 });
 
@@ -308,8 +355,3 @@ describe('testLastTokenIndex', function () {
 
     });
 });
-
-
-
-
-
