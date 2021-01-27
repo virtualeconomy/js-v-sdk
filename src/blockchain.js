@@ -56,9 +56,10 @@ function textToSafeJson(str, keys) {
 
 export default class Blockchain {
 
-    constructor(host_ip, network_byte) {
+    constructor(host_ip, network_byte, api_key = '') {
         this.network_byte = network_byte;
         this.host_ip = host_ip;
+        this.api_key = api_key;
     }
 
     async getBalance(address) {
@@ -79,8 +80,8 @@ export default class Blockchain {
         return textToSafeJson(response, keys);
     }
 
-    async getActiveLeaseList(address, key) {
-        let response = await getRequestWithKey(this.host_ip, '/transactions/activeLeaseList/' + address, key);
+    async getActiveLeaseList(address) {
+        let response = await getRequestWithKey(this.host_ip, '/transactions/activeLeaseList/' + address, this.api_key);
         let keys = ['amount'];
         return textToSafeJson(response, keys);
     }

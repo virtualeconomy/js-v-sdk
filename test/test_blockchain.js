@@ -78,8 +78,8 @@ async function testTxCount(chain, address, type) {
     return result;
 }
 
-async function testActiveLeaseList(chain, address, key) {
-    const result = await chain.getActiveLeaseList(address, key);
+async function testActiveLeaseList(chain, address) {
+    const result = await chain.getActiveLeaseList(address);
     return result;
 }
 
@@ -207,7 +207,7 @@ describe('testTxCount', function () {
 describe('testActiveLeaseList', function () {
     this.timeout(5000);
     it('get list of active lease transactions', async () =>{
-        let result = await testActiveLeaseList(chain, address, '');
+        let result = await testActiveLeaseList(chain, address);
         expect(result['error']).to.be.a('number');
         // expect(result['count']).to.be.a('number');
     });
