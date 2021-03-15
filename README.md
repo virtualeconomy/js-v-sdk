@@ -308,7 +308,7 @@ Here we briefly introduce how to use this package installed from npm. If you wan
 Sample code please refer these files:
 
 
-```javascript
+```
 // how to build account
 test/test_account.js
 
@@ -324,7 +324,7 @@ test/test_tx.js
 
 Run these commands to test.
 
-```javascript
+```
 # Test account
 $ npm run test_account
 
