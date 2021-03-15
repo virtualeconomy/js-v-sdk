@@ -301,3 +301,56 @@ Here we briefly introduce how to use this package installed from npm. If you wan
     console.log('Json for cold signature:');
     console.log(cold_tx);
     ```
+
+## Sample Code and Testing
+
+
+Sample code please refer these files:
+
+
+```javascript
+// how to build account
+test/test_account.js
+
+// how to get information from API
+test/test_blockchain.js
+
+// how to register contract and execute contract function
+test/test_token.js
+
+// how to send payment、lease、cancel lease transaction and build transaction id
+test/test_tx.js
+```
+
+Run these commands to test.
+
+```javascript
+# Test account
+$ npm run test_account
+
+# Test blockchain
+$ npm run test_blockchain
+
+# Test token
+$ npm run test_token
+
+# Test tx
+$ npm run test_tx
+
+# Test system contract
+$ npm run test_system_contract
+
+# Test payment channel contract
+$ npm run test_payment_channel_contract
+
+# Test lock contract
+$ npm run test_lock_contract
+
+# Test non fungible contract
+$ npm run test_nft_contract
+
+# Test all
+$ npm run test_all
+```
+
+Feel free to modify these test example files. Write your own code as wallet client and integrate into your project.
