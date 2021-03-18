@@ -65,7 +65,25 @@ const Crypto = {
         let signature = Axlsign.sign(privateKeyBytes, dataBytes, SecureRandom.default.randomUint8Array(64));
         return Base58.encode(signature);
     },
-    isValidTransactionSignature: function (dataBytes, signature, publicKey) {
+    isValidTransactionSignature: function (transaction, signature, publicKey) {
+        let dataBytes = transaction.toBytes();
+        if (!dataBytes || !(dataBytes instanceof Uint8Array)) {
+            throw new Error('Missing or invalid data');
+        }
+        if (!signature || typeof signature !== 'string') {
+            throw new Error('Missing or invalid signature');
+        }
+        if (!publicKey || typeof publicKey !== 'string') {
+            throw new Error('Missing or invalid public key');
+        }
+        let signatureBytes = Base58.decode(signature);
+        let publicKeyBytes = Base58.decode(publicKey);
+        if (publicKeyBytes.length !== PUBLIC_KEY_BYTE_LENGTH) {
+            throw new Error('Invalid public key');
+        }
+        return Axlsign.verify(publicKeyBytes, dataBytes, signatureBytes);
+    },
+    verifySignature: function (dataBytes, signature, publicKey) {
         if (!dataBytes || !(dataBytes instanceof Uint8Array)) {
             throw new Error('Missing or invalid data');
         }

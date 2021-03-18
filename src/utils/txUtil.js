@@ -157,7 +157,7 @@ const TxUtil = {
         );
     },
     isValidSignature: function(data, signature, publicKey, txType) {
-        return Crypto.isValidTransactionSignature(
+        return Crypto.verifySignature(
             getBytes(data, txType),
             signature,
             publicKey,
