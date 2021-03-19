@@ -68,7 +68,7 @@ const Crypto = {
     },
     isValidTransactionSignature: function (transaction, signature, publicKey) {
         if (!transaction || !(transaction instanceof Transaction)) {
-            throw new Error('Invalid transaction');
+            throw new Error('Input parameter is not Transaction type object');
         }
         let dataBytes = transaction.toBytes();
         return this.verifySignature(dataBytes, signature, publicKey);
