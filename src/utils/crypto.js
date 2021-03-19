@@ -10,6 +10,7 @@ import Converters from './converters';
 import SecureRandom from './secure-random';
 import Sha3 from 'js-sha3';
 import { PRIVATE_KEY_BYTE_LENGTH, PUBLIC_KEY_BYTE_LENGTH } from '../constants';
+import Transaction from "../transaction";
 
 function sha256(input) {
     let bytes;
@@ -66,7 +67,7 @@ const Crypto = {
         return Base58.encode(signature);
     },
     isValidTransactionSignature: function (transaction, signature, publicKey) {
-        if (!transaction || typeof transaction !== 'object') {
+        if (!transaction || !(transaction instanceof Transaction)) {
             throw new Error('Invalid transaction');
         }
         let dataBytes = transaction.toBytes();
