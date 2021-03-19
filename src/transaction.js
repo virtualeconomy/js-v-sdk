@@ -171,6 +171,22 @@ export default class Transaction {
         return tx;
     }
 
+    buildGenesisTx(public_key, recipient, amount, slotId, timestamp) {
+        if (!timestamp) {
+            timestamp = Date.now() * 1e6;
+        }
+        let tx = {
+            senderPublicKey: public_key,
+            recipient: recipient,
+            amount: convertAmountToMinimumUnit(amount),
+            slotId: slotId,
+            timestamp: timestamp,
+            transactionType: Constants.GENESIS_TX
+        };
+        this.stored_tx = tx;
+        return tx;
+    }
+
     buildCancelLeasingTx(public_key, lease_id, timestamp, fee) {
         fee = typeof fee !== 'undefined' ? fee : Constants.TX_FEE
         if (!timestamp) {

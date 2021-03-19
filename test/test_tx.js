@@ -6,8 +6,10 @@ const test_config = require('../libs/test_config');
 const expect = require("chai").expect;
 const network_byte = constants.TESTNET_BYTE;
 const host_ip = test_config.host_ip;
+const crypto = require('../libs/utils/crypto').default;
 const BigNumber = require('bignumber.js').default;
 var test_lease_id = '';
+var test_genessis_id = "4JqUudiHYHkwCPvdZDTw59qBJpqmQgvVxMzS7Bfc1EJZ";
 var cancel_lease_result = '';
 
 /*======= Change the below before run ==========*/
@@ -15,6 +17,9 @@ const recipient = "AUEMZKy23xvWixKySNDg448dXxwc4GEZCC3";
 const sender_public_key = "DWKUGdT1HL4a3zrhoeRJd2zfKRPxmknRotdGVFrViK7o";
 const attachment = "hello world";
 const amount = 1;
+const mint_amount = 3000000000;
+const slot_id = 0;
+const slot_address = "ATxpELPa3yhE5h4XELxtPrW9TfXPrmYE7ze";
 /*================ Change end ==================*/
 
 
@@ -218,5 +223,28 @@ describe('test cancel leasing tx', function () {
     it('get cancel leasing tx result by Chain', async ()=>{
         await sendCancelLeasingTxByChain(send_tx);
         expect(cancel_lease_result).to.not.be.empty;
+    });
+});
+
+
+//test genesis tx
+describe('test genesis tx', function () {
+    let acc =  new Account(network_byte);
+    acc.buildFromSeed(test_config.seed, test_config.nonce);
+    let public_key = acc.getPublicKey();
+    let tra = new Transaction(network_byte);
+
+    let timestamp = '1535356447650226656';
+    tra.buildGenesisTx(public_key, slot_address, mint_amount, slot_id, timestamp);
+    let bytes = tra.toBytes();
+    let signature = acc.getSignature(bytes);
+    let genesis_id = tra.buildTransactionId(bytes);
+
+    it('get genesis tx id', function () {
+        expect(genesis_id).to.be.equal(test_genessis_id);
+    });
+
+    it('verify signature', function () {
+        expect(crypto.isValidTransactionSignature(tra, signature, public_key)).to.be.true;
     });
 });

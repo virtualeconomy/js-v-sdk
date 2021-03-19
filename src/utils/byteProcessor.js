@@ -22,6 +22,13 @@ class Short extends ByteProcessor {
     }
 }
 
+class Int extends ByteProcessor {
+    process(value) {
+        const bytes = Convert.idxToByteArray(value);
+        return Uint8Array.from(bytes);
+    }
+}
+
 class Long extends ByteProcessor {
     process(value) {
         const bv = new BigNumber(value);
@@ -59,4 +66,4 @@ class DataEntry extends Base58WithSize {}
 
 class Contract extends Base58WithSize {}
 
-export default { ByteProcessor, Base58, Short, Long, Attachment, Recipient, DataEntry, Contract };
+export default { ByteProcessor, Base58, Short, Long, Attachment, Recipient, DataEntry, Contract, Int };
