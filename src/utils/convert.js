@@ -85,12 +85,7 @@ const Convert = {
         return input ? [1] : [0];
     },
     bytesToByteArrayWithSize: function (input) {
-        if (!(input instanceof Array || input instanceof Uint8Array)) {
-            throw new Error('Byte array or Uint8Array input is expected');
-        }
-        else if (input instanceof Array && !(input.every(function (n) { return typeof n === 'number'; }))) {
-            throw new Error('Byte array contains non-numeric elements');
-        }
+        this.throwBytesException(input);
         if (!(input instanceof Array)) {
             input = Array.prototype.slice.call(input);
         }
@@ -116,6 +111,31 @@ const Convert = {
     },
     idxToByteArray: function (input) {
         return converters_1.int32ToBytes(input, true);
+    },
+    byteArrayToShort: function (bytes) {
+        this.checkBytesType(bytes);
+        return converters_1.byteArrayToSignedShort(bytes);
+    },
+    byteArrayToInt: function (bytes) {
+        this.checkBytesType(bytes);
+        return converters_1.byteArrayToSignedInt32(bytes);
+    },
+    byteArrayToLong: function (bytes) {
+        this.checkBytesType(bytes);
+        return converters_1.byteArrayToSignedInt64(bytes);
+    },
+    byteArrayToString: function (bytes) {
+        this.checkBytesType(bytes);
+        return converters_1.byteArrayToString(bytes);
+    },
+    checkBytesType: function (bytes) {
+        if (!(bytes instanceof Array || bytes instanceof Uint8Array)) {
+            throw new Error('Byte array or Uint8Array input is expected');
+        }
+        else if (bytes instanceof Array && !(bytes.every(function (n) { return typeof n === 'number'; }))) {
+            throw new Error('Byte array contains non-numeric elements');
+        }
+        return true
     },
     bigNumberToByteArray: function (input) {
         if (!(input instanceof bignumber_1.default)) {
