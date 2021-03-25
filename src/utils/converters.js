@@ -93,6 +93,18 @@ const Converters = {
         value += bytes[index + 3] << 24;
         return value;
     },
+    byteArrayToSignedInt64: function (bytes, opt_startIndex) {
+        let index = this.checkBytesToIntInput(bytes, 8, opt_startIndex);
+        let value = bytes[index];
+        value += bytes[index + 1] << 8;
+        value += bytes[index + 2] << 16;
+        value += bytes[index + 3] << 24;
+        value += bytes[index + 4] << 32;
+        value += bytes[index + 5] << 40;
+        value += bytes[index + 6] << 48;
+        value += bytes[index + 7] << 56;
+        return value;
+    },
     byteArrayToBigInteger: function (bytes, opt_startIndex) {
         let index = this.checkBytesToIntInput(bytes, 8, opt_startIndex);
         let value = new BigInteger('0', 10);

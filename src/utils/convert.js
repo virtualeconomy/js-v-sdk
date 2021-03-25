@@ -117,6 +117,42 @@ const Convert = {
     idxToByteArray: function (input) {
         return converters_1.int32ToBytes(input, true);
     },
+    byteArrayToShort: function (bytes) {
+        if (!(bytes instanceof Array || bytes instanceof Uint8Array)) {
+            throw new Error('Byte array or Uint8Array input is expected');
+        }
+        else if (bytes instanceof Array && !(bytes.every(function (n) { return typeof n === 'number'; }))) {
+            throw new Error('Byte array contains non-numeric elements');
+        }
+        return converters_1.byteArrayToSignedShort(bytes);
+    },
+    byteArrayToInt: function (bytes) {
+        if (!(bytes instanceof Array || bytes instanceof Uint8Array)) {
+            throw new Error('Byte array or Uint8Array input is expected');
+        }
+        else if (bytes instanceof Array && !(bytes.every(function (n) { return typeof n === 'number'; }))) {
+            throw new Error('Byte array contains non-numeric elements');
+        }
+        return converters_1.byteArrayToSignedInt32(bytes);
+    },
+    byteArrayToLong: function (bytes) {
+        if (!(bytes instanceof Array || bytes instanceof Uint8Array)) {
+            throw new Error('Byte array or Uint8Array input is expected');
+        }
+        else if (bytes instanceof Array && !(bytes.every(function (n) { return typeof n === 'number'; }))) {
+            throw new Error('Byte array contains non-numeric elements');
+        }
+        return converters_1.byteArrayToSignedInt64(bytes);
+    },
+    byteArrayToString: function (bytes) {
+        if (!(bytes instanceof Array || bytes instanceof Uint8Array)) {
+            throw new Error('Byte array or Uint8Array input is expected');
+        }
+        else if (bytes instanceof Array && !(bytes.every(function (n) { return typeof n === 'number'; }))) {
+            throw new Error('Byte array contains non-numeric elements');
+        }
+        return converters_1.byteArrayToString(bytes);
+    },
     bigNumberToByteArray: function (input) {
         if (!(input instanceof bignumber_1.default)) {
             throw new Error('BigNumber input is expected');
