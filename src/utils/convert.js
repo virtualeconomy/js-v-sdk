@@ -113,22 +113,22 @@ const Convert = {
         return converters_1.int32ToBytes(input, true);
     },
     byteArrayToShort: function (bytes) {
-        this.throwBytesException(bytes);
+        this.checkBytesType(bytes);
         return converters_1.byteArrayToSignedShort(bytes);
     },
     byteArrayToInt: function (bytes) {
-        this.throwBytesException(bytes);
+        this.checkBytesType(bytes);
         return converters_1.byteArrayToSignedInt32(bytes);
     },
     byteArrayToLong: function (bytes) {
-        this.throwBytesException(bytes);
+        this.checkBytesType(bytes);
         return converters_1.byteArrayToSignedInt64(bytes);
     },
     byteArrayToString: function (bytes) {
-        this.throwBytesException(bytes);
+        this.checkBytesType(bytes);
         return converters_1.byteArrayToString(bytes);
     },
-    throwBytesException: function (bytes) {
+    checkBytesType: function (bytes) {
         if (!(bytes instanceof Array || bytes instanceof Uint8Array)) {
             throw new Error('Byte array or Uint8Array input is expected');
         }
