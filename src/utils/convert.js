@@ -135,6 +135,7 @@ const Convert = {
         else if (bytes instanceof Array && !(bytes.every(function (n) { return typeof n === 'number'; }))) {
             throw new Error('Byte array contains non-numeric elements');
         }
+        return
     },
     bigNumberToByteArray: function (input) {
         if (!(input instanceof bignumber_1.default)) {
