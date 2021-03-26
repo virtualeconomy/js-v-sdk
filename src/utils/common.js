@@ -1,10 +1,12 @@
 "use strict";
-import BigNumber from 'bignumber.js'
+import BigNumber from 'bignumber.js';
 import Base58 from 'base-58';
 import Convert from './convert';
 import Converters from './converters';
 import Crypto from './crypto'
 import * as Constants from "../constants";
+import Axlsign from "axlsign";
+import SecureRandom from "./secure-random";
 export default {
     getLength(str) {
         let len = encodeURIComponent(str).replace(/%[A-F\d]{2}/g, 'U').length;
@@ -114,5 +116,16 @@ export default {
         let contractArr = encodeArr.concat(checkArr)
         let contractString = Base58.encode(contractArr)
         return contractString
+    },
+    signPaymentChannelTx(channel_id, amount, unity, private_key) {
+        amount = BigNumber(amount).multipliedBy(BigNumber(unity))
+        let byte_arr = Base58.decode(channel_id);
+        let data_bytes = Uint8Array.from(Convert.shortToByteArray(byte_arr.length).concat(Array.from(byte_arr)).concat(Convert.bigNumberToByteArray(amount)));
+        let private_key_bytes = Base58.decode(private_key);
+        if (private_key_bytes.length !== Constants.PRIVATE_KEY_BYTE_LENGTH) {
+            throw new Error('Invalid private key');
+        }
+        let signature = Axlsign.sign(private_key_bytes, data_bytes, SecureRandom.randomUint8Array(64));
+        return Base58.encode(signature);
     }
 }
