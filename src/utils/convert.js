@@ -85,7 +85,7 @@ const Convert = {
         return input ? [1] : [0];
     },
     bytesToByteArrayWithSize: function (input) {
-        this.throwBytesException(input);
+        this.checkBytesType(input);
         if (!(input instanceof Array)) {
             input = Array.prototype.slice.call(input);
         }
