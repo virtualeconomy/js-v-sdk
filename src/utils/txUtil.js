@@ -15,6 +15,12 @@ import Base58 from 'base-58';
 import * as Constants from '../constants';
 
 // Fields of the original data object
+var genesisField = {
+    timestamp: new ByteProcessor.Long('timestamp'),
+    amount: new ByteProcessor.Long('amount'),
+    slotId: new ByteProcessor.Int('slotId'),
+    recipient: new ByteProcessor.Recipient('recipient')
+};
 var paymentField = {
     timestamp: new ByteProcessor.Long('timestamp'),
     amount: new ByteProcessor.Long('amount'),
@@ -58,6 +64,9 @@ var registerContractField = {
 function getFields(type) {
     let storedFields = {};
     switch (type) {
+        case Constants.GENESIS_TX:
+            storedFields = genesisField;
+            break;
         case Constants.PAYMENT_TX:
             storedFields = paymentField;
             break;
@@ -157,7 +166,7 @@ const TxUtil = {
         );
     },
     isValidSignature: function(data, signature, publicKey, txType) {
-        return Crypto.isValidTransactionSignature(
+        return Crypto.verifySignature(
             getBytes(data, txType),
             signature,
             publicKey,

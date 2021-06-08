@@ -10,6 +10,7 @@ import Converters from './converters';
 import SecureRandom from './secure-random';
 import Sha3 from 'js-sha3';
 import { PRIVATE_KEY_BYTE_LENGTH, PUBLIC_KEY_BYTE_LENGTH } from '../constants';
+import Transaction from "../transaction";
 
 function sha256(input) {
     let bytes;
@@ -65,7 +66,14 @@ const Crypto = {
         let signature = Axlsign.sign(privateKeyBytes, dataBytes, SecureRandom.default.randomUint8Array(64));
         return Base58.encode(signature);
     },
-    isValidTransactionSignature: function (dataBytes, signature, publicKey) {
+    isValidTransactionSignature: function (transaction, signature, publicKey) {
+        if (!transaction || !(transaction instanceof Transaction)) {
+            throw new Error('Input parameter is not Transaction type object');
+        }
+        let dataBytes = transaction.toBytes();
+        return this.verifySignature(dataBytes, signature, publicKey);
+    },
+    verifySignature: function (dataBytes, signature, publicKey) {
         if (!dataBytes || !(dataBytes instanceof Uint8Array)) {
             throw new Error('Missing or invalid data');
         }

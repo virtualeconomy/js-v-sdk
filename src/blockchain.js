@@ -2,6 +2,7 @@
 
 // import "babel-polyfill";
 import Fetch from 'node-fetch';
+import Common from './utils/common';
 
 async function getRequest(host, path) {
     const url = host + path;
@@ -9,6 +10,19 @@ async function getRequest(host, path) {
         method: 'GET',
         headers: {
             'Accept': 'application/json'
+        }
+    }
+    const response = await Fetch(url, config);
+    return await response.text();
+}
+
+async function getRequestWithKey(host, path, key) {
+    const url = host + path;
+    const config = {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'api_key': key
         }
     }
     const response = await Fetch(url, config);
@@ -26,7 +40,7 @@ async function postRequest (url, tx) {
         body: jsonData
     }
     const response = await Fetch(url, config);
-    return await response.text();;
+    return await response.text();
 }
 
 function textToSafeJson(str, keys) {
@@ -42,9 +56,10 @@ function textToSafeJson(str, keys) {
 
 export default class Blockchain {
 
-    constructor(host_ip, network_byte) {
+    constructor(host_ip, network_byte, api_key = '') {
         this.network_byte = network_byte;
         this.host_ip = host_ip;
+        this.api_key = api_key;
     }
 
     async getBalance(address) {
@@ -65,16 +80,27 @@ export default class Blockchain {
         return textToSafeJson(response, keys);
     }
 
+    async getActiveLeaseList(address) {
+        let response = await getRequestWithKey(this.host_ip, '/transactions/activeLeaseList/' + address, this.api_key);
+        let keys = ['amount'];
+        return textToSafeJson(response, keys);
+    }
+
     async getTxById(tx_id) {
         let response = await getRequest(this.host_ip, '/transactions/info/' + tx_id);
         let keys = ['amount'];
         return textToSafeJson(response, keys);
     }
 
-    async getTxByType(address, record_limit, type) {
-        let response = await getRequest(this.host_ip, '/transactions/list?address=' + address + '&limit=' + record_limit + '&txType=' + type)
-        let keys =['amount']
-        return textToSafeJson(response, keys)
+    async getTxByType(address, record_limit, type, offset = 0) {
+        let response = await getRequest(this.host_ip, '/transactions/list?address=' + address + '&limit=' + record_limit + '&txType=' + type + '&offset=' + offset);
+        let keys =['amount'];
+        return textToSafeJson(response, keys);
+    }
+
+    async getTxCount(address, type) {
+        let response = await getRequest(this.host_ip, '/transactions/count?address=' + address + '&txType=' + type);
+        return textToSafeJson(response);
     }
 
     async getUnconfirmedTxById(tx_id) {
@@ -130,6 +156,17 @@ export default class Blockchain {
 
     async getContractContent(contract_id) {
         let response = await getRequest(this.host_ip, '/contract/content/' + contract_id);
+        return textToSafeJson(response);
+    }
+
+    async getContractData(contract_id, state_index, data_type, data) {
+        let key_string = Common.getContractKeyString(state_index, data_type, data);
+        let response = await getRequest(this.host_ip, '/contract/data/' + contract_id + '/' + key_string);
+        return textToSafeJson(response);
+    }
+
+    async getLastTokenIndex(contract_id) {
+        let response = await getRequest(this.host_ip, '/contract/lastTokenIndex/' + contract_id);
         return textToSafeJson(response);
     }
 

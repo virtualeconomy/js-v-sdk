@@ -37,6 +37,8 @@ function getContractType(contract) {
             return 'PAYMENT_CONTRACT';
         case Contract.LOCK_CONTRACT:
             return 'LOCK_CONTRACT';
+        case Contract.NON_FUNGIBLE_TOKEN_CONTRACT:
+            return 'NON_FUNGIBLE_TOKEN_CONTRACT';
         default:
             throw new Error('Invalid contract! ')
     }
@@ -75,37 +77,9 @@ function processData(data) {
     let num = data.length
     let encode_arr = Convert.shortToByteArray(num);
     for (let i=0; i<num; i++) {
-        encode_arr = encode_arr.concat(data_bytes_gen(data[i]['value'], data[i]['type']))
+        encode_arr = encode_arr.concat(Common.getDataBytes(data[i]['value'], data[i]['type']))
     }
     return Base58.encode(Uint8Array.from(encode_arr))
-}
-
-function data_bytes_gen(data, data_type) {
-    let data_bytes;
-    switch (data_type) {
-        case Constants.AMOUNT_TYPE:
-            data = BigNumber(data)
-            data_bytes = Convert.bigNumberToByteArray(data);
-            break;
-        case Constants.SHORTTEXT_TYPE:
-            let byte_arr = Convert.stringToByteArray(data);
-            let length = byte_arr.length;
-            let length_arr = Convert.shortToByteArray(length);
-            data_bytes = length_arr.concat(byte_arr)
-            break;
-        case Constants.TOKEN_ID_TYPE:
-            let token_id_arr = Base58.decode(data);
-            data_bytes = Array.from(token_id_arr);
-            break;
-        case Constants.ACCOUNT_ADDR_TYPE:
-            let account_arr = Base58.decode(data);
-            data_bytes = Array.from(account_arr);
-            break;
-        case Constants.CONTRACT_ACCOUNT_TYPE:
-            let contract_account_arr = Base58.decode(data);
-            data_bytes = Array.from(contract_account_arr);
-    }
-    return [data_type].concat(data_bytes);
 }
 
 // Fields-process functions for cold signature
@@ -113,16 +87,6 @@ function getContractColdFields(cold_tx, network_byte, acc) {
     let init_data = cold_tx['initData'];
     let public_key_bytes = Base58.decode(cold_tx['senderPublicKey']);
     cold_tx['address'] = acc.convertPublicKeyToAddress(public_key_bytes, network_byte);
-    let contract_type = getContractType(cold_tx['contract']);
-    switch (contract_type) {
-        case 'TOKEN_CONTRACT': case 'TOKEN_CONTRACT_WITH_SPLIT':
-            cold_tx['contractInitExplain'] = 'Create token' + (contract_type === 'TOKEN_CONTRACT' ? ' ' : ' (support split) ') + 'with max supply ' + BigNumber(init_data[0]['value']).dividedBy(init_data[1]['value']);
-            cold_tx['contractInitTextual'] = "init(max=" + BigNumber(init_data[0]['value']).dividedBy(init_data[1]['value'])+ ",unity= "+ BigNumber(init_data[1]['value']) + ",tokenDescription='" + init_data[2]['value'] + "')";
-            break;
-        case 'PAYMENT_CONTRACT': case 'LOCK_CONTRACT':
-            cold_tx['contractInitExplain'] = ''
-            cold_tx['contractInitTextual'] = ''
-    }
     cold_tx['contractInit'] = processData(init_data);
     delete cold_tx['senderPublicKey'];
     delete cold_tx['initData'];
@@ -202,6 +166,22 @@ export default class Transaction {
             feeScale: Constants.FEE_SCALE,
             timestamp: timestamp,
             transactionType: Constants.LEASE_TX
+        };
+        this.stored_tx = tx;
+        return tx;
+    }
+
+    buildGenesisTx(public_key, recipient, amount, slotId, timestamp) {
+        if (!timestamp) {
+            timestamp = Date.now() * 1e6;
+        }
+        let tx = {
+            senderPublicKey: public_key,
+            recipient: recipient,
+            amount: convertAmountToMinimumUnit(amount),
+            slotId: slotId,
+            timestamp: timestamp,
+            transactionType: Constants.GENESIS_TX
         };
         this.stored_tx = tx;
         return tx;
@@ -373,7 +353,7 @@ export default class Transaction {
 
     buildTransactionId(data_bytes) {
         if (!data_bytes || !(data_bytes instanceof Uint8Array)) {
-            throw new Error('Missing or invalid data');
+            data_bytes = this.toBytes()
         }
         let output = new Uint8Array(32);
         Blake2b(output.length).update(data_bytes).digest(output);

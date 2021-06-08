@@ -1,6 +1,6 @@
 {
     "name": "@virtualeconomy/js-v-sdk",
-    "version": "1.0.0",
+    "version": "2.0.7",
     "license": "MIT",
     "main": "./dist/index.js",
     "dependencies": {
@@ -42,11 +42,15 @@
         "rollup-plugin-babel": "^4.3.3"
     },
     "scripts": {
-        "test_all": "npm run build && mocha ./test/test_token.js ./test/test_account.js ./test/test_blockchain.js ./test/test_tx.js",
+        "test_all": "npm run build && mocha ./test/test_token.js ./test/test_account.js ./test/test_blockchain.js ./test/test_tx.js ./test/test_system_contract.js ./test/test_payment_channel_contract.js ./test/test_lock_contract.js",
         "test_token": "npm run build && mocha ./test/test_token.js",
         "test_account": "npm run build && mocha ./test/test_account.js",
         "test_blockchain": "npm run build && mocha ./test/test_blockchain.js",
         "test_tx": "npm run build && mocha ./test/test_tx.js",
+        "test_system_contract": "npm run build && mocha ./test/test_system_contract.js",
+        "test_payment_channel_contract": "npm run build && mocha ./test/test_payment_channel_contract.js",
+        "test_lock_contract": "npm run build && mocha ./test/test_lock_contract.js",
+        "test_nft_contract": "npm run build && mocha ./test/test_nft_contract.js",
         "clean": "rm -rf dist libs",
         "pre-build": "babel --source-maps -d libs src test",
         "build": "npm run pre-build && cross-env BABEL_ENV=production babel-node build/bundle.js esm,cjs"
