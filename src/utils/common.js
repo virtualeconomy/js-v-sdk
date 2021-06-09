@@ -7,7 +7,7 @@ import Crypto from './crypto'
 import * as Constants from "../constants";
 import Axlsign from "axlsign";
 import SecureRandom from "./secure-random";
-export {
+export default {
     getLength(str) {
         let len = encodeURIComponent(str).replace(/%[A-F\d]{2}/g, 'U').length;
         return len
