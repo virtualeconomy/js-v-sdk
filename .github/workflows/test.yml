@@ -23,4 +23,4 @@ jobs:
         continue-on-error: true
       - run: npm i
       - run: npm run build --if-present
-      - run: npm test
+      - run: npm test_all
