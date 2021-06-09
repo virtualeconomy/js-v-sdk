@@ -2,9 +2,9 @@
     "name": "@virtualeconomy/js-v-sdk",
     "version": "2.0.7",
     "license": "MIT",
-    "description": "V Systems javascript library"
-    "keywords": ["vsys", "v-systems", "blockchain", "contracts"]
-    "homepage": "https://github.com/virtualeconomy/js-v-sdk"
+    "description": "V Systems javascript library"],
+    "keywords": ["vsys", "v-systems", "blockchain","contracts"],
+    "homepage": "https://github.com/virtualeconomy/js-v-sdk",
     "main": "./dist/index.js",
     "dependencies": {
         "@babel/runtime": "^7.4.5",
