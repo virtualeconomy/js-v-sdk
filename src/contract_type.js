@@ -4,3 +4,4 @@ export const SYSTEM = 'SystemContract';
 export const LOCK = 'LockContract';
 export const PAYMENT_CHANNEL = 'PaymentChannelContract';
 export const NFT = 'NonFungibleContract';
+export const SWAP = 'SwapContract';

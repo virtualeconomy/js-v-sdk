@@ -97,6 +97,27 @@ export function getContractFunctionIndex(contract_type, function_name) {
                 default:
                     throw new Error('Invalid function name!')
             }
+        case ContractType.SWAP:
+            switch (function_name) {
+                case 'SUPERSEDE':
+                  return Constants.SWAP_CONTRACT_SUPERSEDE_FUNCIDX
+                case 'SETSWAP':
+                  return Constants.SWAP_CONTRACT_SETSWAP_FUNCIDX
+                case 'ADDLIQUIDITY':
+                  return Constants.SWAP_CONTRACT_ADDLIQUIDITY_FUNCIDX
+                case 'REMOVELIQUIDITY':
+                  return Constants.SWAP_CONTRACT_REMOVELIQUIDITY_FUNCIDX
+                case 'SWAPTOKENFOREXACTBASE':
+                  return Constants.SWAP_CONTRACT_SWAPTOKENFOREXACTBASE_FUNCIDX
+                case 'SWAPEXACTTOKENFORBASE':
+                  return Constants.SWAP_CONTRACT_SWAPEXACTTOKENFORBASE_FUNCIDX
+                case 'SWAPTOKENFOREXACTTARGET':
+                  return Constants.SWAP_CONTRACT_SWAPTOKENFOREXACTTARGET_FUNCIDX
+                case 'SWAPEXACTTOKENFORTARGET':
+                  return Constants.SWAP_CONTRACT_SWAPEXACTTOKENFORTARGET_FUNCIDX
+                default:
+                  throw new Error('Invalid function name!')
+            }
         default:
             throw new Error('Invalid contract type!')
     }
@@ -329,5 +350,87 @@ export class NonFungibleTokenContractDataGenerator {
             { type: Constants.INT32_TYPE, value: tokenIndex }
         ]
         return data
+    }
+}
+
+export class VSwapContractDataGenerator {
+
+    createInitData(tokenAIndex, tokenBIndex, liquidityTokenIndex, minimumLiquidity) {
+        let data = [
+            { type: Constants.TOKEN_ID_TYPE, value: tokenAIndex },
+            { type: Constants.TOKEN_ID_TYPE, value: tokenBIndex },
+            { type: Constants.TOKEN_ID_TYPE, value: liquidityTokenIndex },
+            { type: Constants.AMOUNT_TYPE, value: minimumLiquidity }
+        ]
+        return data
+    }
+
+    createSupersedeData(newOwner) {
+        return [{ type: Constants.ACCOUNT_ADDR_TYPE, value: newOwner }]
+    }
+
+    createSetSwapData(amountADesired, amountBDesired) {
+        let data = [
+            { type: Constants.AMOUNT_TYPE, value: amountADesired },
+            { type: Constants.AMOUNT_TYPE, value: amountBDesired }
+        ]
+        return data
+    }
+
+    createAddLiquidityData(amountADesired, amountBDesired, amountAMin, amountBmin, deadline) {
+        let data = [
+            { type: Constants.AMOUNT_TYPE, value: amountADesired },
+            { type: Constants.AMOUNT_TYPE, value: amountBDesired },
+            { type: Constants.AMOUNT_TYPE, value: amountAMin },
+            { type: Constants.AMOUNT_TYPE, value: amountBmin },
+            { type: Constants.TIME_STAMP_TYPE, value: deadline }
+        ]
+        return data
+    }
+
+    createRemoveLiquidityData(liquidity, amountAMin, amountBMin, deadline) {
+      let data = [
+          { type: Constants.AMOUNT_TYPE, value: liquidity },
+          { type: Constants.AMOUNT_TYPE, value: amountAMin },
+          { type: Constants.AMOUNT_TYPE, value: amountBMin },
+          { type: Constants.TIME_STAMP_TYPE, value: deadline }
+      ]
+      return data
+    }
+
+    createSwapTokenForExactBaseTokenData(amountOut, amountInMax, deadline) {
+      let data = [
+          { type: Constants.AMOUNT_TYPE, value: amountOut },
+          { type: Constants.AMOUNT_TYPE, value: amountInMax },
+          { type: Constants.TIME_STAMP_TYPE, value: deadline }
+      ]
+      return data
+    }
+
+    createSwapExactTokenForBaseTokenData(amountOutMin, amountIn, deadline) {
+      let data = [
+          { type: Constants.AMOUNT_TYPE, value: amountOutMin },
+          { type: Constants.AMOUNT_TYPE, value: amountIn },
+          { type: Constants.TIME_STAMP_TYPE, value: deadline }
+      ]
+      return data
+    }
+
+    createSwapTokenForExactTargetTokenData(amountOut, amountInMax, deadline) {
+      let data = [
+          { type: Constants.AMOUNT_TYPE, value: amountOut },
+          { type: Constants.AMOUNT_TYPE, value: amountIn },
+          { type: Constants.TIME_STAMP_TYPE, value: deadline }
+      ]
+      return data
+    }
+
+    createSwapExactTokenForTargetTokenData(amountOutMin, amountIn, deadline) {
+      let data = [
+          { type: Constants.AMOUNT_TYPE, value: amountOutMin },
+          { type: Constants.AMOUNT_TYPE, value: amountIn },
+          { type: Constants.TIME_STAMP_TYPE, value: deadline }
+      ]
+      return data
     }
 }

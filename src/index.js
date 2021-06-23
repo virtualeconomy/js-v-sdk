@@ -9,7 +9,7 @@ import Convert from './utils/convert';
 import ByteProcessor from './utils/byteProcessor';
 import Converters from './utils/converters';
 import TxUtil from './utils/txUtil';
-import { TokenContractDataGenerator, LockContractDataGenerator, PaymentChannelContractDataGenerator, SystemContractDataGenerator, NonFungibleTokenContractDataGenerator, getContractFunctionIndex } from './data';
+import { TokenContractDataGenerator, LockContractDataGenerator, PaymentChannelContractDataGenerator, SystemContractDataGenerator, NonFungibleTokenContractDataGenerator, VSwapContractDataGenerator, getContractFunctionIndex } from './data';
 
 export {
     Account,
@@ -29,6 +29,7 @@ export {
     PaymentChannelContractDataGenerator,
     SystemContractDataGenerator,
     NonFungibleTokenContractDataGenerator,
+    VSwapContractDataGenerator
 };
 export default {
     Account,
@@ -48,4 +49,5 @@ export default {
     PaymentChannelContractDataGenerator,
     SystemContractDataGenerator,
     NonFungibleTokenContractDataGenerator,
+    VSwapContractDataGenerator
 };

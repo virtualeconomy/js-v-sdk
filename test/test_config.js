@@ -1,4 +1,4 @@
 "use strict";
-export const seed = "alter glare wealth alert about inmate wild foster nothing track brown chief primary acquire energy";
+export const seed = "ticket funny square casino loop order light render second flame segment trial hero loyal pepper";
 export const nonce = 0;
-export const host_ip = 'https://test.v.systems/api';
+export const host_ip = 'http://18.225.34.108:9928';

@@ -39,6 +39,8 @@ function getContractType(contract) {
             return 'LOCK_CONTRACT';
         case Contract.NON_FUNGIBLE_TOKEN_CONTRACT:
             return 'NON_FUNGIBLE_TOKEN_CONTRACT';
+        case Contract.V_SWAP_CONTRACT:
+            return 'SWAP_CONTRACT';
         default:
             throw new Error('Invalid contract! ')
     }
