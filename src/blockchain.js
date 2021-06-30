@@ -1,6 +1,8 @@
 "use strict";
 
 // import "babel-polyfill";
+import Base58 from 'base-58';
+import Convert from './utils/convert';
 import Fetch from 'node-fetch';
 import Common from './utils/common';
 
@@ -159,8 +161,13 @@ export default class Blockchain {
         return textToSafeJson(response);
     }
 
-    async getContractData(contract_id, state_index, data_type, data) {
-        let key_string = Common.getContractKeyString(state_index, data_type, data);
+    async getContractData(contract_id, state_index, data_type = -1, data="") {
+        let key_string = ""
+        if (data_type == -1) {
+          key_string = Base58.encode([state_index]);
+        } else {
+          key_string = Common.getContractKeyString(state_index, data_type, data);
+        }
         let response = await getRequest(this.host_ip, '/contract/data/' + contract_id + '/' + key_string);
         return textToSafeJson(response);
     }
