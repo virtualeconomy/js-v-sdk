@@ -419,7 +419,7 @@ export class VSwapContractDataGenerator {
     createSwapTokenForExactTargetTokenData(amountOut, amountInMax, deadline) {
       let data = [
           { type: Constants.AMOUNT_TYPE, value: amountOut },
-          { type: Constants.AMOUNT_TYPE, value: amountIn },
+          { type: Constants.AMOUNT_TYPE, value: amountInMax },
           { type: Constants.TIME_STAMP_TYPE, value: deadline }
       ]
       return data
