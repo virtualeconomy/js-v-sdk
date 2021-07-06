@@ -3,6 +3,7 @@ import Blockchain from './blockchain';
 import * as constants from './constants';
 import * as Contract from './contract';
 import * as ContractType from './contract_type';
+import * as VSwapUtils from './utils/contract/vswap_utils';
 import Transaction from './transaction';
 import Crypto from './utils/crypto';
 import Convert from './utils/convert';
@@ -17,6 +18,7 @@ export {
     constants,
     Contract,
     ContractType,
+    VSwapUtils,
     Transaction,
     Crypto,
     Convert,
@@ -37,6 +39,7 @@ export default {
     constants,
     Contract,
     ContractType,
+    VSwapUtils,
     Transaction,
     Crypto,
     Convert,
