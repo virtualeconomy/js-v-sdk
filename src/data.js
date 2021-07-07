@@ -97,6 +97,15 @@ export function getContractFunctionIndex(contract_type, function_name) {
                 default:
                     throw new Error('Invalid function name!')
             }
+        case ContractType.ATOMIC_SWAP:
+            switch (function_name) {
+                case 'LOCK':
+                    return Constants.ATOMIC_SWAP_CONTRACT_LOCK_FUNCIDX
+                case 'SOLVEPUZZLE':
+                    return Constants.ATOMIC_SWAP_CONTRACT_SOLVE_PUZZLE_FUNCIDX
+                case 'EXPIREWITHDRAW':
+                    return Constants.ATOMIC_SWAP_CONTRACT_EXPIRE_WITHDRAW_FUNCIDX
+            }
         default:
             throw new Error('Invalid contract type!')
     }
@@ -328,6 +337,37 @@ export class NonFungibleTokenContractDataGenerator {
             { type: Constants.ACCOUNT_ADDR_TYPE, value: recipient },
             { type: Constants.INT32_TYPE, value: tokenIndex }
         ]
+        return data
+    }
+}
+
+export class AtomicSwapContractDataGenerator {
+
+    createInitData(tokenIndex) {
+        let data = [{ type: Constants.TOKEN_ID_TYPE, value: tokenIndex }]
+        return data
+    }
+
+    createLockData(amount, recipient, puzzle, expiredTime) {
+        let data = [
+            { type: Constants.AMOUNT_TYPE, value: amount },
+            { type: Constants.ACCOUNT_ADDR_TYPE, value: recipient },
+            { type: Constants.SHORT_BYTES_TYPE, value: puzzle },
+            { type: Constants.TIME_STAMP_TYPE, value: expiredTime }
+        ]
+        return data
+    }
+
+    createSolvePuzzleData(txIndex, key) {
+        let data = [
+            { type: Constants.SHORT_BYTES_TYPE, value: txIndex },
+            { type: Constants.SHORT_BYTES_TYPE, value: key }
+        ]
+        return data
+    }
+
+    createExpireWithdrawData(txIndex) {
+        let data = [{ type: Constants.SHORT_BYTES_TYPE, value: txIndex }]
         return data
     }
 }
