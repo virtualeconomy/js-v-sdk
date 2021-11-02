@@ -2,6 +2,9 @@
     "name": "@virtualeconomy/js-v-sdk",
     "version": "2.0.7",
     "license": "MIT",
+    "description": "V Systems javascript library",
+    "keywords": ["vsys", "v-systems", "blockchain","contracts"],
+    "homepage": "https://github.com/virtualeconomy/js-v-sdk",
     "main": "./dist/index.js",
     "engines": {
     "node": ">=16",
@@ -58,5 +61,10 @@
         "clean": "rm -rf dist libs",
         "pre-build": "babel --source-maps -d libs src test",
         "build": "npm run pre-build && cross-env BABEL_ENV=production babel-node build/bundle.js esm,cjs"
-    }
+    },
+      "engines": {    
+        "node": ">=12",
+        "zlib": "^1.2.8",
+        "yarn": ">=0.19.0"
+        }
 }
