@@ -1,4 +1,7 @@
 # js-vsystems
+
+> **DEPRECATED. Please use the new JavaScript SDK [js-vsys](https://github.com/virtualeconomy/js-vsys) instead.**
+
 JavaScript library for V Systems
 
 ## Install from npm （recommended)
